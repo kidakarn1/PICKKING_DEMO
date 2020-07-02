@@ -85,7 +85,7 @@ Public Class main
         Try
             'ProgressBar1.Show()
             'Dim strCommand As String = "SELECT * FROM sys_users"
-            strCommand = "SELECT * FROM sys_users WHERE emp_id = " & "'" & Str & "'"
+            strCommand = "SELECT * FROM sys_users WHERE emp_id = " & "'" & Str & "' and enable = '1' "
             ' MsgBox(strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
             reader = command.ExecuteReader()

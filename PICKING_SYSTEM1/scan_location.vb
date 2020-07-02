@@ -244,7 +244,6 @@ m:
         part_de.PD5 = Me
         part_de.Show()
         Me.Hide()
-        show_fifo()
         'Dim show_image_part As show_image_part = New show_image_part()
         ' show_image_part.Show()
         'part_de.scan_qty.Focus()wq

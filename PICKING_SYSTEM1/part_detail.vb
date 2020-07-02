@@ -22,6 +22,7 @@ Public Class part_detail
     Public ID_table_detail As String = "NO_DATA"
     Public check_process As String = "NO_OK"
 
+    Dim g_index As Integer = 0
     Dim id_cut_stock_FW As String = "no_data"
     Dim path As String
     Dim a As Integer = 0
@@ -125,6 +126,7 @@ Public Class part_detail
         Finally
             ' Dim path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
             'MsgBox(path)
+            Panel4.Visible = False
             scan_qty.Focus()
 
             lb_code_user.Text = main.show_code_id_user()
@@ -150,6 +152,8 @@ Public Class part_detail
             alert_success_remain.Visible = False
             alert_loop.Visible = False
             alert_right_fa.Visible = False
+            Panel5.Visible = False
+            get_data_tetail()
             'check_qr_part()
         End Try
     End Sub
@@ -689,38 +693,39 @@ comeback:
 
                         'Dim item_tempp As String = scan_qty.Text.Substring(95, 5)
 
-                        'Else
-                        ' MsgBox("Please scan tag part")
+                    Else
+                        MsgBox("Please scan tag part")
 
-                        ' Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
-                        'Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
-                        ' Dim stLed As New Bt.LibDef.BT_LED_PARAM()
-                        'stBuz.dwOn = 200
-                        'stBuz.dwOff = 100
-                        ' stBuz.dwCount = 2
-                        ' stBuz.bVolume = 3
-                        ' stBuz.bTone = 1
-                        ' stVib.dwOn = 200
-                        'stVib.dwOff = 100
-                        '' stVib.dwCount = 2
-                        'stLed.dwOn = 200
-                        ' stLed.dwOff = 100
-                        ' stLed.dwCount = 2
-                        ' stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
-                        'Bt.SysLib.Device.btBuzzer(1, stBuz)
-                        'Bt.SysLib.Device.btVibrator(1, stVib)
-                        'Bt.SysLib.Device.btLED(1, stLed)
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
 
-                        'scan_qty.Text = ""
-                        'scan_qty.Focus()
+                        scan_qty.Text = ""
+                        scan_qty.Focus()
                     End If
 
                 End If
             Case System.Windows.Forms.Keys.Down
 
             Case System.Windows.Forms.Keys.F1
-                'show_pln.Visible = True
-                'input_password.Focus()
+                Panel4.Visible = True
+                user_id.Focus()
+
         End Select
 
 
@@ -1630,7 +1635,7 @@ LOOP_INSERT:
             Loop
             reader.Close()
             Dim strCommand As String = "UPDATE sup_work_plan_supply_dev SET pick_flg = '1'  , PICK_QTY = '" & total_pig_qty & "'  WHERE wi  = '" & Module1.wi & "' AND item_cd = '" & sel_where2 & "'"
-            MsgBox("strCommand = " & strCommand)
+            'MsgBox("strCommand = " & strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
             reader = command.ExecuteReader()
             reader.Close()
@@ -4481,8 +4486,9 @@ L_END2:
     End Sub
 
     Private Sub btn_detail_part_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btn_detail_part.Click
-        Dim page_PO_NO As PO_NO = New PO_NO()
-        page_PO_NO.Show()
+        'Dim page_PO_NO As PO_NO = New PO_NO()
+        'page_PO_NO.Show()
+        get_data_tetail()
     End Sub
 
     Public Function check_remain(ByVal scan_lot As String, ByVal updated_seq As String, ByVal F_item_cd As String)
@@ -5076,5 +5082,166 @@ re_check:
 
     Private Sub PictureBox3_Click_2(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
 
+    End Sub
+
+    Private Sub end_pa_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        Panel4.Visible = False
+    End Sub
+
+    Private Sub PictureBox4_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub PictureBox6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox6.Click
+        Panel4.Visible = False
+        scan_qty.Focus()
+    End Sub
+
+    Private Sub user_id_TextChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles user_id.KeyDown
+        Select Case e.KeyCode
+            Case System.Windows.Forms.Keys.Enter
+                password.Focus()
+        End Select
+    End Sub
+
+    Private Sub PictureBox5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox5.Click
+        Dim strCommand12345678 As String = "select count(su.su_id) as c_id  , su.sug_id as per from sys_users su  , sys_user_groups sug  where su.emp_id = '" & user_id.Text & "' and su.sys_pass = '" & password.Text & "' and su.sug_id  = sug.sug_id and su.enable = '1' GROUP BY su.sug_id"
+        MsgBox(strCommand12345678)
+        Dim cmd As SqlCommand = New SqlCommand(strCommand12345678, myConn)
+        reader = cmd.ExecuteReader()
+
+        If reader.Read() Then
+            If reader("c_id").ToString() = "1" And reader("per").ToString() <> "3" Then
+                Panel5.Visible = True
+                Panel4.Visible = False
+            Else
+                MsgBox("คุณไม่มีสิทธิ์")
+            End If
+        Else
+        MsgBox("คุณไม่มีสิทธิ์")
+        End If
+        reader.Close()
+    End Sub
+
+    Private Sub PictureBox4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox4.Click
+
+    End Sub
+
+    Private Sub Button5_Click_3(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
+        Panel5.Visible = False
+    End Sub
+
+    Private Sub ListView2_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub ListView2_SelectedIndexChanged_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles ListView2.SelectedIndexChanged
+
+    End Sub
+    Public Sub get_data_tetail()
+        Panel6.Visible = True
+        Dim x As ListViewItem = New ListViewItem()
+        ListView2.Items.Clear()
+        Try
+            Dim arr_qty_total As ArrayList = New ArrayList()
+            If Module1.M_CHECK_TYPE = "WEB_POST" Then
+                Dim num As Integer = 0
+                For Each key In Module1.arr_pick_detail_po
+                    Dim lot As String = Module1.arr_pick_detail_lot(num).ToString
+                    Dim po As String = Module1.arr_pick_detail_po(num).ToString
+                    Dim QTY As String = Module1.arr_pick_detail_qty(num).ToString
+                    x = New ListViewItem(Module1.arr_pick_detail_po(num).ToString)
+                    x.SubItems.Add(Module1.arr_pick_detail_lot(num).ToString)
+                    x.SubItems.Add(Module1.arr_pick_detail_qty(num).ToString)
+                    x.SubItems.Add("0")
+                    ListView2.Items.Add(x)
+                    If Module1.check_pick_detail <> 0 Then
+                        Dim count_scan As Integer = 0
+                        For Each key2 In Module1.arr_check_PO_scan
+                            If lot = Module1.arr_check_lot_scan(count_scan).ToString And po = Module1.arr_check_PO_scan(count_scan).ToString Then
+                                Dim i As Integer = 0
+                                Dim total_qty As Integer = 0
+                                For Each key3 In Module1.arr_check_QTY_scan
+                                    If lot = Module1.arr_check_lot_scan(i).ToString And po = Module1.arr_check_PO_scan(i).ToString Then
+                                        total_qty = total_qty + Module1.arr_check_QTY_scan(i)
+                                        If QTY <= total_qty Then
+                                            ListView2.Items(num).BackColor = Color.FromArgb(103, 255, 103)
+                                            ' MsgBox(num & " ," & count_scan & "===SET OK")
+                                        ElseIf QTY > total_qty Then
+                                            ListView2.Items(num).BackColor = Color.Yellow
+                                            'MsgBox(num & " ," & count_scan & "===SETing")
+                                        End If
+                                    End If
+                                    ListView2.Items(num).SubItems(3).Text = total_qty
+                                    i = i + 1
+                                Next
+
+                            End If
+                            count_scan = count_scan + 1
+                        Next
+                    End If
+                    num = num + 1
+                Next
+
+            ElseIf M_CHECK_TYPE = "FW" Then
+                Dim check As Integer = 0
+                Dim num As Integer = 0
+                For Each key In Module1.arr_pick_detail_lot
+                    Dim lot As String = Module1.arr_pick_detail_lot(num).ToString
+                    ' Dim po As String = Module1.arr_pick_detail_po(num).ToString
+                    Dim QTY As String = Module1.arr_pick_detail_qty(num).ToString
+                    x = New ListViewItem(" - ")
+                    x.SubItems.Add(Module1.arr_pick_detail_lot(num).ToString)
+                    x.SubItems.Add(Module1.arr_pick_detail_qty(num).ToString)
+                    x.SubItems.Add("0")
+                    ListView2.Items.Add(x)
+                    If Module1.check_pick_detail <> 0 Then
+                        Dim count_scan As Integer = 0
+                        For Each key2 In Module1.arr_check_lot_scan
+                            If lot = Module1.arr_check_lot_scan(count_scan).ToString Then
+                                Dim i As Integer = 0
+                                Dim total_qty As Integer = 0
+                                For Each key3 In Module1.arr_check_QTY_scan
+                                    If lot = Module1.arr_check_lot_scan(i).ToString Then
+                                        total_qty = total_qty + Module1.arr_check_QTY_scan(i)
+                                        If QTY <= total_qty Then
+                                            ListView2.Items(num).BackColor = Color.FromArgb(103, 255, 103)
+                                            Dim val = Module1.M_CHECK_LOT_COUNT_FW(num)
+                                            ' If val = "2" Then
+                                            'GoTo Exit_count2
+                                            ' End If
+                                            ' MsgBox(num & " ," & count_scan & "===SET OK")
+                                        ElseIf QTY > total_qty Then
+                                            ListView2.Items(num).BackColor = Color.Yellow
+                                            Dim val = Module1.M_CHECK_LOT_COUNT_FW(num)
+
+                                            ' If val = "2" Then
+                                            'GoTo Exit_count2
+                                            'End If
+
+                                            'MsgBox(num & " ," & count_scan & "===SETing")
+                                        End If
+                                    End If
+                                    ListView2.Items(num).SubItems(3).Text = total_qty
+exit_loop:
+                                    i = i + 1
+                                Next
+                            End If
+Exit_count2:
+                            count_scan = count_scan + 1
+                        Next
+                    End If
+                    num = num + 1
+                Next
+            End If
+        Catch ex As Exception
+            MsgBox("ERROR LOT FAILL FROM CODE SUPPIER " & vbNewLine & ex.Message, 16, "Status in")
+        End Try
+
+    End Sub
+
+    Private Sub Button6_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button6.Click
+        Panel6.Visible = False
+        scan_qty.Focus()
     End Sub
 End Class

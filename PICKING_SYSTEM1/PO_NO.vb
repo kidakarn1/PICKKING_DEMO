@@ -145,6 +145,7 @@ Exit_count2:
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+
         Me.Close()
         part_detail.scan_qty.Focus()
     End Sub
