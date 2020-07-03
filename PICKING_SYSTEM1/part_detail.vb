@@ -374,7 +374,7 @@ comeback:
                             Else
                                 If supp_tag_qty > req_qty And firstscan = "0" Then
                                     'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
-
+                                    check_scan = 2
                                     check_text_box_qr_code()
                                     text_tmp.Text = supp_tag_qty
                                     remain_qty1 = supp_tag_qty - req_qty
@@ -393,6 +393,7 @@ comeback:
                                     alert_success_remain.Visible = True
                                     status_alert_image = "success_remain"
                                     text_box_success.Focus()
+                                    GoTo exit_scan
                                     'เคสเท่ากับ Tag
                                 ElseIf req_qty = text_tmp.Text Then
                                     'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
@@ -408,6 +409,7 @@ comeback:
                                     alert_success.Visible = True
                                     status_alert_image = "success"
                                     text_box_success.Focus()
+                                    GoTo exit_scan
                                     'เคสยิงสะสม
                                 Else
                                     sup_seq_scan_no = sup_seq_scan_no + 1
@@ -454,6 +456,7 @@ comeback:
 
                                         If scan_qty_total > req_qty Then
                                             'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
+                                            check_scan = 2
                                             Button3.Visible = True
                                             Button2.Visible = False
                                             remain_qty1 = scan_qty_total - req_qty
@@ -468,6 +471,7 @@ comeback:
                                             alert_success_remain.Visible = True
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
+                                            GoTo exit_scan
                                         ElseIf req_qty = text_tmp.Text Then
                                             'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                             Button2.Visible = True
@@ -481,6 +485,7 @@ comeback:
                                             alert_success.Visible = True
                                             status_alert_image = "success"
                                             text_box_success.Focus()
+                                            GoTo exit_scan
                                         Else
                                             scan_qty_arrlist.Add(supp_tag_qty)
                                             scan_lot_arrlist.Add(order_number)
@@ -573,7 +578,7 @@ comeback:
                                     Button4.Visible = True
                                     Button2.Visible = False
                                     Dim summa As Integer = fa_tag_qty - remain_qty1
-
+                                    check_scan = 2
                                     scan_qty_arrlist.Add(summa)
                                     scan_lot_arrlist.Add(fa_lot_no)
                                     scan_read_arrlist.Add(scan_qty.Text)
@@ -582,9 +587,15 @@ comeback:
                                     firstscan = "1"
                                     check_text_box_qr_code()
                                     scan_qty.Visible = False
+
+
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
+
                                     alert_success_remain.Visible = True
                                     status_alert_image = "success_remain"
                                     text_box_success.Focus()
+                                    GoTo exit_scan
                                     'เคสเท่ากับ Tag
                                 ElseIf req_qty = text_tmp.Text Then
                                     '  MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
@@ -598,9 +609,12 @@ comeback:
                                     firstscan = "1"
                                     check_text_box_qr_code()
                                     scan_qty.Visible = False
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
                                     alert_success.Visible = True
                                     status_alert_image = "success"
                                     text_box_success.Focus()
+                                    GoTo exit_scan
                                     'เคสยิงสะสม
                                 Else
                                     'MsgBox("test")
@@ -632,7 +646,7 @@ comeback:
                                             Button2.Visible = False
                                             remain_qty1 = scan_qty_total - req_qty
                                             Dim summa As Integer = fa_qty - remain_qty1
-
+                                            check_scan = 2
                                             'remain_qty1 = scan_qty_total - req_qty.Text
 
                                             'Dim summa As Integer = fa_tag_qty - remain_qty1
@@ -645,9 +659,12 @@ comeback:
                                             firstscan = "1"
                                             check_text_box_qr_code()
                                             scan_qty.Visible = False
+                                            text_box_success.Visible = True
+                                            text_box_success.Focus()
                                             alert_success_remain.Visible = True
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
+                                            GoTo exit_scan
                                             'MsgBox(remain_qty1)
                                         ElseIf req_qty = text_tmp.Text Then
                                             ' MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
@@ -661,9 +678,12 @@ comeback:
                                             firstscan = "1"
                                             check_text_box_qr_code()
                                             scan_qty.Visible = False
+                                            text_box_success.Visible = True
+                                            text_box_success.Focus()
                                             alert_success.Visible = True
                                             status_alert_image = "success"
                                             text_box_success.Focus()
+                                            GoTo exit_scan
                                         Else
                                             scan_qty_arrlist.Add(fa_qty)
                                             scan_lot_arrlist.Add(fa_lot_no)
@@ -678,7 +698,7 @@ comeback:
 
                                     scan_qty.Text = ""
                                     scan_qty.Focus()
-
+exit_scan:
                                 End If
                             End If
 
@@ -1000,7 +1020,7 @@ LOOP_INSERT:
         End Try
 
 
-
+        ' MsgBox("scan_qr_part_detail = " & Module1.scan_qr_part_detail)
         Dim firstStrscan As String = Module1.scan_qr_part_detail.Substring(0, 52)
         Dim secondStrscan As String = Module1.scan_qr_part_detail.Substring(58)
         Dim total_len3 As Integer = Len(remainqtyStr)
@@ -1047,8 +1067,8 @@ LOOP_INSERT:
                 total_pig_qty = CDbl(Val(reader("PICK_QTY").ToString)) + CDbl(Val(Module1.check_QTY))
             Loop
             reader.Close()
-            Dim strCommand As String = "UPDATE sup_work_plan_supply_dev SET update_date = '" & date_now & "' , pick_flg = '1' ,  update_by = '" & emp_cd & "' , term_cd = '" & term_id & "' , pick_qty = '" & qty_detail & "' , PICK_QTY = '" & total_pig_qty & "' WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
-            MsgBox(strCommand)
+            Dim strCommand As String = "UPDATE sup_work_plan_supply_dev SET update_date = '" & date_now & "' , pick_flg = '1' ,  update_by = '" & emp_cd & "' , term_cd = '" & term_id & "' , PICK_QTY = '" & total_pig_qty & "' WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
+            'MsgBox(strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
             reader = command.ExecuteReader()
             reader.Close()
@@ -2220,7 +2240,7 @@ LOOP_INSERT:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H420")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H405")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2500,7 +2520,7 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2590,7 +2610,7 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2633,7 +2653,7 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2681,7 +2701,7 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2726,14 +2746,14 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H250")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H240")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2752,7 +2772,7 @@ L_END2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+
             bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Location : " & loc_detail)
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
@@ -2761,46 +2781,42 @@ L_END2:
 
 
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
+            '  bESC.CopyTo(bBuf, len)
+            ' len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            'bBufWork.CopyTo(bBuf, len)
+            'len = len + bBufWork.Length
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V180")
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
+            'bESC.CopyTo(bBuf, len)
+            ' len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V180")
+            ' bBufWork.CopyTo(bBuf, len)
+            ' len = len + bBufWork.Length
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H210")
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
+            ' bESC.CopyTo(bBuf, len)
+            'len = len + bESC.Length
+            ' bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H210")
+            ' bBufWork.CopyTo(bBuf, len)
+            ' len = len + bBufWork.Length
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
+            ' bESC.CopyTo(bBuf, len)
+            ' len = len + bESC.Length
+            ' bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            ' bBufWork.CopyTo(bBuf, len)
+            '  len = len + bBufWork.Length
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
-            bESC.CopyTo(bBuf, len)
+            '  bESC.CopyTo(bBuf, len)
+            ' len = len + bESC.Length
+            ' bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
+            '  bBufWork.CopyTo(bBuf, len)
+            ' len = len + bBufWork.Length
+            ' bESC.CopyTo(bBuf, len)
 
-            bESC.CopyTo(bBuf, len)
-            len = len + bESC.Length
-            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & time_detail)
-            bBufWork.CopyTo(bBuf, len)
-            len = len + bBufWork.Length
+            'bESC.CopyTo(bBuf, len)
+            'len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & time_detail)
+            'bBufWork.CopyTo(bBuf, len)
+            'len = len + bBufWork.Length
 
 
 
@@ -2814,14 +2830,14 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H300")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H290")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2864,14 +2880,14 @@ L_END2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H350")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H340")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2906,7 +2922,7 @@ L_END2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2947,7 +2963,7 @@ L_END2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V250")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V470")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -2973,7 +2989,7 @@ L_END2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "DATE : " & date_detail)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "DATE : " & date_detail & " TIME : " & time_detail)
 
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
@@ -3027,13 +3043,13 @@ L_END2:
                 ''// barcode
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V0220")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H0010")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H220")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
@@ -3049,13 +3065,13 @@ L_END2:
                 '// QR code
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V200")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H240")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H220")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
@@ -5202,7 +5218,7 @@ re_check:
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
 
             If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
             Else
                 MsgBox("connect faill")
 
@@ -5256,7 +5272,7 @@ re_check:
             MsgBox("check_null = " & check_null)
             MsgBox("cut_rigit = " & cut_rigit(check_null))
             MsgBox("b = " & b)
-            Dim SEQ As String = b.Substring(3) 'SEQ FA'
+            Dim SEQ As String = TextBox1.Text.Substring(16, 3) 'SEQ FA'
             Dim str As String = "select * from sup_work_plan_supply_dev where ITEM_CD = '" & part_no_detail & "'"
             MsgBox(str)
             Dim cmd As SqlCommand = New SqlCommand(str, myConn)
@@ -5299,7 +5315,7 @@ re_check:
 
             M_reprint = "FW"
             If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
             Else
                 MsgBox("connect faill")
             End If
@@ -5493,7 +5509,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5583,7 +5599,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5626,7 +5642,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5653,7 +5669,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Model : " & Module1.M_Model)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Model : " & part_model)
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5668,7 +5684,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5695,7 +5711,7 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Reprint QTY. : " & reprint_qty)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Reprint QTY : " & reprint_qty)
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5711,14 +5727,14 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H250")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H240")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5754,14 +5770,14 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V180")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V380")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H210")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H680")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5797,14 +5813,14 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H300")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H290")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5848,14 +5864,14 @@ Exit_count2:
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V550")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
             'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H350")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H340")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5892,7 +5908,7 @@ Exit_count2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5933,7 +5949,7 @@ Exit_count2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V250")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V470")
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
 
@@ -5959,7 +5975,7 @@ Exit_count2:
 
             bESC.CopyTo(bBuf, len)
             len = len + bESC.Length
-            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "DATE : " & date_detail)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "DATE : " & date_detail & " Time : " & time_detail)
 
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
@@ -5968,13 +5984,13 @@ Exit_count2:
                 ''// barcode
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V0220")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H0010")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H220")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
@@ -5990,13 +6006,13 @@ Exit_count2:
                 '// QR code
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V200")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V735")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
                 bESC.CopyTo(bBuf, len)
                 len = len + bESC.Length
-                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H240")
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H220")
                 bBufWork.CopyTo(bBuf, len)
                 len = len + bBufWork.Length
 
@@ -6126,10 +6142,6 @@ L_END2:
         End Try
 
         remain_qty1 = 0
-
-    End Sub
-
-    Private Sub TextBox1_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBox1.TextChanged
 
     End Sub
 End Class
