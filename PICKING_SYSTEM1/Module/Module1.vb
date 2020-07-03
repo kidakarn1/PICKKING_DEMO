@@ -46,7 +46,8 @@ Module Module1
     Public check_pick_detail As Integer = 0
     Dim myConn As SqlConnection
     Dim reader As SqlDataReader
-
+    Public user_reprint As String = "NODATA"
+    Public M_reprint As String = "NODATA"
     Public arr_LVL As ArrayList = New ArrayList()
     Public arr_com_flg As ArrayList = New ArrayList()
 

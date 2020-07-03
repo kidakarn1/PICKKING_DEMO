@@ -5112,8 +5112,10 @@ re_check:
 
         If reader.Read() Then
             If reader("c_id").ToString() = "1" And reader("per").ToString() <> "3" Then
+                Module1.user_reprint = user_id.Text()
                 Panel5.Visible = True
                 Panel4.Visible = False
+                TextBox1.Focus()
             Else
                 MsgBox("คุณไม่มีสิทธิ์")
             End If
@@ -5128,7 +5130,184 @@ re_check:
     End Sub
 
     Private Sub Button5_Click_3(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
-        Panel5.Visible = False
+        Dim L_data = Len(TextBox1.Text)
+
+        If L_data = "62" Then
+            Dim re_qty As String = TextBox2.Text
+            Dim re_qty_number As Double = 0.0
+            re_qty_number = CDbl(Val(re_qty))
+            Dim number_re_qty As Integer = Len(re_qty)
+            Dim new_qr As String = TextBox1.Text.Substring(0, 50)
+            Dim qty_old As String = TextBox1.Text.Substring(51, 8)
+            Dim SEQ As String = TextBox1.Text.Substring(59)
+            Dim charArray_re_qty() As Char = re_qty.ToCharArray
+            Dim charArray_old_qty() As Char = qty_old.ToCharArray
+            Dim key As Integer = 0
+            Dim RESULT_QTY As String = ""
+            Dim regit As Integer = 9 - number_re_qty
+            For i As Integer = 0 To 8 Step +1
+                Dim data_rigit As String = ""
+                If i = regit Then
+                    data_rigit = charArray_re_qty(key)
+                    regit = regit + 1
+                    key = key + 1
+                Else
+                    data_rigit = "0"
+                End If
+                RESULT_QTY &= data_rigit
+            Next
+            Dim new_qr_re_print As String = new_qr & RESULT_QTY & SEQ
+            Dim sp_qr = new_qr_re_print.Split("               ")
+            Dim data_arr As String = sp_qr(0)
+            Dim part_no_detail As String = data_arr.Substring(12)
+
+            Dim str As String = "select * from sup_work_plan_supply_dev where ITEM_CD = '" & part_no_detail & "'"
+            MsgBox(str)
+            Dim cmd As SqlCommand = New SqlCommand(str, myConn)
+            reader = cmd.ExecuteReader()
+            Dim part_name_detail As String = "NOATA"
+            Dim Model_detail As String = "NOATA"
+            Dim loc_detail As String = "NOATA"
+            If reader.Read() Then
+                part_name_detail = reader("ITEM_NAME").ToString()
+                Model_detail = reader("MODEL").ToString()
+                loc_detail = reader("LOCATION_PART").ToString()
+            Else
+                MsgBox("NODATA")
+            End If
+            reader.Close()
+            Dim time As DateTime = DateTime.Now
+            Dim format As String = "yyyy-MM-dd HH:mm:ss"
+            Dim date_now = time.ToString(format)
+
+            Dim time_detail As DateTime = DateTime.Now
+            Dim format_time_detail As String = "HH:mm:ss"
+            Dim now_time_detail = time_detail.ToString(format_time_detail)
+
+            Dim date_detail As DateTime = DateTime.Now
+            Dim format_date_detail As String = "dd-MM-yyyy"
+            Dim now_date_detail = date_detail.ToString(format_date_detail)
+            Dim reprint_qty As String = RESULT_QTY
+            Dim user_detail As String = Module1.user_reprint
+            Dim qr_detail_reprint As String = new_qr_re_print
+            Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
+            stInfoSet1.addr = "a066109719bd"
+            Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
+            stInfoSet.addr = "a066109719bd"
+            Dim pin As StringBuilder = New StringBuilder("0000")
+            Dim pin1 As StringBuilder = New StringBuilder("0000")
+            Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
+            stInfoSet1.addr = "a066109719bd"
+            M_reprint = "WEB_POST"
+            Dim pinlen As UInt32 = CType(pin.Length, UInt32)
+
+            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+            Else
+                MsgBox("connect faill")
+
+            End If
+
+            MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
+        ElseIf L_data = "103" Then
+            Dim re_qty As String = TextBox2.Text
+            Dim re_qty_number As Double = 0.0
+            re_qty_number = CDbl(Val(re_qty))
+            Dim number_re_qty As Integer = Len(re_qty)
+            Dim new_qr As String = TextBox1.Text.Substring(0, 52)
+            Dim qty_old As String = TextBox1.Text.Substring(51, 8)
+            Dim qty_old2 As String = TextBox1.Text.Substring(58)
+            Dim charArray_re_qty() As Char = re_qty.ToCharArray
+            Dim charArray_old_qty() As Char = qty_old.ToCharArray
+            Dim key As Integer = 0
+            Dim RESULT_QTY As String = ""
+            Dim regit As Integer = 7 - number_re_qty
+            Dim n As Integer = 0
+            For i As Integer = 1 To 6 Step +1
+                Dim data_rigit As String = ""
+                If i = regit Then
+                    data_rigit = charArray_re_qty(key)
+                    regit = regit + 1
+                    key = key + 1
+                Else
+                    data_rigit = " "
+                    n = n + 1
+                End If
+                RESULT_QTY &= data_rigit
+            Next
+            MsgBox("====>" & n & "<========" & RESULT_QTY)
+            Dim new_qr_re_print As String = new_qr & RESULT_QTY & qty_old2
+            MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
+            MsgBox(TextBox1.Text.Substring(52, 6))
+            Dim sp_qr = new_qr_re_print.Split(" ")
+            Dim data_arr As String = sp_qr(0)
+            Dim part_no_detail As String = data_arr.Substring(19)
+
+            Dim check_null As Integer = 0
+            Dim char_array() As Char = TextBox1.Text.ToCharArray
+            For i As Integer = 17 To 55 Step +1
+                Dim rigit As String = char_array(i)
+                If rigit = " " Then
+                    check_null = check_null + 1
+                End If
+            Next
+            Dim cut_rigit = TextBox1.Text.Split(" ")
+            Dim b As String = cut_rigit(check_null)
+            MsgBox("check_null = " & check_null)
+            MsgBox("cut_rigit = " & cut_rigit(check_null))
+            MsgBox("b = " & b)
+            Dim SEQ As String = b.Substring(3) 'SEQ FA'
+            Dim str As String = "select * from sup_work_plan_supply_dev where ITEM_CD = '" & part_no_detail & "'"
+            MsgBox(str)
+            Dim cmd As SqlCommand = New SqlCommand(str, myConn)
+            reader = cmd.ExecuteReader()
+            Dim part_name_detail As String = "NOATA"
+            Dim Model_detail As String = "NOATA"
+            Dim loc_detail As String = "NOATA"
+            If reader.Read() Then
+                part_name_detail = reader("ITEM_NAME").ToString()
+                Model_detail = reader("MODEL").ToString()
+                loc_detail = reader("LOCATION_PART").ToString()
+            Else
+                MsgBox("NODATA")
+            End If
+            reader.Close()
+            Dim time As DateTime = DateTime.Now
+            Dim format As String = "yyyy-MM-dd HH:mm:ss"
+            Dim date_now = time.ToString(format)
+
+            Dim time_detail As DateTime = DateTime.Now
+            Dim format_time_detail As String = "HH:mm:ss"
+            Dim now_time_detail = time_detail.ToString(format_time_detail)
+
+            Dim date_detail As DateTime = DateTime.Now
+            Dim format_date_detail As String = "dd-MM-yyyy"
+            Dim now_date_detail = date_detail.ToString(format_date_detail)
+            Dim reprint_qty As String = RESULT_QTY
+            Dim user_detail As String = Module1.user_reprint
+            Dim qr_detail_reprint As String = new_qr_re_print
+            Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
+            stInfoSet1.addr = "a066109719bd"
+            Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
+            stInfoSet.addr = "a066109719bd"
+            Dim pin As StringBuilder = New StringBuilder("0000")
+            Dim pin1 As StringBuilder = New StringBuilder("0000")
+            Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
+            stInfoSet1.addr = "a066109719bd"
+            M_reprint = "WEB_POST"
+            Dim pinlen As UInt32 = CType(pin.Length, UInt32)
+
+            M_reprint = "FW"
+            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+            Else
+                MsgBox("connect faill")
+            End If
+
+        Else
+            MsgBox("QR CODE ไม่ถูกต้อง")
+        End If
+
     End Sub
 
     Private Sub ListView2_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -5243,5 +5422,714 @@ Exit_count2:
     Private Sub Button6_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button6.Click
         Panel6.Visible = False
         scan_qty.Focus()
+    End Sub
+
+    Private Sub Button7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button7.Click
+        TextBox1.Text = ""
+        TextBox2.Text = ""
+        TextBox1.Focus()
+    End Sub
+
+    Private Sub TextBox1_Text_key_down(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TextBox1.KeyDown
+        Select Case e.KeyCode
+            Case System.Windows.Forms.Keys.Enter
+                TextBox2.Focus()
+        End Select
+    End Sub
+
+    Private Sub PictureBox8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox8.Click
+        user_id.Text = ""
+        password.Text = ""
+        scan_qty.Focus()
+        Panel5.Visible = False
+    End Sub
+
+    Private Sub Bluetooth_Reprint(ByVal stInfoSet As LibDef.BT_BLUETOOTH_TARGET, ByVal pin As StringBuilder, ByVal pinlen As UInt32, ByVal part_number As String, ByVal part_name As String, ByVal part_model As String, ByVal reprint_qty As String, ByVal loc_detail As String, ByVal user_detail As String, ByVal date_detail As String, ByVal time_detail As String, ByVal qr_detail_remain As String, ByVal seq As String)
+        Dim ret As Int32 = 0
+        Dim disp As [String] = ""
+
+        Dim sbBuf As New StringBuilder("")
+        Dim ssizeGet As UInt32 = 0
+        Dim bBuf As [Byte]() = New Byte() {}
+
+
+        Dim rsizeGet As UInt32 = 0
+        Dim bBufGet As [Byte]() = New [Byte](4094) {}
+
+        Try
+            bBuf = New [Byte](4094) {}
+            Dim bBufWork As [Byte]() = New [Byte]() {}
+            Dim bESC As [Byte]() = New [Byte](0) {ESC}
+            Dim bSTX As [Byte]() = New [Byte](0) {STX}
+            Dim bETX As [Byte]() = New [Byte](0) {ETX}
+            Dim bLF As [Byte]() = New [Byte](0) {LF}
+            Dim b00 As [Byte]() = New [Byte](0) {&H0}
+            Dim b30 As [Byte]() = New [Byte](0) {&H30}
+            Dim len As Int32 = 0
+
+
+            ' Receipt mode
+            bSTX.CopyTo(bBuf, len)
+            len = len + bSTX.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("A")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("PG33A1010112800384+000+000+00+00+00005000") '// Label
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H40")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Part No : " & part_number)
+
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V140")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H20")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "Reprint Tag")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+
+
+            '// Human readable 2
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H90")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Part Name : " & part_name)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H140")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Model : " & Module1.M_Model)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H190")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Reprint QTY. : " & reprint_qty)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H250")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Location : " & loc_detail)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V180")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H210")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & time_detail)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H300")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+
+            If M_reprint = "WEB_POST" Then
+                Dim PO = qr_detail_remain.Substring(2, 10)
+
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "PO No: " & PO)
+            ElseIf M_reprint = "FW" Then
+                Dim LOT = qr_detail_remain.Substring(58, 4)
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "LOT : " & LOT)
+            End If
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V20")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H10")
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H350")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0202")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & data)
+
+
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "SEQ : " & seq)
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V700")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H405")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "Revised By : " & user_detail)
+
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            '-'----------------'----------------'
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("%1")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V250")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H405")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("P00")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("L0101")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+            bESC.CopyTo(bBuf, len)
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K2B" & "DATE : " & date_detail)
+
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            If CodeType = "C128" Then
+                ''// barcode
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V0220")
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H0010")
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("BG02060>G" & qr_detail_remain) '// code 128
+                'bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("BD101060" & data) '// code 39
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+
+            Else
+                '// QR code
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("V200")
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("H240")
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("2D30,M,04,0,0") '// qr setting
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+
+                bESC.CopyTo(bBuf, len)
+                len = len + bESC.Length
+                bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("DS2," & qr_detail_remain) '// qr data
+                bBufWork.CopyTo(bBuf, len)
+                len = len + bBufWork.Length
+            End If
+
+
+
+
+
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("Q0001")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bESC.CopyTo(bBuf, len)
+            len = len + bESC.Length
+            bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("Z")
+            bBufWork.CopyTo(bBuf, len)
+            len = len + bBufWork.Length
+
+            bETX.CopyTo(bBuf, len)
+            len = len + bETX.Length
+
+            If SppSend(bBuf, ssizeGet) = False Then
+                GoTo L_END1
+            End If
+
+            ' Response wait
+            Dim printflg As [Boolean] = False
+            While True
+                Dim recvFlg As [Boolean] = False
+                For i As Int32 = 0 To 9
+                    ' Receive data
+                    bBufGet = New [Byte](0) {}
+                    If SppRecv(bBufGet, rsizeGet) = False Then
+                        Continue For
+                    End If
+                    recvFlg = True
+                    Exit For
+                Next
+                If recvFlg = False Then
+                    Exit While
+                End If
+
+                If bBufGet(0) = ACK Then
+                    ' SBPL transmission
+                    bBuf = New [Byte]() {ENQ}
+                    If SppSend(bBuf, ssizeGet) = False Then
+                        GoTo L_END1
+                    End If
+                ElseIf bBufGet(0) = NAK Then
+                    GoTo L_END1
+                ElseIf bBufGet(0) = STX Then
+                    ' SPBL reception
+                    bBufGet = New [Byte](4094) {}
+                    If SppRecv(bBufGet, rsizeGet) = False Then
+                        GoTo L_END1
+                    End If
+                    If bBufGet(9) <> ETX Then
+                        GoTo L_END1
+                    End If
+                    If bBufGet(2) = &H47 OrElse bBufGet(2) = &H48 OrElse bBufGet(2) = &H53 OrElse bBufGet(2) = &H54 Then
+                        ' Printing is being performed, so wait for a short amount of time.
+                        Thread.Sleep(200)
+                        bBuf = New [Byte]() {ENQ}
+                        If SppSend(bBuf, ssizeGet) = False Then
+                            GoTo L_END1
+                        End If
+                        Continue While
+                    ElseIf (bBufGet(2) <> &H0) AndAlso (bBufGet(2) <> &H1) AndAlso (bBufGet(2) <> &H41) AndAlso (bBufGet(2) <> &H42) AndAlso (bBufGet(2) <> &H4E) AndAlso (bBufGet(2) <> &H4D) Then
+                        Exit While
+                    End If
+                    ' Print success
+                    printflg = True
+                    Exit While
+                End If
+            End While
+            If printflg = True Then
+
+                disp = "Printing Successfully."
+                MessageBox.Show(disp, "Printing complete")
+
+                '// Append scanlog file
+                Dim sw As New System.IO.StreamWriter(htlogfile, True, System.Text.Encoding.GetEncoding("Shift_JIS"))
+
+                Dim dtNow As DateTime = DateTime.Now
+                sw.Write(DateTime.Now.ToString("dd/MM/yyyy,HH:mm:ss,"))
+                sw.Write("TEST" & vbCrLf)
+                sw.Close()
+
+
+
+            End If
+
+            Return
+L_END1:
+            ret = Bluetooth.btBluetoothSPPDisconnect()
+            If ret <> LibDef.BT_OK Then
+                disp = "btBluetoothSPPDisconnect error ret[" & ret & "]"
+                MessageBox.Show(disp, "Error")
+                GoTo L_END2
+            End If
+L_END2:
+            'ButtonF2.Enabled = True
+            ret = Bluetooth.btBluetoothClose()
+            If ret <> LibDef.BT_OK Then
+                disp = "btBluetoothClose error ret[" & ret & "]"
+                MessageBox.Show(disp, "Error")
+                Return
+            End If
+        Catch ex As Exception
+            MessageBox.Show(ex.ToString())
+            MsgBox("Program error please contact PCS department")
+        End Try
+
+        remain_qty1 = 0
+
+    End Sub
+
+    Private Sub TextBox1_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBox1.TextChanged
+
     End Sub
 End Class

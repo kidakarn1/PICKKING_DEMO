@@ -23,9 +23,22 @@ Partial Public Class part_detail
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
         Me.Panel1 = New System.Windows.Forms.Panel
         Me.Panel5 = New System.Windows.Forms.Panel
+        Me.PictureBox8 = New System.Windows.Forms.PictureBox
+        Me.Label7 = New System.Windows.Forms.Label
+        Me.Label6 = New System.Windows.Forms.Label
+        Me.Label5 = New System.Windows.Forms.Label
+        Me.Button7 = New System.Windows.Forms.Button
         Me.Button5 = New System.Windows.Forms.Button
         Me.TextBox2 = New System.Windows.Forms.TextBox
         Me.TextBox1 = New System.Windows.Forms.TextBox
+        Me.Panel6 = New System.Windows.Forms.Panel
+        Me.Button6 = New System.Windows.Forms.Button
+        Me.PictureBox7 = New System.Windows.Forms.PictureBox
+        Me.ListView2 = New System.Windows.Forms.ListView
+        Me.ColumnHeader1 = New System.Windows.Forms.ColumnHeader
+        Me.ColumnHeader2 = New System.Windows.Forms.ColumnHeader
+        Me.ColumnHeader3 = New System.Windows.Forms.ColumnHeader
+        Me.ColumnHeader4 = New System.Windows.Forms.ColumnHeader
         Me.Panel4 = New System.Windows.Forms.Panel
         Me.PictureBox6 = New System.Windows.Forms.PictureBox
         Me.PictureBox5 = New System.Windows.Forms.PictureBox
@@ -66,21 +79,13 @@ Partial Public Class part_detail
         Me.lb_code_line = New System.Windows.Forms.Label
         Me.lb_code_pd = New System.Windows.Forms.Label
         Me.lb_code_user = New System.Windows.Forms.Label
-        Me.Panel6 = New System.Windows.Forms.Panel
-        Me.Button6 = New System.Windows.Forms.Button
-        Me.PictureBox7 = New System.Windows.Forms.PictureBox
-        Me.ListView2 = New System.Windows.Forms.ListView
-        Me.ColumnHeader1 = New System.Windows.Forms.ColumnHeader
-        Me.ColumnHeader2 = New System.Windows.Forms.ColumnHeader
-        Me.ColumnHeader3 = New System.Windows.Forms.ColumnHeader
-        Me.ColumnHeader4 = New System.Windows.Forms.ColumnHeader
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
+        Me.Panel6.SuspendLayout()
         Me.Panel4.SuspendLayout()
         Me.Panel3.SuspendLayout()
         Me.Panel2.SuspendLayout()
-        Me.Panel6.SuspendLayout()
         Me.SuspendLayout()
         '
         'PictureBox1
@@ -94,8 +99,8 @@ Partial Public Class part_detail
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.Color.MintCream
-        Me.Panel1.Controls.Add(Me.Panel6)
         Me.Panel1.Controls.Add(Me.Panel5)
+        Me.Panel1.Controls.Add(Me.Panel6)
         Me.Panel1.Controls.Add(Me.Panel4)
         Me.Panel1.Controls.Add(Me.alert_success)
         Me.Panel1.Controls.Add(Me.alert_loop)
@@ -126,44 +131,160 @@ Partial Public Class part_detail
         Me.Panel1.Controls.Add(Me.lb_code_line)
         Me.Panel1.Controls.Add(Me.lb_code_pd)
         Me.Panel1.Controls.Add(Me.lb_code_user)
-        Me.Panel1.Location = New System.Drawing.Point(5, 44)
+        Me.Panel1.Location = New System.Drawing.Point(3, 44)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(462, 525)
         '
         'Panel5
         '
+        Me.Panel5.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel5.Controls.Add(Me.PictureBox8)
+        Me.Panel5.Controls.Add(Me.Label7)
+        Me.Panel5.Controls.Add(Me.Label6)
+        Me.Panel5.Controls.Add(Me.Label5)
+        Me.Panel5.Controls.Add(Me.Button7)
         Me.Panel5.Controls.Add(Me.Button5)
         Me.Panel5.Controls.Add(Me.TextBox2)
         Me.Panel5.Controls.Add(Me.TextBox1)
-        Me.Panel5.Location = New System.Drawing.Point(35, 176)
+        Me.Panel5.Location = New System.Drawing.Point(0, 0)
         Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(404, 282)
+        Me.Panel5.Size = New System.Drawing.Size(462, 525)
+        '
+        'PictureBox8
+        '
+        Me.PictureBox8.Image = CType(resources.GetObject("PictureBox8.Image"), System.Drawing.Image)
+        Me.PictureBox8.Location = New System.Drawing.Point(380, 3)
+        Me.PictureBox8.Name = "PictureBox8"
+        Me.PictureBox8.Size = New System.Drawing.Size(82, 75)
+        Me.PictureBox8.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'Label7
+        '
+        Me.Label7.Font = New System.Drawing.Font("Tahoma", 26.0!, System.Drawing.FontStyle.Bold)
+        Me.Label7.ForeColor = System.Drawing.Color.White
+        Me.Label7.Location = New System.Drawing.Point(142, 9)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(186, 54)
+        Me.Label7.Text = "REPRINT"
+        '
+        'Label6
+        '
+        Me.Label6.Font = New System.Drawing.Font("Tahoma", 20.0!, System.Drawing.FontStyle.Bold)
+        Me.Label6.ForeColor = System.Drawing.Color.White
+        Me.Label6.Location = New System.Drawing.Point(136, 195)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(190, 40)
+        Me.Label6.Text = "INPUT QTY"
+        '
+        'Label5
+        '
+        Me.Label5.Font = New System.Drawing.Font("Tahoma", 20.0!, System.Drawing.FontStyle.Bold)
+        Me.Label5.ForeColor = System.Drawing.SystemColors.ActiveCaptionText
+        Me.Label5.Location = New System.Drawing.Point(130, 74)
+        Me.Label5.Name = "Label5"
+        Me.Label5.Size = New System.Drawing.Size(233, 40)
+        Me.Label5.Text = "SCAN QR CODE"
+        '
+        'Button7
+        '
+        Me.Button7.BackColor = System.Drawing.Color.Red
+        Me.Button7.Font = New System.Drawing.Font("Tahoma", 28.0!, System.Drawing.FontStyle.Bold)
+        Me.Button7.ForeColor = System.Drawing.Color.White
+        Me.Button7.Location = New System.Drawing.Point(229, 329)
+        Me.Button7.Name = "Button7"
+        Me.Button7.Size = New System.Drawing.Size(165, 51)
+        Me.Button7.TabIndex = 3
+        Me.Button7.Text = "CLEAR"
         '
         'Button5
         '
         Me.Button5.BackColor = System.Drawing.SystemColors.ActiveCaption
+        Me.Button5.Font = New System.Drawing.Font("Tahoma", 28.0!, System.Drawing.FontStyle.Bold)
         Me.Button5.ForeColor = System.Drawing.Color.White
-        Me.Button5.Location = New System.Drawing.Point(159, 244)
+        Me.Button5.Location = New System.Drawing.Point(78, 330)
         Me.Button5.Name = "Button5"
-        Me.Button5.Size = New System.Drawing.Size(72, 20)
+        Me.Button5.Size = New System.Drawing.Size(109, 51)
         Me.Button5.TabIndex = 2
-        Me.Button5.Text = "Button5"
+        Me.Button5.Text = "OK"
         '
         'TextBox2
         '
-        Me.TextBox2.Font = New System.Drawing.Font("Tahoma", 15.0!, System.Drawing.FontStyle.Bold)
-        Me.TextBox2.Location = New System.Drawing.Point(60, 177)
+        Me.TextBox2.Font = New System.Drawing.Font("Tahoma", 28.0!, System.Drawing.FontStyle.Bold)
+        Me.TextBox2.Location = New System.Drawing.Point(24, 240)
+        Me.TextBox2.MaxLength = 5
         Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(276, 31)
+        Me.TextBox2.Size = New System.Drawing.Size(423, 52)
         Me.TextBox2.TabIndex = 1
         '
         'TextBox1
         '
-        Me.TextBox1.Font = New System.Drawing.Font("Tahoma", 15.0!, System.Drawing.FontStyle.Bold)
-        Me.TextBox1.Location = New System.Drawing.Point(60, 94)
+        Me.TextBox1.Font = New System.Drawing.Font("Tahoma", 28.0!, System.Drawing.FontStyle.Bold)
+        Me.TextBox1.Location = New System.Drawing.Point(25, 121)
         Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.Size = New System.Drawing.Size(276, 31)
+        Me.TextBox1.Size = New System.Drawing.Size(423, 52)
         Me.TextBox1.TabIndex = 0
+        '
+        'Panel6
+        '
+        Me.Panel6.BackColor = System.Drawing.Color.Teal
+        Me.Panel6.Controls.Add(Me.Button6)
+        Me.Panel6.Controls.Add(Me.PictureBox7)
+        Me.Panel6.Controls.Add(Me.ListView2)
+        Me.Panel6.Location = New System.Drawing.Point(3, 51)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(459, 488)
+        '
+        'Button6
+        '
+        Me.Button6.BackColor = System.Drawing.Color.Red
+        Me.Button6.Font = New System.Drawing.Font("Tahoma", 18.0!, System.Drawing.FontStyle.Bold)
+        Me.Button6.ForeColor = System.Drawing.Color.White
+        Me.Button6.Location = New System.Drawing.Point(162, 422)
+        Me.Button6.Name = "Button6"
+        Me.Button6.Size = New System.Drawing.Size(111, 41)
+        Me.Button6.TabIndex = 4
+        Me.Button6.Text = "END"
+        '
+        'PictureBox7
+        '
+        Me.PictureBox7.Image = CType(resources.GetObject("PictureBox7.Image"), System.Drawing.Image)
+        Me.PictureBox7.Location = New System.Drawing.Point(6, -1)
+        Me.PictureBox7.Name = "PictureBox7"
+        Me.PictureBox7.Size = New System.Drawing.Size(449, 41)
+        '
+        'ListView2
+        '
+        Me.ListView2.Columns.Add(Me.ColumnHeader1)
+        Me.ListView2.Columns.Add(Me.ColumnHeader2)
+        Me.ListView2.Columns.Add(Me.ColumnHeader3)
+        Me.ListView2.Columns.Add(Me.ColumnHeader4)
+        Me.ListView2.Font = New System.Drawing.Font("Tahoma", 15.0!, System.Drawing.FontStyle.Bold)
+        Me.ListView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None
+        Me.ListView2.Location = New System.Drawing.Point(5, 40)
+        Me.ListView2.Name = "ListView2"
+        Me.ListView2.Size = New System.Drawing.Size(450, 379)
+        Me.ListView2.TabIndex = 3
+        Me.ListView2.View = System.Windows.Forms.View.Details
+        '
+        'ColumnHeader1
+        '
+        Me.ColumnHeader1.Text = "PO NO"
+        Me.ColumnHeader1.Width = 157
+        '
+        'ColumnHeader2
+        '
+        Me.ColumnHeader2.Text = "LOT NO"
+        Me.ColumnHeader2.Width = 151
+        '
+        'ColumnHeader3
+        '
+        Me.ColumnHeader3.Text = "QTY"
+        Me.ColumnHeader3.Width = 79
+        '
+        'ColumnHeader4
+        '
+        Me.ColumnHeader4.Text = "SCAN"
+        Me.ColumnHeader4.Width = 59
         '
         'Panel4
         '
@@ -281,7 +402,7 @@ Partial Public Class part_detail
         Me.PictureBox3.Image = CType(resources.GetObject("PictureBox3.Image"), System.Drawing.Image)
         Me.PictureBox3.Location = New System.Drawing.Point(3, 53)
         Me.PictureBox3.Name = "PictureBox3"
-        Me.PictureBox3.Size = New System.Drawing.Size(456, 425)
+        Me.PictureBox3.Size = New System.Drawing.Size(456, 500)
         Me.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'btn_detail_part
@@ -529,68 +650,6 @@ Partial Public Class part_detail
         Me.lb_code_user.Size = New System.Drawing.Size(147, 25)
         Me.lb_code_user.Text = "Label1"
         '
-        'Panel6
-        '
-        Me.Panel6.BackColor = System.Drawing.Color.Teal
-        Me.Panel6.Controls.Add(Me.Button6)
-        Me.Panel6.Controls.Add(Me.PictureBox7)
-        Me.Panel6.Controls.Add(Me.ListView2)
-        Me.Panel6.Location = New System.Drawing.Point(4, 2)
-        Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(452, 475)
-        '
-        'Button6
-        '
-        Me.Button6.BackColor = System.Drawing.Color.Red
-        Me.Button6.Font = New System.Drawing.Font("Tahoma", 18.0!, System.Drawing.FontStyle.Bold)
-        Me.Button6.ForeColor = System.Drawing.Color.White
-        Me.Button6.Location = New System.Drawing.Point(160, 422)
-        Me.Button6.Name = "Button6"
-        Me.Button6.Size = New System.Drawing.Size(111, 41)
-        Me.Button6.TabIndex = 4
-        Me.Button6.Text = "END"
-        '
-        'PictureBox7
-        '
-        Me.PictureBox7.Image = CType(resources.GetObject("PictureBox7.Image"), System.Drawing.Image)
-        Me.PictureBox7.Location = New System.Drawing.Point(0, 0)
-        Me.PictureBox7.Name = "PictureBox7"
-        Me.PictureBox7.Size = New System.Drawing.Size(449, 41)
-        '
-        'ListView2
-        '
-        Me.ListView2.Columns.Add(Me.ColumnHeader1)
-        Me.ListView2.Columns.Add(Me.ColumnHeader2)
-        Me.ListView2.Columns.Add(Me.ColumnHeader3)
-        Me.ListView2.Columns.Add(Me.ColumnHeader4)
-        Me.ListView2.Font = New System.Drawing.Font("Tahoma", 15.0!, System.Drawing.FontStyle.Bold)
-        Me.ListView2.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None
-        Me.ListView2.Location = New System.Drawing.Point(0, 41)
-        Me.ListView2.Name = "ListView2"
-        Me.ListView2.Size = New System.Drawing.Size(450, 379)
-        Me.ListView2.TabIndex = 3
-        Me.ListView2.View = System.Windows.Forms.View.Details
-        '
-        'ColumnHeader1
-        '
-        Me.ColumnHeader1.Text = "PO NO"
-        Me.ColumnHeader1.Width = 157
-        '
-        'ColumnHeader2
-        '
-        Me.ColumnHeader2.Text = "LOT NO"
-        Me.ColumnHeader2.Width = 151
-        '
-        'ColumnHeader3
-        '
-        Me.ColumnHeader3.Text = "QTY"
-        Me.ColumnHeader3.Width = 79
-        '
-        'ColumnHeader4
-        '
-        Me.ColumnHeader4.Text = "SCAN"
-        Me.ColumnHeader4.Width = 59
-        '
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
@@ -608,10 +667,10 @@ Partial Public Class part_detail
         Me.Text = "part_detail"
         Me.Panel1.ResumeLayout(False)
         Me.Panel5.ResumeLayout(False)
+        Me.Panel6.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
-        Me.Panel6.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -670,4 +729,9 @@ Partial Public Class part_detail
     Friend WithEvents ColumnHeader3 As System.Windows.Forms.ColumnHeader
     Friend WithEvents ColumnHeader4 As System.Windows.Forms.ColumnHeader
     Friend WithEvents Button6 As System.Windows.Forms.Button
+    Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents Label5 As System.Windows.Forms.Label
+    Friend WithEvents Button7 As System.Windows.Forms.Button
+    Friend WithEvents Label7 As System.Windows.Forms.Label
+    Friend WithEvents PictureBox8 As System.Windows.Forms.PictureBox
 End Class
