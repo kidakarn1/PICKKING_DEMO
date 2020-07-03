@@ -138,60 +138,58 @@ Public Class scan_location
 
     End Sub
 
-    Private Sub text_box_location_TextChanged(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles text_box_location.KeyDown
+    Private Sub text_box_location_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles text_box_location.TextChanged
 m:
- Select e.KeyCode
-            Case System.Windows.Forms.Keys.Enter
-                Try
+        System.Windows.Forms.Application.DoEvents()
+        Try
 
-                    Dim sub_box = text_box_location.Text
-                    Dim loc_val As String = Location.Text.Substring(11)
-                    Dim ps = Part_Selected.Text.Substring(16)
-                    Module1.past_numer = ps
-                    Dim length_of_text_box As Integer
-                    length_of_text_box = (ps.Length() + loc_val.Length()) + 6
-                    'MsgBox(length_of_text_box)
-                    'MsgBox(sub_box.Length())
-                    Dim sub_box_length As Integer
-                    sub_box_length = sub_box.Length() + 6
-                    a = (length_of_text_box = sub_box_length)
-                    Dim val_box = sub_box.Split(" ")
-                    Dim part = val_box(0)
-                    Dim loca = val_box(6)
-                    Dim default_length As Integer = Len(ps & "      " & loc_val)
-                    Dim L_location As Integer = Len(text_box_location.Text)
+            Dim sub_box = text_box_location.Text
+            Dim loc_val As String = Location.Text.Substring(11)
+            Dim ps = Part_Selected.Text.Substring(16)
+            Module1.past_numer = ps
+            Dim length_of_text_box As Integer
+            length_of_text_box = (ps.Length() + loc_val.Length()) + 6
+            'MsgBox(length_of_text_box)
+            'MsgBox(sub_box.Length())
+            Dim sub_box_length As Integer
+            sub_box_length = sub_box.Length() + 6
+            a = (length_of_text_box = sub_box_length)
+            Dim val_box = sub_box.Split(" ")
+            Dim part = val_box(0)
+            Dim loca = val_box(6)
+            Dim default_length As Integer = Len(ps & "      " & loc_val)
+            Dim L_location As Integer = Len(text_box_location.Text)
 
-                    If default_length >= L_location Or default_length <= L_location Then
+            If default_length >= L_location Or default_length <= L_location Then
 
-                        If part = ps Then
-                            If loca = loc_val Then
-                                check()
-                                'Button1.Show()
-                                check_scan = "OK"
-                            Else
-                                text_box_location.Text = ""
-                                Button1.Hide()
-                                check_scan = "NO_OK"
-                            End If
-                        Else
-                            text_box_location.Text = ""
-                            Button1.Hide()
-                            check_scan = "NO_OK"
-                        End If
-
-                        If check_scan = "NO_OK" Then
-                            fo.Focus()
-                            PictureBox3.Visible = True
-                            Button1.Visible = False
-                            btn_ok.Visible = False
-                            text_box_location.Visible = False
-                        End If
+                If part = ps Then
+                    If loca = loc_val Then
+                        Button1.Show()
+                        check_scan = "OK"
+                    Else
+                        text_box_location.Text = ""
+                        Button1.Hide()
+                        check_scan = "NO_OK"
                     End If
-                    'End If
-                Catch ex As Exception
-                    ' MsgBox("scan faill")
-                End Try
-        End Select
+                Else
+                    text_box_location.Text = ""
+                    Button1.Hide()
+                    check_scan = "NO_OK"
+                End If
+
+                If check_scan = "NO_OK" Then
+                    fo.Focus()
+                    PictureBox3.Visible = True
+                    Button1.Visible = False
+                    btn_ok.Visible = False
+                    text_box_location.Visible = False
+                End If
+            End If
+            'End If
+        Catch ex As Exception
+            ' MsgBox("scan faill")
+        End Try
+
 
     End Sub
     Public Function check_alert()
