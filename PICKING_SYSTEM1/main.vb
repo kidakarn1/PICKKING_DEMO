@@ -32,7 +32,12 @@ Public Class main
             Label4.Visible = False
             Label5.Visible = False
             'Panel1.Visible = True
+            PictureBox4.Visible = False
+            PictureBox9.Visible = False
+            Label7.Visible = False
             Me.emp_cd.Focus()
+
+
         End Try
     End Sub
 
@@ -134,6 +139,8 @@ Public Class main
                 PictureBox2.Visible = True
                 PictureBox3.Visible = True
                 PictureBox4.Visible = True
+                PictureBox9.Visible = True
+                Label7.Visible = True
                 get_image_user()
             End If
         Catch ex As Exception
@@ -216,6 +223,8 @@ Public Class main
         PictureBox2.Visible = False
         PictureBox3.Visible = False
         PictureBox4.Visible = False
+        PictureBox9.Visible = False
+        Label7.Visible = false
         dat = ""
         passToanofrm = dat
         'System.Console.WriteLine("===>" + reader.Item(1))'
@@ -275,5 +284,16 @@ Public Class main
 
     Private Sub Label6_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label6.ParentChanged
 
+    End Sub
+
+    Private Sub PictureBox3_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
+        MsgBox("=====<<>>")
+        Dim reprint As reprint = New reprint()
+        reprint.Show()
+        Me.Hide()
+    End Sub
+
+    Private Sub PictureBox10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+        'Me.PictureBox1.Image = Image.FromFile("C:\Users\Me\Pictures\myanimatedimage.gif")
     End Sub
 End Class
