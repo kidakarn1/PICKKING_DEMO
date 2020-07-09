@@ -124,7 +124,7 @@ Public Class reprint
 
     Private Sub PictureBox5_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox5.Click
         Dim strCommand12345678 As String = "select count(su.su_id) as c_id  , su.sug_id as per from sys_users su  , sys_user_groups sug  where su.emp_id = '" & user_id.Text & "' and su.sys_pass = '" & password.Text & "' and su.sug_id  = sug.sug_id and su.enable = '1' GROUP BY su.sug_id"
-        MsgBox(strCommand12345678)
+        ' MsgBox(strCommand12345678)
         Dim cmd As SqlCommand = New SqlCommand(strCommand12345678, myConn)
         reader = cmd.ExecuteReader()
         If reader.Read() Then
@@ -1134,6 +1134,7 @@ L_END2:
             ' TextBox2.Enabled = False
             Label1.Text = "QTY BEFOR : 0"
             Label2.Text = "QTY AFTER : 0"
+            'main.loader()
         End Try
     End Sub
 

@@ -27,7 +27,7 @@ Public Class Select_Line
         Try
 LOOP_MAIN_OPEN:
             myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            ' myConn = New SqlConnection("Data Source=192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status line")
@@ -55,14 +55,69 @@ LOOP_MAIN_OPEN:
                 Module1.time_scan = reader("DateAdd").ToString()
             Loop
             reader.Close()
-            'MsgBox(Module1.time_scan)
-            ' Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.LVL AS LVL, sw.PICK_FLG as PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN CAST (GETDATE() AS DATE) AND '" & Module1.time_scan & "' AND AA.LINE_CD = '" & sel_where & "'  ORDER BY AA.wi1 ASC" 'ใช้ บริษัท'
+            ' MsgBox(Module1.time_scan)
+            'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.LVL AS LVL, sw.PICK_FLG as PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN CAST (GETDATE() AS DATE) AND '" & Module1.time_scan & "' AND AA.LINE_CD = '" & sel_where & "'  ORDER BY AA.wi1 ASC" 'ใช้ บริษัท and AA.PF=0' 
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND DATEADD( DAY, 4, CAST (GETDATE() AS DATE)) AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
+            Dim str_date_now2 As String = "select GETDATE() as d "
+            'MsgBox("00001")
+            Dim cmd_str2 As SqlCommand = New SqlCommand(str_date_now2, myConn)
+            'MsgBox("00002")
+            reader = cmd_str2.ExecuteReader()
+            ' MsgBox("00003")
+            Dim date_now As String = "NOOOOO"
+            Dim date_now_database As String = "NNNOO"
+            Do While reader.Read = True
+                'MsgBox("-----")
+                date_now = reader.Item(0)
+                'MsgBox(date_now)
+                '  MsgBox("00004")
+                Dim sp_date_now = date_now.Split(" ")
+                '   MsgBox("00005")
+                date_now_database = sp_date_now(0)
+                'MsgBox(date_now_database)
+            Loop
+            reader.Close()
 
 
-            ' Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.WORK_ODR_DLV_DATE AS d , sw.PICK_QTY , sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
-            Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY, sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN '2020-07-07' AND '2020-07-07' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
 
+            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "'"
+            Dim cmd_work_day As SqlCommand = New SqlCommand(srt_get_day_work, myConn)
+            'MsgBox("01")
+            reader = cmd_work_day.ExecuteReader()
+            Dim wd As String = "NO"
+            'MsgBox("02")
+            Dim date_now_get As String = "NODATA"
+            'MsgBox("03")
+            If reader.Read() Then
+                'MsgBox("04")
+                wd = reader("number_work").ToString()
+                wd += 1
+                'MsgBox("05")
+                date_now_get = reader("work_date").ToString()
+                'MsgBox("06")
+                reader.Close()
+                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "'"
+                'MsgBox(wok_show_data)
+                'MsgBox("07")
+                Dim cmd_work_show As SqlCommand = New SqlCommand(wok_show_data, myConn)
+                'MsgBox("08")
+                reader = cmd_work_show.ExecuteReader()
+                'MsgBox("09")
+                If reader.Read() Then
+                    date_now_get = reader("work_date").ToString()
+                Else
+                    MsgBox("ELSE NAJA")
+                End If
+                'MsgBox(date_now_get)
+                reader.Close()
+            Else
+                reader.Close()
+                date_now_get = date_now_database
+            End If
+
+            Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY , sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE = '" & date_now_get & "' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC" 'แบบ list ออกมา ในวัน พน ในการpick แต่จะมีปัญหาคือ ถ้าถึงวันศุกร์ แล้วต้องจัดแผนวันจัน จะมองไม่เห็นข้อมูล จะมองเห็นแค่ วันเสาร์'
+            'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY, sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN '2020-07-07' AND '2020-07-07' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
+            'MsgBox("strCommand = " & strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
             reader = command.ExecuteReader()
             Dim num As Integer
@@ -87,7 +142,6 @@ LOOP_MAIN_OPEN:
                     arr_com_flg.Add(reader("PF").ToString)
                     arr_LVL.Add(reader("LVL").ToString)
                 End If
-
                 If reader("PF").ToString = "1" Then
                     Line_list_view.Items(num).BackColor = Color.FromArgb(103, 255, 103)
                     btn_ok.Visible = False
@@ -103,7 +157,7 @@ LOOP_MAIN_OPEN:
             'part_detail.line_cd.Text = sel_where '
         Catch ex As Exception
             reader.Close()
-            MsgBox("COMBOX  Fail" & vbNewLine & ex.Message, 16, "Status")
+            MsgBox("ERROR FUNCTION load_data" & vbNewLine & ex.Message, 16, "Status")
         Finally
             'MsgBox("OK")
         End Try
@@ -523,11 +577,64 @@ NEXT_END_WEB_POST:
             ' MsgBox(Module1.time_scan)
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.LVL AS LVL, sw.PICK_FLG as PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN CAST (GETDATE() AS DATE) AND '" & Module1.time_scan & "' AND AA.LINE_CD = '" & sel_where & "'  ORDER BY AA.wi1 ASC" 'ใช้ บริษัท and AA.PF=0' 
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND DATEADD( DAY, 4, CAST (GETDATE() AS DATE)) AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
+            Dim str_date_now2 As String = "select GETDATE() as d "
+            'MsgBox("00001")
+            Dim cmd_str2 As SqlCommand = New SqlCommand(str_date_now2, myConn)
+            'MsgBox("00002")
+            reader = cmd_str2.ExecuteReader()
+            ' MsgBox("00003")
+            Dim date_now As String = "NOOOOO"
+            Dim date_now_database As String = "NNNOO"
+            Do While reader.Read = True
+                'MsgBox("-----")
+                date_now = reader.Item(0)
+                'MsgBox(date_now)
+                '  MsgBox("00004")
+                Dim sp_date_now = date_now.Split(" ")
+                '   MsgBox("00005")
+                date_now_database = sp_date_now(0)
+                'MsgBox(date_now_database)
+            Loop
+            reader.Close()
 
 
 
+            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "'"
+            Dim cmd_work_day As SqlCommand = New SqlCommand(srt_get_day_work, myConn)
+            'MsgBox("01")
+            reader = cmd_work_day.ExecuteReader()
+            Dim wd As String = "NO"
+            'MsgBox("02")
+            Dim date_now_get As String = "NODATA"
+            'MsgBox("03")
+            If reader.Read() Then
+                'MsgBox("04")
+                wd = reader("number_work").ToString()
+                wd += 1
+                'MsgBox("05")
+                date_now_get = reader("work_date").ToString()
+                'MsgBox("06")
+                reader.Close()
+                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "'"
+                'MsgBox(wok_show_data)
+                'MsgBox("07")
+                Dim cmd_work_show As SqlCommand = New SqlCommand(wok_show_data, myConn)
+                'MsgBox("08")
+                reader = cmd_work_show.ExecuteReader()
+                'MsgBox("09")
+                If reader.Read() Then
+                    date_now_get = reader("work_date").ToString()
+                Else
+                    MsgBox("ELSE NAJA")
+                End If
+                'MsgBox(date_now_get)
+                reader.Close()
+            Else
+                reader.Close()
+                date_now_get = date_now_database
+            End If
 
-            Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY , sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC" 'แบบ list ออกมา ในวัน พน ในการpick แต่จะมีปัญหาคือ ถ้าถึงวันศุกร์ แล้วต้องจัดแผนวันจัน จะมองไม่เห็นข้อมูล จะมองเห็นแค่ วันเสาร์'
+            Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY , sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE = '" & date_now_get & "' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC" 'แบบ list ออกมา ในวัน พน ในการpick แต่จะมีปัญหาคือ ถ้าถึงวันศุกร์ แล้วต้องจัดแผนวันจัน จะมองไม่เห็นข้อมูล จะมองเห็นแค่ วันเสาร์'
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY, sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual_test pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN '2020-07-07' AND '2020-07-07' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
             'MsgBox("strCommand = " & strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)

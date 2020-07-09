@@ -117,8 +117,8 @@ Public Class part_detail
             path = path.Substring(0, en)
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
             myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn_Resive = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source=192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            myConn_Resive = New SqlConnection("Data Source=192.168.161.101;I nitial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
             myConn_Resive.Open()
         Catch ex As Exception 
@@ -160,7 +160,7 @@ Public Class part_detail
     Public Sub New()
         InitializeComponent()
         If Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg") IsNot Nothing Then
-            show_img.Image = Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg")
+            show_img.Image = Api.DownloadImage("http://192.168.161.102/exp_api3party/image_gif/")
         End If
         'show_img_part.Image = 
     End Sub

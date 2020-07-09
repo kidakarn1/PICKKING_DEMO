@@ -18,9 +18,11 @@ Public Class main
     Public valSel As Array
     Public strData(,) As String
     Public miscData() As Object = {}
+    Public ml As Integer = 0
+    Public count_time As Integer = 0
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            ' myConn = New SqlConnection("Data Source=192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             myConn.Open()
         Catch ex As Exception
@@ -36,7 +38,8 @@ Public Class main
             PictureBox9.Visible = False
             Label7.Visible = False
             Me.emp_cd.Focus()
-
+            Timer1.Enabled = True
+            Panel2.Visible = False
 
         End Try
     End Sub
@@ -141,7 +144,7 @@ Public Class main
                 PictureBox4.Visible = True
                 PictureBox9.Visible = True
                 Label7.Visible = True
-                get_image_user()
+                'get_image_user()
             End If
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status")
@@ -285,15 +288,111 @@ Public Class main
     Private Sub Label6_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label6.ParentChanged
 
     End Sub
-
+    Public Sub loader()
+        Panel2.Visible = True
+    End Sub
     Private Sub PictureBox3_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
-        MsgBox("=====<<>>")
-        Dim reprint As reprint = New reprint()
-        reprint.Show()
-        Me.Hide()
+        Try
+            'loader()
+            Dim reprint As reprint = New reprint()
+            reprint.Show()
+            Me.Hide()
+        Catch ex As Exception
+            MsgBox("error next page")
+        End Try
+
     End Sub
 
     Private Sub PictureBox10_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         'Me.PictureBox1.Image = Image.FromFile("C:\Users\Me\Pictures\myanimatedimage.gif")
+    End Sub
+
+    Private Sub PictureBox10_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox10.Click
+
+    End Sub
+
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+
+        ml += 1
+
+        If ml <= 1 Then
+            PictureBox10.Visible = True
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 2 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = True
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 3 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = True
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 4 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = True
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 5 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = True
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 6 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = True
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 7 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = True
+            PictureBox17.Visible = False
+        ElseIf ml = 8 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = True
+            ml = 0
+        End If
+
+    End Sub
+
+    Private Sub PictureBox18_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
     End Sub
 End Class
