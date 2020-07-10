@@ -149,12 +149,6 @@
     <Compile Include="PO_NO.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="reprint.Designer.vb">
-      <DependentUpon>reprint.vb</DependentUpon>
-    </Compile>
-    <Compile Include="reprint.vb">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="scan_location.Designer.vb">
       <DependentUpon>scan_location.vb</DependentUpon>
     </Compile>
@@ -185,12 +179,6 @@
     <Compile Include="show_image_part.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="test_gif.Designer.vb">
-      <DependentUpon>test_gif.vb</DependentUpon>
-    </Compile>
-    <Compile Include="test_gif.vb">
-      <SubType>Form</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="detail_scan.resx">
@@ -219,10 +207,6 @@
       <DependentUpon>PO_NO.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="reprint.resx">
-      <DependentUpon>reprint.vb</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="scan_location.resx">
       <DependentUpon>scan_location.vb</DependentUpon>
       <SubType>Designer</SubType>
@@ -245,10 +229,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="show_image_part.resx">
       <DependentUpon>show_image_part.vb</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="test_gif.resx">
-      <DependentUpon>test_gif.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -315,8 +295,6 @@
     <Content Include="dbnetlib.dll" />
     <Content Include="image\load.gif" />
     <Content Include="image\loading2.gif" />
-    <None Include="Resources\Youtube_loading_symbol_1_%28wobbly%29.gif" />
-    <None Include="Resources\Image1.gif" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\vs2DA8.tmp" />
