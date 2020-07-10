@@ -62,16 +62,17 @@ Public Class scan_location
     Dim reader As SqlDataReader
     Dim dat As String = String.Empty
     Dim check_scan As String = "NOOO"
+    Public ml As Integer = 0
     Private Sub scan_location_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
             getwi = PD4.get_wi()
-            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             myConn.Open()
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status scan")
         Finally
-
+            Panel2.Visible = False
             Button1.Hide()
             PictureBox3.Visible = False
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
@@ -160,9 +161,7 @@ m:
                     Dim loca = val_box(6)
                     Dim default_length As Integer = Len(ps & "      " & loc_val)
                     Dim L_location As Integer = Len(text_box_location.Text)
-
                     If default_length >= L_location Or default_length <= L_location Then
-
                         If part = ps Then
                             If loca = loc_val Then
                                 check()
@@ -178,7 +177,6 @@ m:
                             Button1.Hide()
                             check_scan = "NO_OK"
                         End If
-
                         If check_scan = "NO_OK" Then
                             fo.Focus()
                             PictureBox3.Visible = True
@@ -241,10 +239,12 @@ m:
         page_PO_NO.Show()
     End Sub
     Public Sub check()
-        ' MsgBox("In check")
+        Timer1.Enabled = True
+        Panel2.Visible = True
         Dim part_de As part_detail = New part_detail()
         part_de.PD5 = Me
         part_de.Show()
+        Panel2.Visible = False
         Me.Hide()
         'Dim show_image_part As show_image_part = New show_image_part()
         ' show_image_part.Show()
@@ -310,4 +310,88 @@ m:
     End Sub
 
 
+    Private Sub Panel2_GotFocus_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+    Private Sub PictureBox10_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+        ml += 1
+        If ml <= 1 Then
+            PictureBox10.Visible = True
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 2 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = True
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 3 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = True
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 4 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = True
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 5 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = True
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 6 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = True
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 7 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = True
+            PictureBox17.Visible = False
+        ElseIf ml = 8 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = True
+            ml = 0
+        End If
+    End Sub
 End Class

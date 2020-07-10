@@ -43,3 +43,5 @@ C:\home3\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM1.vbproj.Genera
 C:\home3\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM1.xml
 C:\home3\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM1.pdb
 C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM.Home.resources
+C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM.reprint.resources
+C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Debug\PICKING_SYSTEM.test_gif.resources

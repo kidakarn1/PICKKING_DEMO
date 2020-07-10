@@ -22,6 +22,7 @@ Partial Public Class main
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(main))
         Me.Panel3 = New System.Windows.Forms.Panel
         Me.Panel2 = New System.Windows.Forms.Panel
+        Me.Label10 = New System.Windows.Forms.Label
         Me.PictureBox17 = New System.Windows.Forms.PictureBox
         Me.PictureBox11 = New System.Windows.Forms.PictureBox
         Me.PictureBox10 = New System.Windows.Forms.PictureBox
@@ -52,10 +53,7 @@ Partial Public Class main
         Me.TextBox1 = New System.Windows.Forms.TextBox
         Me.Label2 = New System.Windows.Forms.Label
         Me.PictureBox6 = New System.Windows.Forms.PictureBox
-<<<<<<< HEAD
         Me.Timer1 = New System.Windows.Forms.Timer
-=======
->>>>>>> parent of e5f94b8... 08/07/63
         Me.Panel3.SuspendLayout()
         Me.Panel2.SuspendLayout()
         Me.Panel1.SuspendLayout()
@@ -64,11 +62,8 @@ Partial Public Class main
         'Panel3
         '
         Me.Panel3.BackColor = System.Drawing.Color.DarkSlateGray
-<<<<<<< HEAD
         Me.Panel3.Controls.Add(Me.Panel2)
         Me.Panel3.Controls.Add(Me.PictureBox9)
-=======
->>>>>>> parent of e5f94b8... 08/07/63
         Me.Panel3.Controls.Add(Me.Label6)
         Me.Panel3.Controls.Add(Me.Label7)
         Me.Panel3.Controls.Add(Me.Label8)
@@ -87,6 +82,7 @@ Partial Public Class main
         'Panel2
         '
         Me.Panel2.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel2.Controls.Add(Me.Label10)
         Me.Panel2.Controls.Add(Me.PictureBox17)
         Me.Panel2.Controls.Add(Me.PictureBox11)
         Me.Panel2.Controls.Add(Me.PictureBox10)
@@ -95,9 +91,18 @@ Partial Public Class main
         Me.Panel2.Controls.Add(Me.PictureBox14)
         Me.Panel2.Controls.Add(Me.PictureBox15)
         Me.Panel2.Controls.Add(Me.PictureBox16)
-        Me.Panel2.Location = New System.Drawing.Point(117, 80)
+        Me.Panel2.Location = New System.Drawing.Point(103, 57)
         Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(258, 245)
+        Me.Panel2.Size = New System.Drawing.Size(298, 299)
+        '
+        'Label10
+        '
+        Me.Label10.Font = New System.Drawing.Font("Tahoma", 20.0!, System.Drawing.FontStyle.Bold)
+        Me.Label10.ForeColor = System.Drawing.Color.White
+        Me.Label10.Location = New System.Drawing.Point(39, 248)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(210, 43)
+        Me.Label10.Text = "กำลังโหลดข้อมูล"
         '
         'PictureBox17
         '
@@ -173,22 +178,22 @@ Partial Public Class main
         '
         'Label6
         '
-        Me.Label6.BackColor = System.Drawing.Color.FromArgb(CType(CType(252, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.Label6.BackColor = System.Drawing.Color.FromArgb(CType(CType(17, Byte), Integer), CType(CType(147, Byte), Integer), CType(CType(208, Byte), Integer))
         Me.Label6.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
         Me.Label6.ForeColor = System.Drawing.Color.FromArgb(CType(CType(3, Byte), Integer), CType(CType(9, Byte), Integer), CType(CType(28, Byte), Integer))
-        Me.Label6.Location = New System.Drawing.Point(45, 515)
+        Me.Label6.Location = New System.Drawing.Point(56, 468)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(154, 26)
-        Me.Label6.Text = "HOW TO USE"
+        Me.Label6.Size = New System.Drawing.Size(108, 26)
+        Me.Label6.Text = "REPRINT"
         '
         'Label7
         '
         Me.Label7.BackColor = System.Drawing.Color.FromArgb(CType(CType(231, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(54, Byte), Integer))
-        Me.Label7.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
-        Me.Label7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(3, Byte), Integer), CType(CType(9, Byte), Integer), CType(CType(28, Byte), Integer))
-        Me.Label7.Location = New System.Drawing.Point(319, 515)
+        Me.Label7.Font = New System.Drawing.Font("Tahoma", 12.0!, System.Drawing.FontStyle.Bold)
+        Me.Label7.ForeColor = System.Drawing.Color.White
+        Me.Label7.Location = New System.Drawing.Point(410, 568)
         Me.Label7.Name = "Label7"
-        Me.Label7.Size = New System.Drawing.Size(85, 26)
+        Me.Label7.Size = New System.Drawing.Size(48, 18)
         Me.Label7.Text = "EXIT"
         '
         'Label8
@@ -196,17 +201,17 @@ Partial Public Class main
         Me.Label8.BackColor = System.Drawing.Color.FromArgb(CType(CType(175, Byte), Integer), CType(CType(221, Byte), Integer), CType(CType(68, Byte), Integer))
         Me.Label8.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
         Me.Label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(3, Byte), Integer), CType(CType(9, Byte), Integer), CType(CType(28, Byte), Integer))
-        Me.Label8.Location = New System.Drawing.Point(276, 270)
+        Me.Label8.Location = New System.Drawing.Point(258, 244)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(144, 29)
-        Me.Label8.Text = "PICK PACK"
+        Me.Label8.Size = New System.Drawing.Size(172, 29)
+        Me.Label8.Text = "PICK PACKING"
         '
         'Label9
         '
         Me.Label9.BackColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(124, Byte), Integer), CType(CType(33, Byte), Integer))
         Me.Label9.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
         Me.Label9.ForeColor = System.Drawing.Color.FromArgb(CType(CType(3, Byte), Integer), CType(CType(9, Byte), Integer), CType(CType(28, Byte), Integer))
-        Me.Label9.Location = New System.Drawing.Point(33, 273)
+        Me.Label9.Location = New System.Drawing.Point(48, 256)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(131, 26)
         Me.Label9.Text = "PICK PART"
@@ -242,30 +247,18 @@ Partial Public Class main
         '
         Me.PictureBox4.BackColor = System.Drawing.Color.DarkSlateGray
         Me.PictureBox4.Image = CType(resources.GetObject("PictureBox4.Image"), System.Drawing.Image)
-<<<<<<< HEAD
         Me.PictureBox4.Location = New System.Drawing.Point(397, 522)
         Me.PictureBox4.Name = "PictureBox4"
         Me.PictureBox4.Size = New System.Drawing.Size(67, 65)
-=======
-        Me.PictureBox4.Location = New System.Drawing.Point(246, 341)
-        Me.PictureBox4.Name = "PictureBox4"
-        Me.PictureBox4.Size = New System.Drawing.Size(208, 205)
->>>>>>> parent of e5f94b8... 08/07/63
         Me.PictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'PictureBox3
         '
         Me.PictureBox3.BackColor = System.Drawing.Color.DarkSlateGray
         Me.PictureBox3.Image = CType(resources.GetObject("PictureBox3.Image"), System.Drawing.Image)
-<<<<<<< HEAD
         Me.PictureBox3.Location = New System.Drawing.Point(9, 316)
         Me.PictureBox3.Name = "PictureBox3"
         Me.PictureBox3.Size = New System.Drawing.Size(198, 190)
-=======
-        Me.PictureBox3.Location = New System.Drawing.Point(9, 342)
-        Me.PictureBox3.Name = "PictureBox3"
-        Me.PictureBox3.Size = New System.Drawing.Size(219, 204)
->>>>>>> parent of e5f94b8... 08/07/63
         Me.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'PictureBox2
@@ -274,11 +267,7 @@ Partial Public Class main
         Me.PictureBox2.Image = CType(resources.GetObject("PictureBox2.Image"), System.Drawing.Image)
         Me.PictureBox2.Location = New System.Drawing.Point(245, 100)
         Me.PictureBox2.Name = "PictureBox2"
-<<<<<<< HEAD
         Me.PictureBox2.Size = New System.Drawing.Size(198, 190)
-=======
-        Me.PictureBox2.Size = New System.Drawing.Size(209, 211)
->>>>>>> parent of e5f94b8... 08/07/63
         Me.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'PictureBox1
@@ -287,11 +276,7 @@ Partial Public Class main
         Me.PictureBox1.Image = CType(resources.GetObject("PictureBox1.Image"), System.Drawing.Image)
         Me.PictureBox1.Location = New System.Drawing.Point(9, 99)
         Me.PictureBox1.Name = "PictureBox1"
-<<<<<<< HEAD
         Me.PictureBox1.Size = New System.Drawing.Size(198, 190)
-=======
-        Me.PictureBox1.Size = New System.Drawing.Size(219, 212)
->>>>>>> parent of e5f94b8... 08/07/63
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Panel1
@@ -306,24 +291,14 @@ Partial Public Class main
         Me.Panel1.Controls.Add(Me.TextBox1)
         Me.Panel1.Controls.Add(Me.Label2)
         Me.Panel1.Controls.Add(Me.PictureBox6)
-<<<<<<< HEAD
-        Me.Panel1.Location = New System.Drawing.Point(3, 92)
+        Me.Panel1.Location = New System.Drawing.Point(-1, 88)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(475, 449)
-=======
-        Me.Panel1.Location = New System.Drawing.Point(0, 102)
-        Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(475, 457)
->>>>>>> parent of e5f94b8... 08/07/63
+        Me.Panel1.Size = New System.Drawing.Size(475, 447)
         '
         'PictureBox8
         '
         Me.PictureBox8.Image = CType(resources.GetObject("PictureBox8.Image"), System.Drawing.Image)
-<<<<<<< HEAD
-        Me.PictureBox8.Location = New System.Drawing.Point(152, 121)
-=======
-        Me.PictureBox8.Location = New System.Drawing.Point(149, 75)
->>>>>>> parent of e5f94b8... 08/07/63
+        Me.PictureBox8.Location = New System.Drawing.Point(146, 92)
         Me.PictureBox8.Name = "PictureBox8"
         Me.PictureBox8.Size = New System.Drawing.Size(323, 267)
         '
@@ -401,18 +376,15 @@ Partial Public Class main
         Me.PictureBox6.Size = New System.Drawing.Size(483, 305)
         Me.PictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
-<<<<<<< HEAD
         'Timer1
         '
         '
-=======
->>>>>>> parent of e5f94b8... 08/07/63
         'main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi
         Me.BackColor = System.Drawing.Color.Black
-        Me.ClientSize = New System.Drawing.Size(640, 480)
+        Me.ClientSize = New System.Drawing.Size(470, 590)
         Me.ControlBox = False
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Panel3)
@@ -421,7 +393,6 @@ Partial Public Class main
         Me.Name = "main"
         Me.Text = "PickingSysten_new_gen"
         Me.TopMost = True
-        Me.WindowState = System.Windows.Forms.FormWindowState.Maximized
         Me.Panel3.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
         Me.Panel1.ResumeLayout(False)
@@ -450,7 +421,6 @@ Partial Public Class main
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents Label8 As System.Windows.Forms.Label
     Friend WithEvents Label9 As System.Windows.Forms.Label
-<<<<<<< HEAD
     Friend WithEvents PictureBox9 As System.Windows.Forms.PictureBox
     Friend WithEvents PictureBox17 As System.Windows.Forms.PictureBox
     Friend WithEvents PictureBox16 As System.Windows.Forms.PictureBox
@@ -462,7 +432,6 @@ Partial Public Class main
     Friend WithEvents PictureBox11 As System.Windows.Forms.PictureBox
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
-=======
->>>>>>> parent of e5f94b8... 08/07/63
+    Friend WithEvents Label10 As System.Windows.Forms.Label
 
 End Class

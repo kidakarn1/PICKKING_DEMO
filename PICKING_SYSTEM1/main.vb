@@ -20,10 +20,11 @@ Public Class main
     Public miscData() As Object = {}
     Public ml As Integer = 0
     Public count_time As Integer = 0
+    Public status As Integer = 0
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            ' myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             myConn.Open()
         Catch ex As Exception
 
@@ -34,13 +35,13 @@ Public Class main
             Label4.Visible = False
             Label5.Visible = False
             'Panel1.Visible = True
+            PictureBox4.Visible = False
+            PictureBox9.Visible = False
+            Label7.Visible = False
             Me.emp_cd.Focus()
-<<<<<<< HEAD
-            Timer1.Enabled = True
+
             Panel2.Visible = False
 
-=======
->>>>>>> parent of e5f94b8... 08/07/63
         End Try
     End Sub
 
@@ -142,13 +143,9 @@ Public Class main
                 PictureBox2.Visible = True
                 PictureBox3.Visible = True
                 PictureBox4.Visible = True
-<<<<<<< HEAD
                 PictureBox9.Visible = True
                 Label7.Visible = True
                 'get_image_user()
-=======
-                get_image_user()
->>>>>>> parent of e5f94b8... 08/07/63
             End If
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status")
@@ -230,6 +227,8 @@ Public Class main
         PictureBox2.Visible = False
         PictureBox3.Visible = False
         PictureBox4.Visible = False
+        PictureBox9.Visible = False
+        Label7.Visible = false
         dat = ""
         passToanofrm = dat
         'System.Console.WriteLine("===>" + reader.Item(1))'
@@ -290,13 +289,15 @@ Public Class main
     Private Sub Label6_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label6.ParentChanged
 
     End Sub
-<<<<<<< HEAD
     Public Sub loader()
         Panel2.Visible = True
     End Sub
     Private Sub PictureBox3_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
+        Timer1.Enabled = True
+        loader()
+
+        Application.DoEvents()
         Try
-            'loader()
             Dim reprint As reprint = New reprint()
             reprint.Show()
             Me.Hide()
@@ -315,9 +316,8 @@ Public Class main
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
-
         ml += 1
-
+        status += 5
         If ml <= 1 Then
             PictureBox10.Visible = True
             PictureBox11.Visible = False
@@ -398,6 +398,8 @@ Public Class main
     Private Sub PictureBox18_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
-=======
->>>>>>> parent of e5f94b8... 08/07/63
+
+    Private Sub Panel2_GotFocus_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.GotFocus
+
+    End Sub
 End Class

@@ -116,14 +116,15 @@ Public Class part_detail
             Dim en As Int32 = path.LastIndexOf("\")
             path = path.Substring(0, en)
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn_Resive = New SqlConnection("Data Source=192.168.161.101;I nitial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            ' myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            'myConn_Resive = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
-            myConn_Resive.Open()
+            'myConn_Resive.Open()
         Catch ex As Exception 
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status")
         Finally
+
             ' Dim path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
             'MsgBox(path)
             Panel4.Visible = False
@@ -160,7 +161,7 @@ Public Class part_detail
     Public Sub New()
         InitializeComponent()
         If Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg") IsNot Nothing Then
-            show_img.Image = Api.DownloadImage("http://192.168.161.102/exp_api3party/image_gif/")
+            show_img.Image = Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg")
         End If
         'show_img_part.Image = 
     End Sub
@@ -1303,7 +1304,7 @@ LOOP_INSERT:
         Try
             Dim strCommand As String = ""
             Dim str_plus As String = "SELECT PICK_QTY , qty FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.M_LINE_CD & "' AND item_cd = '" & Module1.past_numer & "'AND wi  = '" & Module1.M_WI_STOP_SCAN & "' "
-            ' MsgBox("str_plus = " & str_plus)
+            'MsgBox("str_plus = " & str_plus)
             ' MsgBox("0")
             Dim cmd_plus As SqlCommand = New SqlCommand(str_plus, myConn)
             ' MsgBox("00")
@@ -1341,7 +1342,7 @@ LOOP_INSERT:
                 ' MsgBox("strCommand = " & strCommand)
             ElseIf check_scan = 2 Then
                 strCommand = "UPDATE sup_work_plan_supply_dev SET update_date = '" & date_now & "' , pick_flg = '1' , PICK_QTY = '" & total_pig_qty & "' , update_by = '" & emp_cd & "' , term_cd = '" & term_id & "'   WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
-                'MsgBox("strCommand = " & strCommand)
+                ' MsgBox("strCommand = " & strCommand)
             End If
             'MsgBox(strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
@@ -1356,7 +1357,7 @@ LOOP_INSERT:
         Try
             Dim x As ListViewItem
             Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 4, CAST(GETDATE() AS DATE)) ORDER BY wi ASC"
-            'MsgBox(strCommand)
+            'MsgBox("====>>>" & strCommand1)
             Dim command1 As SqlCommand = New SqlCommand(strCommand1, myConn)
             reader = command1.ExecuteReader()
             Dim num As Integer
@@ -4204,48 +4205,7 @@ L_END2:
                 Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
                 reader = command2.ExecuteReader()
                 reader.Close()
-                Try
-                    If Len(tag_readed) = 62 Then
-                        Dim str_select As String = "select IND,TAG_QTY from FA_RECEIVE_TAG_1 where READ_QR = '" & tag_readed & "'"
-                        'MsgBox("str_select = " & str_select)
-                        Dim cmd_resive As SqlCommand = New SqlCommand(str_select, myConn_Resive)
-                        reader = cmd_resive.ExecuteReader()
-                        Dim IND As String = "NODATA"
-                        Dim TAG_QTY As String = "NODATA"
-                        Dim total_qty As Integer = 0
-                        Dim reject_flg As Integer = 0
-                        Dim check As Integer = 0
-                        If reader.Read() Then
-                            IND = reader("IND").ToString()
-                            TAG_QTY = reader("TAG_QTY").ToString()
-                            total_qty = TAG_QTY - scan_qty
-                            If total_qty <= 0 Then
-                                reject_flg = 4
-                            ElseIf total_qty > 0 Then
-                                reject_flg = 3
-                            End If
-                            check = 1
-                        End If
-                        reader.Close()
-                        Try
-                            If check = 1 Then
-                                Dim str_update_fa_receive = "update FA_RECEIVE_TAG_1 set TAG_QTY = '" & total_qty & "' , REJECT_FLG = '" & reject_flg & "' where IND = '" & IND & "'"
-                                'MsgBox("str_update_fa_receive = " & str_update_fa_receive)
-                                Dim cmd_update As SqlCommand = New SqlCommand(str_update_fa_receive, myConn_Resive)
-                                reader = cmd_update.ExecuteReader()
-                                reader.Close()
-                            Else
-                                'MsgBox("NO QR_CODE P_NICE")
-                            End If
-                        Catch ex As Exception
-                            reader.Close()
-                            'MsgBox("ERROR TRY CUT_STOCK_P_NICE update" & vbNewLine & ex.Message, 16, "Status")
-                        End Try
-                    End If
-                Catch ex As Exception
-                    MsgBox("ERROR TRY CUT_STOCK_P_NICE" & vbNewLine & ex.Message, 16, "Status")
-                    reader.Close()
-                End Try
+             
                 If Len_length = 62 Then
                     WEB_POST_Cut_stock_frith_in_out(PO, F_item_cd, scan_qty, tag_readed, updated_seq, com_flg_table, tag_remain_qty)
                 ElseIf Len_length = 103 Then
@@ -4838,6 +4798,7 @@ re_check:
             Case System.Windows.Forms.Keys.Enter
 
                 If check_process = "OK" Then
+                    status_alert_image = ""
                     Dim Line As Select_Line = New Select_Line()
                     Line.Show()
                     Me.Close()
