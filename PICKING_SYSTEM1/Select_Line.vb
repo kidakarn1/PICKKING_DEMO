@@ -81,7 +81,7 @@ LOOP_MAIN_OPEN:
 
 
 
-            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "'"
+            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "' and enable ='1'"
             Dim cmd_work_day As SqlCommand = New SqlCommand(srt_get_day_work, myConn)
             'MsgBox("01")
             reader = cmd_work_day.ExecuteReader()
@@ -97,7 +97,7 @@ LOOP_MAIN_OPEN:
                 date_now_get = reader("work_date").ToString()
                 'MsgBox("06")
                 reader.Close()
-                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "'"
+                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "' and enable ='1' "
                 'MsgBox(wok_show_data)
                 'MsgBox("07")
                 Dim cmd_work_show As SqlCommand = New SqlCommand(wok_show_data, myConn)
@@ -598,7 +598,7 @@ NEXT_END_WEB_POST:
             Loop
             reader.Close()
 
-            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "'"
+            Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "' and enable ='1'"
             Dim cmd_work_day As SqlCommand = New SqlCommand(srt_get_day_work, myConn)
             'MsgBox("01")
             reader = cmd_work_day.ExecuteReader()
@@ -614,7 +614,7 @@ NEXT_END_WEB_POST:
                 date_now_get = reader("work_date").ToString()
                 'MsgBox("06")
                 reader.Close()
-                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "'"
+                Dim wok_show_data = "select * from EXP_WORK_DAY where work_id = '" & wd & "' and enable ='1'"
                 'MsgBox(wok_show_data)
                 'MsgBox("07")
                 Dim cmd_work_show As SqlCommand = New SqlCommand(wok_show_data, myConn)

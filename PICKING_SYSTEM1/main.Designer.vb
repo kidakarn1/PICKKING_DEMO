@@ -77,7 +77,7 @@ Partial Public Class main
         Me.Panel3.Controls.Add(Me.PictureBox1)
         Me.Panel3.Location = New System.Drawing.Point(3, 3)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(470, 590)
+        Me.Panel3.Size = New System.Drawing.Size(478, 596)
         '
         'Panel2
         '
@@ -383,8 +383,8 @@ Partial Public Class main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi
-        Me.BackColor = System.Drawing.Color.Black
-        Me.ClientSize = New System.Drawing.Size(470, 590)
+        Me.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.ClientSize = New System.Drawing.Size(478, 565)
         Me.ControlBox = False
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Panel3)

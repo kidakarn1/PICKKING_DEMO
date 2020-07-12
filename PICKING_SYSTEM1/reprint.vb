@@ -222,17 +222,22 @@ Public Class reprint
             stInfoSet1.addr = "a066109719bd"
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
-
-            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Dim n_old As Double = 0.0
-                n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
-                Dim old_qty As String = n_old
-                insert_log(old_qty, "1")
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
-            Else
-                MsgBox("connect faill")
+            Dim n_old As Double = 0.0
+            n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
+            Dim old_qty As String = n_old
+            Dim check = check_reprint("62", old_qty, TextBox1.Text, re_qty_number)
+            If check = "SUCCESS" Then
+                If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                    insert_log(old_qty, "1")
+                    Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Else
+                    MsgBox("connect faill")
+                End If
+            ElseIf check = "FAILL" Then
+                MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
+            ElseIf check = "NO_DATA" Then
+                MsgBox("ไม่พบข้อมูล QR นี้")
             End If
-
             ' MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
         ElseIf L_data = "103" Then
             Dim re_qty As String = TextBox2.Text
@@ -321,21 +326,74 @@ Public Class reprint
             stInfoSet1.addr = "a066109719bd"
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
-
             M_reprint = "FW"
-            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Dim old_qty As String = TextBox1.Text.Substring(52, 6)
+            Dim old_qty As String = TextBox1.Text.Substring(52, 6)
+            Dim check = check_reprint("103", Trim(old_qty), TextBox1.Text, re_qty_number)
 
-                insert_log(Trim(old_qty), "0")
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
-            Else
-                MsgBox("connect faill")
+            If check = "SUCCESS" Then
+                If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                    insert_log(Trim(old_qty), "0")
+                    Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Else
+                    MsgBox("connect faill")
+                End If
+            ElseIf check = "FAILL" Then
+                MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
+            ElseIf check = "NO_DATA" Then
+                MsgBox("ไม่พบข้อมูล QR นี้")
             End If
-
         Else
             MsgBox("QR CODE ไม่ถูกต้อง")
         End If
     End Sub
+    Public Function check_reprint(ByVal l_size As String, ByVal old_qty As String, ByVal textbox As String, ByVal new_qty As String )
+
+        If l_size = "62" Then
+            Dim PO As String = textbox.Substring(2, 10)
+            Dim textbox_split = textbox.Split(" ")
+            Dim item_cd As String = textbox_split(0)
+            Dim data_item_cd As String = item_cd.Substring(12)
+            Dim sql As String = "select item_cd , qty , PUCH_ODR_CD from sup_frith_in_out where item_cd ='" & data_item_cd & "' and  PUCH_ODR_CD ='" & PO & "'"
+            Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
+            reader = cmd.ExecuteReader()
+            If reader.Read() Then
+                Dim QTY_STOCK = reader("qty").ToString()
+                reader.Close()
+                If QTY_STOCK >= new_qty Then
+                    Return "SUCCESS"
+                Else
+                    Return "FAILL"
+                End If
+            Else
+                reader.Close()
+                Return "NO_DATA"
+            End If
+
+        ElseIf l_size = "103" Then
+            Dim old2 As String = textbox.Substring(58)
+            Dim data = old2.Split(" ")
+            Dim lot_fa As String = data(0)
+            Dim full_text = textbox.Split(" ")
+            Dim data_item_cd As String = full_text(0)
+            Dim item_cd = data_item_cd.Substring(19)
+            Dim sql As String = "select fa_item_cd , fa_lot , fa_total from sup_frith_in_out_fa where fa_item_cd ='" & item_cd & "' and  fa_lot ='" & lot_fa & "'"
+            Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
+            reader = cmd.ExecuteReader()
+            If reader.Read() Then
+                Dim QTY_STOCK = reader("fa_total").ToString()
+                reader.Close()
+                If QTY_STOCK >= new_qty Then
+                    Return "SUCCESS"
+                Else
+                    Return "FAILL"
+                End If
+            Else
+                reader.Close()
+                Return "NO_DATA"
+            End If
+        End If
+        Return 0
+    End Function
     Private Function Bluetooth_Connect_MB200i(ByVal stInfoSet As LibDef.BT_BLUETOOTH_TARGET, ByVal pin As StringBuilder, ByVal pinlen As UInt32) As [Boolean]
         Dim bRet As [Boolean] = False
         Dim ret As Int32 = 0
