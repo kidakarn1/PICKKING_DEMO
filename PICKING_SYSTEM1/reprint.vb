@@ -141,11 +141,11 @@ Public Class reprint
         End If
         reader.Close()
     End Sub
-    Public Function insert_log(ByVal bef_qty As String, ByVal status As String)
+    Public Function insert_log(ByVal bef_qty As String, ByVal status As String, ByVal lot As String, ByVal seq As String, ByVal item_cd As String)
         Dim time As DateTime = DateTime.Now
         Dim format As String = "yyyy-MM-dd HH:mm:ss"
         Dim date_now = time.ToString(format)
-        Dim str As String = "insert into sys_logs_reprint (reprint_by , reprint_date , reprint_aft , reprint_bef , qr_read , status) values('" & user_id.Text & "' , '" & date_now & "' , '" & TextBox2.Text & "' , '" & bef_qty & "' , '" & TextBox1.Text & "' , '" & status & "')"
+        Dim str As String = "insert into sys_logs_reprint (reprint_by , reprint_date , reprint_aft , reprint_bef , qr_read , status , reprint_lot , reprint_seq , reprint_item_cd) values('" & user_id.Text & "' , '" & date_now & "' , '" & TextBox2.Text & "' , '" & bef_qty & "' , '" & TextBox1.Text & "' , '" & status & "' , '" & lot & "' , '" & seq & "' , '" & item_cd & "')"
         'MsgBox("str = " & str)
         Dim command2 As SqlCommand = New SqlCommand(str, myConn)
         reader = command2.ExecuteReader()
@@ -228,7 +228,12 @@ Public Class reprint
             Dim check = check_reprint("62", old_qty, TextBox1.Text, re_qty_number)
             If check = "SUCCESS" Then
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                    insert_log(old_qty, "1")
+                    Dim PO As String = TextBox1.Text.Substring(2, 10)
+                    Dim seq_text As String = TextBox1.Text.Substring(59, 3)
+                    Dim textbox_split = TextBox1.Text.Split(" ")
+                    Dim item_cd As String = textbox_split(0)
+                    Dim data_item_cd As String = item_cd.Substring(12)
+                    insert_log(old_qty, "1", PO, seq_text, data_item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
                     MsgBox("connect faill")
@@ -329,10 +334,20 @@ Public Class reprint
             M_reprint = "FW"
             Dim old_qty As String = TextBox1.Text.Substring(52, 6)
             Dim check = check_reprint("103", Trim(old_qty), TextBox1.Text, re_qty_number)
-
+            'MsgBox(check)
             If check = "SUCCESS" Then
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                    insert_log(Trim(old_qty), "0")
+                    Dim old2 As String = TextBox1.Text.Substring(58)
+                    Dim data = old2.Split(" ")
+                    Dim lot_fa As String = data(0)
+                    Dim full_text = TextBox1.Text.Split(" ")
+                    Dim data_item_cd As String = full_text(0)
+                    Dim item_cd = data_item_cd.Substring(19)
+                    Dim plan_seq As String = TextBox1.Text.Substring(16, 3)
+                    Dim lot_sep As String = TextBox1.Text.Substring(58, 4)
+                    Dim tag_number As String = TextBox1.Text.Substring(100, 3)
+                    Dim tag_seq As String = plan_seq + lot_sep + tag_number
+                    insert_log(Trim(old_qty), "0", lot_fa, tag_seq, item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
                     MsgBox("connect faill")
@@ -353,13 +368,18 @@ Public Class reprint
             Dim textbox_split = textbox.Split(" ")
             Dim item_cd As String = textbox_split(0)
             Dim data_item_cd As String = item_cd.Substring(12)
-            Dim sql As String = "select item_cd , qty , PUCH_ODR_CD from sup_frith_in_out where item_cd ='" & data_item_cd & "' and  PUCH_ODR_CD ='" & PO & "'"
+            Dim sql As String = "select item_cd , qty , id ,PUCH_ODR_CD from sup_frith_in_out where item_cd ='" & data_item_cd & "' and  PUCH_ODR_CD ='" & PO & "'"
+            Dim qty_double As Double = 0.0
+            Dim new_qty_double As Double = 0.0
             Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
             reader = cmd.ExecuteReader()
             If reader.Read() Then
+
                 Dim QTY_STOCK = reader("qty").ToString()
+                qty_double = CDbl(Val(reader("qty").ToString))
+                new_qty_double = CDbl(Val(new_qty))
                 reader.Close()
-                If QTY_STOCK >= new_qty Then
+                If qty_double >= new_qty_double Then
                     Return "SUCCESS"
                 Else
                     Return "FAILL"
@@ -370,6 +390,8 @@ Public Class reprint
             End If
 
         ElseIf l_size = "103" Then
+            Dim qty_double As Double = 0.0
+            Dim new_qty_double As Double = 0.0
             Dim old2 As String = textbox.Substring(58)
             Dim data = old2.Split(" ")
             Dim lot_fa As String = data(0)
@@ -380,9 +402,11 @@ Public Class reprint
             Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
             reader = cmd.ExecuteReader()
             If reader.Read() Then
+                qty_double = CDbl(Val(reader("fa_total").ToString))
+                new_qty_double = CDbl(Val(new_qty))
                 Dim QTY_STOCK = reader("fa_total").ToString()
                 reader.Close()
-                If QTY_STOCK >= new_qty Then
+                If qty_double >= new_qty_double Then
                     Return "SUCCESS"
                 Else
                     Return "FAILL"
@@ -1182,8 +1206,8 @@ L_END2:
 
     Private Sub reprint_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            ' myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            ' myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             myConn.Open()
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status in ")

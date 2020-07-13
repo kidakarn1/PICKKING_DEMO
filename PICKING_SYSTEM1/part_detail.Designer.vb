@@ -80,6 +80,7 @@ Partial Public Class part_detail
         Me.lb_code_pd = New System.Windows.Forms.Label
         Me.lb_code_user = New System.Windows.Forms.Label
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog
+        Me.alert_reprint = New System.Windows.Forms.PictureBox
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
         Me.Panel6.SuspendLayout()
@@ -99,6 +100,7 @@ Partial Public Class part_detail
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.Color.MintCream
+        Me.Panel1.Controls.Add(Me.alert_reprint)
         Me.Panel1.Controls.Add(Me.Panel5)
         Me.Panel1.Controls.Add(Me.Panel6)
         Me.Panel1.Controls.Add(Me.Panel4)
@@ -232,7 +234,7 @@ Partial Public Class part_detail
         Me.Panel6.Controls.Add(Me.ListView2)
         Me.Panel6.Location = New System.Drawing.Point(3, 51)
         Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(459, 488)
+        Me.Panel6.Size = New System.Drawing.Size(459, 474)
         '
         'Button6
         '
@@ -295,7 +297,7 @@ Partial Public Class part_detail
         Me.Panel4.Controls.Add(Me.PictureBox4)
         Me.Panel4.Location = New System.Drawing.Point(45, 87)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(381, 365)
+        Me.Panel4.Size = New System.Drawing.Size(115, 86)
         '
         'PictureBox6
         '
@@ -402,7 +404,7 @@ Partial Public Class part_detail
         Me.PictureBox3.Image = CType(resources.GetObject("PictureBox3.Image"), System.Drawing.Image)
         Me.PictureBox3.Location = New System.Drawing.Point(3, 53)
         Me.PictureBox3.Name = "PictureBox3"
-        Me.PictureBox3.Size = New System.Drawing.Size(456, 500)
+        Me.PictureBox3.Size = New System.Drawing.Size(459, 483)
         Me.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'btn_detail_part
@@ -654,6 +656,14 @@ Partial Public Class part_detail
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
+        'alert_reprint
+        '
+        Me.alert_reprint.Image = CType(resources.GetObject("alert_reprint.Image"), System.Drawing.Image)
+        Me.alert_reprint.Location = New System.Drawing.Point(38, 113)
+        Me.alert_reprint.Name = "alert_reprint"
+        Me.alert_reprint.Size = New System.Drawing.Size(381, 320)
+        Me.alert_reprint.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
         'part_detail
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
@@ -734,4 +744,5 @@ Partial Public Class part_detail
     Friend WithEvents Button7 As System.Windows.Forms.Button
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents PictureBox8 As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_reprint As System.Windows.Forms.PictureBox
 End Class

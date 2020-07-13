@@ -116,9 +116,9 @@ Public Class part_detail
             Dim en As Int32 = path.LastIndexOf("\")
             path = path.Substring(0, en)
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
-            ' myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             'myConn_Resive = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
             'myConn_Resive.Open()
         Catch ex As Exception 
@@ -154,6 +154,7 @@ Public Class part_detail
             alert_loop.Visible = False
             alert_right_fa.Visible = False
             Panel5.Visible = False
+            alert_reprint.Visible = False
             get_data_tetail()
             'check_qr_part()
         End Try
@@ -182,9 +183,6 @@ Public Class part_detail
 
     End Sub
 
-    Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
-
-    End Sub
 
     Private Sub lb_code_user_ParentChanged_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lb_code_user.ParentChanged
 
@@ -370,7 +368,11 @@ comeback:
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
-
+                                ElseIf bool_check_scan = "HAVE_Reprint" Then
+                                    'MsgBox("TAG นี้ไม่สามารถ สแกนได้แล้ว เนื่องจาก reprint ไปแล้ว")
+                                    alert_reprint.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
                                 End If
                             Else
                                 If supp_tag_qty > req_qty And firstscan = "0" Then
@@ -566,8 +568,11 @@ comeback:
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
+                                ElseIf bool_check_scan = "HAVE_Reprint" Then
+                                    alert_reprint.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
                                 End If
-
                             Else
                                 'MsgBox "test123"
                                 If fa_qty > req_qty And firstscan = "0" Then
@@ -754,7 +759,7 @@ exit_scan:
     End Sub
 
     Private Sub show_qty_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles show_qty.ParentChanged
-      
+
     End Sub
     Public Function Ck_dup(ByVal Lis As ListBox, ByVal Str As String)
 
@@ -774,6 +779,7 @@ exit_scan:
         Dim order_number As String = ""
         Dim Code_suppier As String = "nodata"
         Dim qty_scan As Integer = 0
+        Dim seq_check_reprint As String = "NODATA"
         If Len_length = 103 Then 'Fa '
             plan_seq = scan_qty.Text.Substring(16, 3)
             lot_sep = scan_qty.Text.Substring(58, 4)
@@ -781,18 +787,29 @@ exit_scan:
             tag_seq = plan_seq + lot_sep + tag_number
             'order_number = scan_qty.Text.Substring(2 , 10)
             order_number = scan_qty.Text.Substring(58, 4)
+            qty_scan = scan_qty.Text.Substring(52, 6)
+            seq_check_reprint = plan_seq
         ElseIf Len_length = 62 Then 'web post'
             qty_scan = scan_qty.Text.Substring(51, 8)
             Code_suppier = scan_qty.Text.Substring(37, 5)
             order_number = scan_qty.Text.Substring(2, 10)
             tag_seq = scan_qty.Text.Substring(59, 3)
+            seq_check_reprint = tag_seq
         End If
 
 
         'Dim strCommand As String = "select count (id)as c from sup_scan_pick_detail_test where tag_readed = '" & scan & "'"
-
+        Dim check_re = check_reprint(Module1.past_numer, order_number, tag_seq, qty_scan)
+        If check_re = "HAVE_Reprint" Then 'check reprint'
+            bool_check_scan = "HAVE_Reprint"
+            text_tmp.Text = scan_qty_total
+            scan_qty.Text = ""
+            Return True
+        Else
+            bool_check_scan = "NO_Reprint"
+        End If
         Dim strCommand3 As String = "SELECT COUNT(id) as c, com_flg  as com_flg , id as i  , scan_qty as qty FROM sup_scan_pick_detail_test  where item_cd = '" & Module1.past_numer & "' and scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and scan_qty >= '" & qty_scan & "' group by com_flg , id , scan_qty"
-        ' MsgBox("strCommand1_bast == >" & strCommand3)
+        'MsgBox("strCommand1_bast == >" & strCommand3)
         Dim command3 As SqlCommand = New SqlCommand(strCommand3, myConn)
         reader = command3.ExecuteReader()
         Do While reader.Read = True
@@ -806,18 +823,17 @@ exit_scan:
 
         '  If check_lot_scan_web_post() = True Then 'CHECK LOT ว่า ถูกต้องหรือไม่'
         Dim status As Integer = 0
+
         status = check_remain_in_detail_test(order_number, tag_seq)
+
         If status = 0 Then 'ตวจสอบว่า remain ว่ามีมั้ย ใน item_cd'
 LOOP_INSERT:
             If check_scan_detail_PO(order_number, Code_suppier) = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
-                'MsgBox("ready ceheck")
                 bool_check_scan = "Plase_scna_detail"
                 Return True
             End If
             If check_com_flg = "0" Then
-                'MsgBox("UPDATE")
                 Module1.check_count = 0
-
                 If RE_check_qr() = 0 Then 'ถ้า 0 คือ insert ได้ 1 insert ไม่ได้'
                     inset_check_qr_part()
                     bool_check_scan = "no_ever"
@@ -855,7 +871,26 @@ LOOP_INSERT:
         Return True
         Return 0
     End Function
-
+    Public Function check_reprint(ByVal item_cd As String, ByVal lot As String, ByVal seq As String, ByVal qty As String)
+        Dim str_check_reprint As String = "select count(id) as c_id from sys_logs_reprint where reprint_lot = '" & lot & "' and reprint_seq = '" & seq & "' and reprint_bef = '" & qty & "' "
+        Dim command3 As SqlCommand = New SqlCommand(str_check_reprint, myConn)
+        reader = command3.ExecuteReader()
+        Dim status As String = "NODATA"
+        If reader.Read() Then
+            If reader("c_id").ToString() >= "1" Then
+                status = "HAVE_Reprint"
+                reader.Close()
+                Return status
+            Else
+                status = "NO_Reprint"
+            End If
+            reader.Close()
+        Else
+            reader.Close()
+            status = "NO_Reprint"
+        End If
+        Return status
+    End Function
 
     Private Sub Button4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button4.Click
         'scan แบบ FA'
@@ -1333,7 +1368,7 @@ LOOP_INSERT:
 
 
                 End If
-              
+
                 'MsgBox("5")
             Loop
             reader.Close()
@@ -4205,7 +4240,7 @@ L_END2:
                 Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
                 reader = command2.ExecuteReader()
                 reader.Close()
-             
+
                 If Len_length = 62 Then
                     WEB_POST_Cut_stock_frith_in_out(PO, F_item_cd, scan_qty, tag_readed, updated_seq, com_flg_table, tag_remain_qty)
                 ElseIf Len_length = 103 Then
@@ -4525,15 +4560,18 @@ L_END2:
         scan = scan_qty.Text
         Dim order_number = scan_qty.Text.Substring(2, 10)
         Dim Len_length As Integer = Len(scan_qty.Text)
+        Dim qty As Integer = 0
         If Len_length = 103 Then 'Fa '
             plan_seq = scan_qty.Text.Substring(16, 3)
             lot_sep = scan_qty.Text.Substring(58, 4)
             tag_number = scan_qty.Text.Substring(100, 3)
             tag_seq = plan_seq + lot_sep + tag_number
             order_number = scan_qty.Text.Substring(58, 4) 'LOT FA'
+            qty = scan_qty.Text.Substring(52, 6)
         ElseIf Len_length = 62 Then 'web post'
             order_number = scan_qty.Text.Substring(2, 10)
             tag_seq = scan_qty.Text.Substring(59, 3)
+            qty = scan_qty.Text.Substring(51, 8)
         End If
         Dim count As String = "0"
         Dim check_com_flg As String = "NO_DATA"
@@ -4548,6 +4586,8 @@ L_END2:
             count = reader("c").ToString()
         Loop
         reader.Close()
+        Dim check_reprint_c As Integer = 0
+
         If count = 1 Then
             text_tmp.Text = scan_qty_total
             ' MsgBox("value = " & scan_qty_total)
@@ -4754,7 +4794,7 @@ re_check:
         ElseIf testLen = 103 Then
 
             Dim lot_scan As String = scan_qty.Text.Substring(58, 4)
-           ' MsgBox("lot")
+            ' MsgBox("lot")
             For Each key In Module1.arr_pick_detail_lot
                 Dim lot As String = Module1.arr_pick_detail_lot(num).ToString
                 'Dim po As String = Module1.arr_pick_detail_po(num).ToString
@@ -4810,6 +4850,27 @@ re_check:
                         alert_tag_remain.Visible = False
                         text_tmp.Text = ""
                         Re_scan_default()
+                    ElseIf bool_check_scan = "HAVE_Reprint" Then
+                        alert_reprint.Visible = False
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Focus()
                     ElseIf bool_check_scan = "Plase_scna_detail" Then
                         alert_detail.Visible = False
                         Re_scan_default()
@@ -4912,55 +4973,76 @@ re_check:
                         scan_qty.Focus()
                     End If
 
-                    ElseIf leng_scan_qty = 103 Then
-                        If bool_check_scan = "HAVE_TAG_REMAIN" Then
-                            alert_tag_remain.Visible = False
-                            Re_scan_default()
-                        ElseIf bool_check_scan = "Plase_scna_detail" Then
-                            alert_detail.Visible = False
-                            Dim Len_length As Integer = Len(scan_qty.Text)
-                            Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
-                            Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
-                            Dim stLed As New Bt.LibDef.BT_LED_PARAM()
-                            stBuz.dwOn = 200
-                            stBuz.dwOff = 100
-                            stBuz.dwCount = 2
-                            stBuz.bVolume = 3
-                            stBuz.bTone = 1
-                            stVib.dwOn = 200
-                            stVib.dwOff = 100
-                            stVib.dwCount = 2
-                            stLed.dwOn = 200
-                            stLed.dwOff = 100
-                            stLed.dwCount = 2
-                            stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
-                            Bt.SysLib.Device.btBuzzer(1, stBuz)
-                            Bt.SysLib.Device.btVibrator(1, stVib)
-                            Bt.SysLib.Device.btLED(1, stLed)
-                            scan_qty.Text = ""
-                            text_tmp.Text = scan_qty_total
-                            scan_qty.Focus()
-                        ElseIf status_alert_image = "Part_incorrect" Then
-                            alert_pa.Visible = False
-                            Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
-                            Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
-                            Dim stLed As New Bt.LibDef.BT_LED_PARAM()
-                            stBuz.dwOn = 200
-                            stBuz.dwOff = 100
-                            stBuz.dwCount = 2
-                            stBuz.bVolume = 3
-                            stBuz.bTone = 1
-                            stVib.dwOn = 200
-                            stVib.dwOff = 100
-                            stVib.dwCount = 2
-                            stLed.dwOn = 200
-                            stLed.dwOff = 100
-                            stLed.dwCount = 2
-                            stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
-                            Bt.SysLib.Device.btBuzzer(1, stBuz)
-                            Bt.SysLib.Device.btVibrator(1, stVib)
-                            Bt.SysLib.Device.btLED(1, stLed)
-                            scan_qty.Text = ""
+                ElseIf leng_scan_qty = 103 Then
+                    If bool_check_scan = "HAVE_TAG_REMAIN" Then
+                        alert_tag_remain.Visible = False
+                        Re_scan_default()
+                    ElseIf bool_check_scan = "HAVE_Reprint" Then
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        alert_reprint.Visible = False
+                        scan_qty.Focus()
+                    ElseIf bool_check_scan = "Plase_scna_detail" Then
+                        alert_detail.Visible = False
+                        Dim Len_length As Integer = Len(scan_qty.Text)
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Text = ""
+                        text_tmp.Text = scan_qty_total
+                        scan_qty.Focus()
+                    ElseIf status_alert_image = "Part_incorrect" Then
+                        alert_pa.Visible = False
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "success" Then
                         alert_success.Visible = False
@@ -5015,7 +5097,7 @@ re_check:
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     End If
-                    End If
+                End If
         End Select
     End Sub
 
@@ -5097,7 +5179,7 @@ re_check:
                 MsgBox("คุณไม่มีสิทธิ์")
             End If
         Else
-        MsgBox("คุณไม่มีสิทธิ์")
+            MsgBox("คุณไม่มีสิทธิ์")
         End If
         reader.Close()
     End Sub
@@ -6103,6 +6185,10 @@ L_END2:
         End Try
 
         remain_qty1 = 0
+
+    End Sub
+
+    Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
 
     End Sub
 End Class

@@ -21,16 +21,6 @@ Partial Public Class main
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(main))
         Me.Panel3 = New System.Windows.Forms.Panel
-        Me.Panel2 = New System.Windows.Forms.Panel
-        Me.Label10 = New System.Windows.Forms.Label
-        Me.PictureBox17 = New System.Windows.Forms.PictureBox
-        Me.PictureBox11 = New System.Windows.Forms.PictureBox
-        Me.PictureBox10 = New System.Windows.Forms.PictureBox
-        Me.PictureBox12 = New System.Windows.Forms.PictureBox
-        Me.PictureBox13 = New System.Windows.Forms.PictureBox
-        Me.PictureBox14 = New System.Windows.Forms.PictureBox
-        Me.PictureBox15 = New System.Windows.Forms.PictureBox
-        Me.PictureBox16 = New System.Windows.Forms.PictureBox
         Me.PictureBox9 = New System.Windows.Forms.PictureBox
         Me.Label6 = New System.Windows.Forms.Label
         Me.Label7 = New System.Windows.Forms.Label
@@ -43,6 +33,16 @@ Partial Public Class main
         Me.PictureBox3 = New System.Windows.Forms.PictureBox
         Me.PictureBox2 = New System.Windows.Forms.PictureBox
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
+        Me.Panel2 = New System.Windows.Forms.Panel
+        Me.Label10 = New System.Windows.Forms.Label
+        Me.PictureBox17 = New System.Windows.Forms.PictureBox
+        Me.PictureBox11 = New System.Windows.Forms.PictureBox
+        Me.PictureBox10 = New System.Windows.Forms.PictureBox
+        Me.PictureBox12 = New System.Windows.Forms.PictureBox
+        Me.PictureBox13 = New System.Windows.Forms.PictureBox
+        Me.PictureBox14 = New System.Windows.Forms.PictureBox
+        Me.PictureBox15 = New System.Windows.Forms.PictureBox
+        Me.PictureBox16 = New System.Windows.Forms.PictureBox
         Me.Panel1 = New System.Windows.Forms.Panel
         Me.PictureBox8 = New System.Windows.Forms.PictureBox
         Me.PictureBox7 = New System.Windows.Forms.PictureBox
@@ -78,95 +78,6 @@ Partial Public Class main
         Me.Panel3.Location = New System.Drawing.Point(3, 3)
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(478, 596)
-        '
-        'Panel2
-        '
-        Me.Panel2.BackColor = System.Drawing.Color.DarkSlateGray
-        Me.Panel2.Controls.Add(Me.Label10)
-        Me.Panel2.Controls.Add(Me.PictureBox17)
-        Me.Panel2.Controls.Add(Me.PictureBox11)
-        Me.Panel2.Controls.Add(Me.PictureBox10)
-        Me.Panel2.Controls.Add(Me.PictureBox12)
-        Me.Panel2.Controls.Add(Me.PictureBox13)
-        Me.Panel2.Controls.Add(Me.PictureBox14)
-        Me.Panel2.Controls.Add(Me.PictureBox15)
-        Me.Panel2.Controls.Add(Me.PictureBox16)
-        Me.Panel2.Location = New System.Drawing.Point(103, 57)
-        Me.Panel2.Name = "Panel2"
-        Me.Panel2.Size = New System.Drawing.Size(298, 299)
-        '
-        'Label10
-        '
-        Me.Label10.Font = New System.Drawing.Font("Tahoma", 20.0!, System.Drawing.FontStyle.Bold)
-        Me.Label10.ForeColor = System.Drawing.Color.White
-        Me.Label10.Location = New System.Drawing.Point(39, 248)
-        Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(210, 43)
-        Me.Label10.Text = "กำลังโหลดข้อมูล"
-        '
-        'PictureBox17
-        '
-        Me.PictureBox17.Image = CType(resources.GetObject("PictureBox17.Image"), System.Drawing.Image)
-        Me.PictureBox17.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox17.Name = "PictureBox17"
-        Me.PictureBox17.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox17.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox11
-        '
-        Me.PictureBox11.Image = CType(resources.GetObject("PictureBox11.Image"), System.Drawing.Image)
-        Me.PictureBox11.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox11.Name = "PictureBox11"
-        Me.PictureBox11.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox10
-        '
-        Me.PictureBox10.Image = CType(resources.GetObject("PictureBox10.Image"), System.Drawing.Image)
-        Me.PictureBox10.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox10.Name = "PictureBox10"
-        Me.PictureBox10.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox12
-        '
-        Me.PictureBox12.Image = CType(resources.GetObject("PictureBox12.Image"), System.Drawing.Image)
-        Me.PictureBox12.Location = New System.Drawing.Point(14, 12)
-        Me.PictureBox12.Name = "PictureBox12"
-        Me.PictureBox12.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox12.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox13
-        '
-        Me.PictureBox13.Image = CType(resources.GetObject("PictureBox13.Image"), System.Drawing.Image)
-        Me.PictureBox13.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox13.Name = "PictureBox13"
-        Me.PictureBox13.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox13.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox14
-        '
-        Me.PictureBox14.Image = CType(resources.GetObject("PictureBox14.Image"), System.Drawing.Image)
-        Me.PictureBox14.Location = New System.Drawing.Point(14, 12)
-        Me.PictureBox14.Name = "PictureBox14"
-        Me.PictureBox14.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox14.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox15
-        '
-        Me.PictureBox15.Image = CType(resources.GetObject("PictureBox15.Image"), System.Drawing.Image)
-        Me.PictureBox15.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox15.Name = "PictureBox15"
-        Me.PictureBox15.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox15.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'PictureBox16
-        '
-        Me.PictureBox16.Image = CType(resources.GetObject("PictureBox16.Image"), System.Drawing.Image)
-        Me.PictureBox16.Location = New System.Drawing.Point(15, 12)
-        Me.PictureBox16.Name = "PictureBox16"
-        Me.PictureBox16.Size = New System.Drawing.Size(246, 227)
-        Me.PictureBox16.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'PictureBox9
         '
@@ -278,6 +189,95 @@ Partial Public Class main
         Me.PictureBox1.Name = "PictureBox1"
         Me.PictureBox1.Size = New System.Drawing.Size(198, 190)
         Me.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'Panel2
+        '
+        Me.Panel2.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel2.Controls.Add(Me.Label10)
+        Me.Panel2.Controls.Add(Me.PictureBox17)
+        Me.Panel2.Controls.Add(Me.PictureBox11)
+        Me.Panel2.Controls.Add(Me.PictureBox10)
+        Me.Panel2.Controls.Add(Me.PictureBox12)
+        Me.Panel2.Controls.Add(Me.PictureBox13)
+        Me.Panel2.Controls.Add(Me.PictureBox14)
+        Me.Panel2.Controls.Add(Me.PictureBox15)
+        Me.Panel2.Controls.Add(Me.PictureBox16)
+        Me.Panel2.Location = New System.Drawing.Point(132, 70)
+        Me.Panel2.Name = "Panel2"
+        Me.Panel2.Size = New System.Drawing.Size(298, 299)
+        '
+        'Label10
+        '
+        Me.Label10.Font = New System.Drawing.Font("Tahoma", 20.0!, System.Drawing.FontStyle.Bold)
+        Me.Label10.ForeColor = System.Drawing.Color.White
+        Me.Label10.Location = New System.Drawing.Point(25, 256)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(221, 43)
+        Me.Label10.Text = "กำลังโหลดข้อมูล"
+        '
+        'PictureBox17
+        '
+        Me.PictureBox17.Image = CType(resources.GetObject("PictureBox17.Image"), System.Drawing.Image)
+        Me.PictureBox17.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox17.Name = "PictureBox17"
+        Me.PictureBox17.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox17.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox11
+        '
+        Me.PictureBox11.Image = CType(resources.GetObject("PictureBox11.Image"), System.Drawing.Image)
+        Me.PictureBox11.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox11.Name = "PictureBox11"
+        Me.PictureBox11.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox10
+        '
+        Me.PictureBox10.Image = CType(resources.GetObject("PictureBox10.Image"), System.Drawing.Image)
+        Me.PictureBox10.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox10.Name = "PictureBox10"
+        Me.PictureBox10.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox12
+        '
+        Me.PictureBox12.Image = CType(resources.GetObject("PictureBox12.Image"), System.Drawing.Image)
+        Me.PictureBox12.Location = New System.Drawing.Point(14, 12)
+        Me.PictureBox12.Name = "PictureBox12"
+        Me.PictureBox12.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox12.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox13
+        '
+        Me.PictureBox13.Image = CType(resources.GetObject("PictureBox13.Image"), System.Drawing.Image)
+        Me.PictureBox13.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox13.Name = "PictureBox13"
+        Me.PictureBox13.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox13.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox14
+        '
+        Me.PictureBox14.Image = CType(resources.GetObject("PictureBox14.Image"), System.Drawing.Image)
+        Me.PictureBox14.Location = New System.Drawing.Point(14, 12)
+        Me.PictureBox14.Name = "PictureBox14"
+        Me.PictureBox14.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox14.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox15
+        '
+        Me.PictureBox15.Image = CType(resources.GetObject("PictureBox15.Image"), System.Drawing.Image)
+        Me.PictureBox15.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox15.Name = "PictureBox15"
+        Me.PictureBox15.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox15.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'PictureBox16
+        '
+        Me.PictureBox16.Image = CType(resources.GetObject("PictureBox16.Image"), System.Drawing.Image)
+        Me.PictureBox16.Location = New System.Drawing.Point(15, 12)
+        Me.PictureBox16.Name = "PictureBox16"
+        Me.PictureBox16.Size = New System.Drawing.Size(246, 227)
+        Me.PictureBox16.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Panel1
         '
