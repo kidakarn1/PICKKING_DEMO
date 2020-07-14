@@ -155,6 +155,7 @@ Public Class part_detail
             alert_right_fa.Visible = False
             Panel5.Visible = False
             alert_reprint.Visible = False
+            Panel7.Visible = False
             get_data_tetail()
             'check_qr_part()
         End Try
@@ -359,17 +360,20 @@ comeback:
                                 ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
                                     ' MsgBox("มี Tag Remain เหลืออยู่ กรุณา สแกน Tag Remain ก่อน", 16, "Alert")
                                     'alert_detail.Visible = False
+                                    Panel7.Visible = True
                                     alert_tag_remain.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
 
                                 ElseIf bool_check_scan = "Plase_scna_detail" Then
                                     ' MsgBox("กรุณา scan ตาม Detail", 16, "Alert")
+                                    Panel7.Visible = True
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
                                 ElseIf bool_check_scan = "HAVE_Reprint" Then
                                     'MsgBox("TAG นี้ไม่สามารถ สแกนได้แล้ว เนื่องจาก reprint ไปแล้ว")
+                                    Panel7.Visible = True
                                     alert_reprint.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
@@ -393,6 +397,7 @@ comeback:
                                     scan_seq_arrlist.Add(order_number & supp_seq)
                                     scan_qty.Visible = False
                                     comp_flg = "1"
+                                    Panel7.Visible = True
                                     alert_success_remain.Visible = True
                                     status_alert_image = "success_remain"
                                     text_box_success.Focus()
@@ -409,6 +414,7 @@ comeback:
                                     comp_flg = "1"
                                     scan_qty.Visible = False
                                     check_scan = 2
+                                    Panel7.Visible = True
                                     alert_success.Visible = True
                                     status_alert_image = "success"
                                     text_box_success.Focus()
@@ -442,6 +448,7 @@ comeback:
                                             '  Bt.SysLib.Device.btBuzzer(1, stBuz)
                                             '  Bt.SysLib.Device.btVibrator(1, stVib)
                                             ' Bt.SysLib.Device.btLED(1, stLed)
+                                            Panel7.Visible = True
                                             alert_loop.Visible = True
                                             status_alert_image = "loop"
                                             text_box_success.Focus()
@@ -471,6 +478,7 @@ comeback:
                                             comp_flg = "1"
                                             scan_qty.Visible = False
                                             check_text_box_qr_code()
+                                            Panel7.Visible = True
                                             alert_success_remain.Visible = True
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
@@ -485,6 +493,7 @@ comeback:
                                             comp_flg = "1"
                                             check_scan = 2
                                             scan_qty.Visible = False
+                                            Panel7.Visible = True
                                             alert_success.Visible = True
                                             status_alert_image = "success"
                                             text_box_success.Focus()
@@ -506,12 +515,14 @@ comeback:
                         Else
                             'MsgBox("Part incorrect")
                             status_alert_image = "Part_incorrect"
+                            Panel7.Visible = True
                             alert_pa.Visible = True
                             text_box_success.Focus()
                         End If
 
                     ElseIf testLen = 76 Then
                         status_alert_image = "alert_right_fa"
+                        Panel7.Visible = True
                         alert_right_fa.Visible = True
                         text_box_success.Focus()
                         'MsgBox("Please scan FA tag on the top right")
@@ -560,15 +571,18 @@ comeback:
                                     Re_scan_fa()
                                 ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
                                     '  MsgBox("มี Tag Remain เหลืออยู่ กรุณา สแกน Tag Remain ก่อน", 16, "Alert")
+                                    Panel7.Visible = True
                                     alert_tag_remain.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
                                 ElseIf bool_check_scan = "Plase_scna_detail" Then
                                     ' MsgBox("กรุณา scan ตาม Detail", 16, "Alert")
+                                    Panel7.Visible = True
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
                                 ElseIf bool_check_scan = "HAVE_Reprint" Then
+                                    Panel7.Visible = True
                                     alert_reprint.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
@@ -597,7 +611,7 @@ comeback:
 
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
-
+                                    Panel7.Visible = True
                                     alert_success_remain.Visible = True
                                     status_alert_image = "success_remain"
                                     text_box_success.Focus()
@@ -617,6 +631,7 @@ comeback:
                                     scan_qty.Visible = False
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
+                                    Panel7.Visible = True
                                     alert_success.Visible = True
                                     status_alert_image = "success"
                                     text_box_success.Focus()
@@ -667,6 +682,7 @@ comeback:
                                             scan_qty.Visible = False
                                             text_box_success.Visible = True
                                             text_box_success.Focus()
+                                            Panel7.Visible = True
                                             alert_success_remain.Visible = True
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
@@ -686,6 +702,7 @@ comeback:
                                             scan_qty.Visible = False
                                             text_box_success.Visible = True
                                             text_box_success.Focus()
+                                            Panel7.Visible = True
                                             alert_success.Visible = True
                                             status_alert_image = "success"
                                             text_box_success.Focus()
@@ -713,6 +730,7 @@ exit_scan:
                         Else
                             'MsgBox("Part incorrect")
                             status_alert_image = "Part_incorrect"
+                            Panel7.Visible = True
                             alert_pa.Visible = True
                             text_box_success.Focus()
                         End If
@@ -798,7 +816,7 @@ exit_scan:
         End If
 
 
-        'Dim strCommand As String = "select count (id)as c from sup_scan_pick_detail_test where tag_readed = '" & scan & "'"
+        'Dim strCommand As String = "select count (id)as c from sup_scan_pick_detail where tag_readed = '" & scan & "'"
         Dim check_re = check_reprint(Module1.past_numer, order_number, tag_seq, qty_scan)
         If check_re = "HAVE_Reprint" Then 'check reprint'
             bool_check_scan = "HAVE_Reprint"
@@ -808,7 +826,7 @@ exit_scan:
         Else
             bool_check_scan = "NO_Reprint"
         End If
-        Dim strCommand3 As String = "SELECT COUNT(id) as c, com_flg  as com_flg , id as i  , scan_qty as qty FROM sup_scan_pick_detail_test  where item_cd = '" & Module1.past_numer & "' and scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and scan_qty >= '" & qty_scan & "' group by com_flg , id , scan_qty"
+        Dim strCommand3 As String = "SELECT COUNT(id) as c, com_flg  as com_flg , id as i  , scan_qty as qty FROM sup_scan_pick_detail  where item_cd = '" & Module1.past_numer & "' and scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and scan_qty >= '" & qty_scan & "' group by com_flg , id , scan_qty"
         'MsgBox("strCommand1_bast == >" & strCommand3)
         Dim command3 As SqlCommand = New SqlCommand(strCommand3, myConn)
         reader = command3.ExecuteReader()
@@ -844,7 +862,7 @@ LOOP_INSERT:
                     Module1.check_count = 1
                     'Return True
                 End If
-                'update_qty_sup_scan_pick_detail_test(id, qty)
+                'update_qty_sup_scan_pick_detail(id, qty)
                 Return 0
             End If
             If count = 0 Then
@@ -1425,13 +1443,13 @@ LOOP_INSERT:
 
             For i = 0 To numarrlist - 1
 
-                Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,com_flg,tag_remain_qty) VALUES ('" & Module1.wi & "','" & Module1.past_numer & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "','" & com_flg & "','" & total_qty & "')"
+                'Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,com_flg,tag_remain_qty) VALUES ('" & Module1.wi & "','" & Module1.past_numer & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "','" & com_flg & "','" & total_qty & "')"
                 'MsgBox(strCommand2)
                 'Dim strCommand3 As String = "UPDATE sup_scan_pick_detail SET update_date = '" & date_now & "' , pick_flg = '1' , update_by = '" & emp_cd & "' , term_cd = '" & term_id & "' , pick_qty = '" & req_qty.Text & "'  WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
                 'MsgBox(strCommand)
-                Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
-                reader = command2.ExecuteReader()
-                reader.Close()
+                ' Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
+                ' reader = command2.ExecuteReader()
+                ' reader.Close()
 
             Next
             delete_data_check_qr_part()
@@ -1484,6 +1502,7 @@ LOOP_INSERT:
         alert_loop.Visible = False
         alert_success_remain.Visible = False
         alert_right_fa.Visible = False
+        alert_reprint.Visible = False
     End Sub
     Private Sub Button3_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button3.Click 'web post'
         hidden_text_qr_code()
@@ -1745,7 +1764,7 @@ LOOP_INSERT:
             For i = 0 To numarrlist - 1
 
 
-                Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq ,tag_remain_qty,com_flg ) VALUES ('" & Module1.wi & "','" & past & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "','" & total_qty & "','" & com_flg & "')"
+                ' Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq ,tag_remain_qty,com_flg ) VALUES ('" & Module1.wi & "','" & past & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "','" & total_qty & "','" & com_flg & "')"
                 'มีการแก้ไขข้อมูล ยังไม่ได้ลอง'
 
                 'MsgBox(strCommand2)
@@ -1753,9 +1772,9 @@ LOOP_INSERT:
                 'MsgBox(strCommand2)
                 'Dim strCommand3 As String = "UPDATE sup_scan_pick_detail SET update_date = '" & date_now & "' , pick_flg = '1' , update_by = '" & emp_cd & "' , term_cd = '" & term_id & "' , pick_qty = '" & req_qty.Text & "'  WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
                 'MsgBox(strCommand)
-                Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
-                reader = command2.ExecuteReader()
-                reader.Close()
+                ' Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
+                'reader = command2.ExecuteReader()
+                ' reader.Close()
 
             Next
         Catch ex As Exception
@@ -4218,8 +4237,8 @@ L_END2:
             If check_remain(scan_lot, updated_seq, F_item_cd) = 1 Then
                 'MsgBox("check_remain = 1")
                 If REMAIN_ID <> "NO_DATA" Then
-                    ' MsgBox("check update_qty_sup_scan_pick_detail_test(" & REMAIN_ID & tag_remain_qty & ")")
-                    update_qty_sup_scan_pick_detail_test(REMAIN_ID, tag_remain_qty)
+                    ' MsgBox("check update_qty_sup_scan_pick_detail(" & REMAIN_ID & tag_remain_qty & ")")
+                    update_qty_sup_scan_pick_detail(REMAIN_ID, tag_remain_qty)
 
                     If Len_length = 62 Then
                         WEB_POST_Cut_stock_frith_in_out(PO, F_item_cd, scan_qty, tag_readed, updated_seq, com_flg_table, tag_remain_qty)
@@ -4234,7 +4253,7 @@ L_END2:
             Else
                 'MsgBox("check_remain = 0")
                 ' Dim total_qty = text_tmp.Text - Module1.check_QTY
-                strCommand2 = "INSERT INTO sup_scan_pick_detail_test (wi , item_cd , scan_qty ,scan_lot , tag_typ , tag_readed , scan_emp, term_cd , updated_date , updated_by , tag_seq  , com_flg , tag_remain_qty) VALUES ('" & F_wi & "' ,'" & F_item_cd & "','" & scan_qty & "' ,'" & scan_lot & "','" & tag_typ & "','" & tag_readed & "','" & scan_emp & "','" & term_cd & "','" & updated_date & "','" & updated_by & "','" & updated_seq & "','" & com_flg_table & "','" & tag_remain_qty & "')"
+                strCommand2 = "INSERT INTO sup_scan_pick_detail (wi , item_cd , scan_qty ,scan_lot , tag_typ , tag_readed , scan_emp, term_cd , updated_date , updated_by , tag_seq  , com_flg , tag_remain_qty) VALUES ('" & F_wi & "' ,'" & F_item_cd & "','" & scan_qty & "' ,'" & scan_lot & "','" & tag_typ & "','" & tag_readed & "','" & scan_emp & "','" & term_cd & "','" & updated_date & "','" & updated_by & "','" & updated_seq & "','" & com_flg_table & "','" & tag_remain_qty & "')"
                 ' strCommand2 = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,com_flg,tag_remain_qty) VALUES ('" & F_wi & "','" & F_item_cd & "','" & F_scan_qty & "','" & F_scan_lot & "','1','" & F_tag_typ & "','" & F_scan_emp & "','" & F_term_cd & "','" & F_updated_date & "','" & F_updated_by & "','" & F_updated_seq & "','" & com_flg & "','" & total_qty & "')"
                 ' MsgBox(strCommand2)
                 Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
@@ -4274,6 +4293,7 @@ L_END2:
     End Sub
     Public Sub Re_scan()
         'MsgBox("Scan ซ้ำ! มีการสแกนแล้วเมื่อสักครู่", 16, "Alert")
+        Panel7.Visible = True
         alert_loop.Visible = True
         status_alert_image = "loop_re_scan"
         text_box_success.Focus()
@@ -4300,6 +4320,7 @@ L_END2:
         ' Bt.SysLib.Device.btBuzzer(1, stBuz)
         ' Bt.SysLib.Device.btVibrator(1, stVib)
         ' Bt.SysLib.Device.btLED(1, stLed)
+        Panel7.Visible = True
         alert_loop.Visible = True
         status_alert_image = "loop_re_scan_fa"
         text_box_success.Focus()
@@ -4342,7 +4363,7 @@ L_END2:
         scan_qty.Text = ""
         scan_qty.Focus()
     End Sub
-    Public Sub update_qty_sup_scan_pick_detail_test(ByVal id As String, ByVal qty_database As Integer)
+    Public Sub update_qty_sup_scan_pick_detail(ByVal id As String, ByVal qty_database As Integer)
         Dim Len_length As Integer = Len(scan_qty.Text)
         'MsgBox("0")
         Dim S_number As String = main.scan_terminal_id
@@ -4379,7 +4400,7 @@ L_END2:
             End If
             'MsgBox("003")
             reader.Close()
-            Dim str_update As String = "update sup_scan_pick_detail_test set com_flg  = '" & com_flg & "' ,tag_remain_qty = '" & sum_qty & "' where id = '" & id & "'"
+            Dim str_update As String = "update sup_scan_pick_detail set com_flg  = '" & com_flg & "' ,tag_remain_qty = '" & sum_qty & "' where id = '" & id & "'"
             'MsgBox(str_update)
             'MsgBox("004")
             Dim command2 As SqlCommand = New SqlCommand(str_update, myConn)
@@ -4390,7 +4411,7 @@ L_END2:
             'MsgBox("007")
             ' MsgBox("UPDATE OK ===>" & str_update)
         Catch ex As Exception
-            MsgBox("SORRY Update ERROR Function update_qty_sup_scan_pick_detail_test" & vbNewLine & ex.Message, 16, "Status")
+            MsgBox("SORRY Update ERROR Function update_qty_sup_scan_pick_detail" & vbNewLine & ex.Message, 16, "Status")
         End Try
     End Sub
     Public Sub update_qty_check_qr_part(ByVal id As String, ByVal qty_database As Integer)
@@ -4507,7 +4528,7 @@ L_END2:
             Dim count As Integer = check_count(scan_lot, updated_seq, F_item_cd)
             Dim status As Integer = 0
             If count <> "0" Then
-                Dim strCommand123 As String = "SELECT COUNT(id) as c,  id as i   FROM sup_scan_pick_detail_test  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "' AND com_flg = '0' and item_cd ='" & F_item_cd & "'  GROUP BY id"
+                Dim strCommand123 As String = "SELECT COUNT(id) as c,  id as i   FROM sup_scan_pick_detail  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "' AND com_flg = '0' and item_cd ='" & F_item_cd & "'  GROUP BY id"
                 'MsgBox("strCommand1_bast == >" & strCommand123)
                 ' MsgBox("000")
                 Dim command123 As SqlCommand = New SqlCommand(strCommand123, myConn)
@@ -4540,7 +4561,7 @@ L_END2:
     End Function
     Public Function check_count(ByVal scan_lot As String, ByVal updated_seq As String, ByVal F_item_cd As String)
         Dim count As String = "0"
-        Dim sql_check As String = "SELECT COUNT(id) as c FROM sup_scan_pick_detail_test  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "' AND com_flg = '0' and item_cd ='" & F_item_cd & "'"
+        Dim sql_check As String = "SELECT COUNT(id) as c FROM sup_scan_pick_detail  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "' AND com_flg = '0' and item_cd ='" & F_item_cd & "'"
         Dim command2 As SqlCommand = New SqlCommand(sql_check, myConn)
         reader = command2.ExecuteReader()
         Do While reader.Read = True
@@ -4681,7 +4702,7 @@ re_check:
     Public Function check_remain_in_detail_test(ByVal order_number As String, ByVal tag_seq As String)
         Try
             Dim count_data As String = Nothing
-            Dim strCommand123 As String = "SELECT COUNT(id) as c,  id as i   FROM sup_scan_pick_detail_test  where com_flg = '0' and item_cd ='" & Module1.past_numer & "'  GROUP BY id"
+            Dim strCommand123 As String = "SELECT COUNT(id) as c,  id as i   FROM sup_scan_pick_detail  where com_flg = '0' and item_cd ='" & Module1.past_numer & "'  GROUP BY id"
             'MsgBox("check_remain_in_detail_test == >" & strCommand123)
             Dim command123 As SqlCommand = New SqlCommand(strCommand123, myConn)
             Dim status As Integer = 0
@@ -4700,7 +4721,7 @@ re_check:
             If status = 1 Then
                 Dim count_remain As String = Nothing
                 Dim check_qe_status As Integer = Remain_check_qr_part(order_number, tag_seq)
-                Dim strCommand1234 As String = "SELECT COUNT(id) as c   , scan_lot , tag_seq  FROM sup_scan_pick_detail_test  where scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '0' GROUP BY scan_lot,tag_seq"
+                Dim strCommand1234 As String = "SELECT COUNT(id) as c   , scan_lot , tag_seq  FROM sup_scan_pick_detail  where scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '0' GROUP BY scan_lot,tag_seq"
                 Dim command1234 As SqlCommand = New SqlCommand(strCommand1234, myConn)
                 reader = command1234.ExecuteReader()
                 If check_qe_status = 4 Then
@@ -4733,7 +4754,7 @@ re_check:
         Return 0
     End Function
     Public Function query_join_check()
-        Dim str_join As String = "SELECT COUNT (sp.id) AS c FROM sup_scan_pick_detail_test sp, check_qr_part cp WHERE sp.item_cd = cp.item_cd AND sp.scan_lot = cp.scan_lot AND sp.tag_seq = cp.tag_seq"
+        Dim str_join As String = "SELECT COUNT (sp.id) AS c FROM sup_scan_pick_detail sp, check_qr_part cp WHERE sp.item_cd = cp.item_cd AND sp.scan_lot = cp.scan_lot AND sp.tag_seq = cp.tag_seq"
         Dim command_join As SqlCommand = New SqlCommand(str_join, myConn)
         reader = command_join.ExecuteReader()
         Dim status = 0
@@ -4836,7 +4857,7 @@ re_check:
         ' MsgBox(leng_scan_qty)
         Select Case e.KeyCode
             Case System.Windows.Forms.Keys.Enter
-
+                'MsgBox("===>" & bool_check_scan)
                 If check_process = "OK" Then
                     status_alert_image = ""
                     Dim Line As Select_Line = New Select_Line()
@@ -4847,10 +4868,12 @@ re_check:
 
                 If leng_scan_qty = 62 Then
                     If bool_check_scan = "HAVE_TAG_REMAIN" Then
+                        Panel7.Visible = False
                         alert_tag_remain.Visible = False
                         text_tmp.Text = ""
                         Re_scan_default()
                     ElseIf bool_check_scan = "HAVE_Reprint" Then
+                        Panel7.Visible = False
                         alert_reprint.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
@@ -4872,9 +4895,11 @@ re_check:
                         Bt.SysLib.Device.btLED(1, stLed)
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "Plase_scna_detail" Then
+                        Panel7.Visible = False
                         alert_detail.Visible = False
                         Re_scan_default()
                     ElseIf status_alert_image = "Part_incorrect" Then
+                        Panel7.Visible = False
                         alert_pa.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
@@ -4897,10 +4922,13 @@ re_check:
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "success" Then
+                        Panel7.Visible = False
                         alert_success.Visible = False
                     ElseIf status_alert_image = "success_remain" Then
+                        Panel7.Visible = False
                         alert_success_remain.Visible = False
                     ElseIf status_alert_image = "loop" Then
+                        Panel7.Visible = False
                         alert_loop.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
@@ -4923,6 +4951,7 @@ re_check:
                         Bt.SysLib.Device.btLED(1, stLed)
                         scan_qty.Focus()
                     ElseIf status_alert_image = "loop_re_scan" Then
+                        Panel7.Visible = False
                         alert_loop.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
@@ -4949,6 +4978,7 @@ re_check:
 
                 ElseIf leng_scan_qty = 76 Then
                     If status_alert_image = "alert_right_fa" Then
+                        Panel7.Visible = False
                         alert_right_fa.Visible = False
                         'MsgBox("Please scan FA tag on the top right")
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
@@ -4975,9 +5005,12 @@ re_check:
 
                 ElseIf leng_scan_qty = 103 Then
                     If bool_check_scan = "HAVE_TAG_REMAIN" Then
+                        Panel7.Visible = False
                         alert_tag_remain.Visible = False
                         Re_scan_default()
                     ElseIf bool_check_scan = "HAVE_Reprint" Then
+                        alert_reprint.Visible = False
+                        Panel7.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
                         Dim stLed As New Bt.LibDef.BT_LED_PARAM()
@@ -4996,9 +5029,9 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
-                        alert_reprint.Visible = False
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "Plase_scna_detail" Then
+                        Panel7.Visible = False
                         alert_detail.Visible = False
                         Dim Len_length As Integer = Len(scan_qty.Text)
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
@@ -5023,7 +5056,6 @@ re_check:
                         text_tmp.Text = scan_qty_total
                         scan_qty.Focus()
                     ElseIf status_alert_image = "Part_incorrect" Then
-                        alert_pa.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
                         Dim stLed As New Bt.LibDef.BT_LED_PARAM()
@@ -5042,11 +5074,16 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        'text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        Panel7.Visible = False
+                        alert_pa.Visible = False
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "success" Then
+                        Panel7.Visible = False
                         alert_success.Visible = False
                     ElseIf status_alert_image = "success_remain" Then
+                        Panel7.Visible = False
                         alert_success_remain.Visible = False
                     ElseIf status_alert_image = "loop" Then
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
@@ -5068,7 +5105,7 @@ re_check:
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
                         'text_tmp.Text = Module1.SCAN_QTY_TOTAL
-
+                        Panel7.Visible = False
                         alert_loop.Visible = False
                         scan_qty.Focus()
                     ElseIf status_alert_image = "loop_re_scan_fa" Then
@@ -5091,7 +5128,7 @@ re_check:
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
                         'text_tmp.Text = Module1.SCAN_QTY_TOTAL
-
+                        Panel7.Visible = False
                         alert_loop.Visible = False
                         text_tmp.Text = scan_qty_total
                         scan_qty.Text = ""
