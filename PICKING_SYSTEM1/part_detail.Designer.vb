@@ -22,6 +22,7 @@ Partial Public Class part_detail
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(part_detail))
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
         Me.Panel1 = New System.Windows.Forms.Panel
+        Me.alert_reprint = New System.Windows.Forms.PictureBox
         Me.Panel5 = New System.Windows.Forms.Panel
         Me.PictureBox8 = New System.Windows.Forms.PictureBox
         Me.Label7 = New System.Windows.Forms.Label
@@ -80,7 +81,6 @@ Partial Public Class part_detail
         Me.lb_code_pd = New System.Windows.Forms.Label
         Me.lb_code_user = New System.Windows.Forms.Label
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog
-        Me.alert_reprint = New System.Windows.Forms.PictureBox
         Me.Panel1.SuspendLayout()
         Me.Panel5.SuspendLayout()
         Me.Panel6.SuspendLayout()
@@ -100,7 +100,6 @@ Partial Public Class part_detail
         'Panel1
         '
         Me.Panel1.BackColor = System.Drawing.Color.MintCream
-        Me.Panel1.Controls.Add(Me.alert_reprint)
         Me.Panel1.Controls.Add(Me.Panel5)
         Me.Panel1.Controls.Add(Me.Panel6)
         Me.Panel1.Controls.Add(Me.Panel4)
@@ -136,6 +135,14 @@ Partial Public Class part_detail
         Me.Panel1.Location = New System.Drawing.Point(3, 44)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(462, 525)
+        '
+        'alert_reprint
+        '
+        Me.alert_reprint.Image = CType(resources.GetObject("alert_reprint.Image"), System.Drawing.Image)
+        Me.alert_reprint.Location = New System.Drawing.Point(3, -3)
+        Me.alert_reprint.Name = "alert_reprint"
+        Me.alert_reprint.Size = New System.Drawing.Size(381, 320)
+        Me.alert_reprint.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Panel5
         '
@@ -290,6 +297,7 @@ Partial Public Class part_detail
         '
         'Panel4
         '
+        Me.Panel4.Controls.Add(Me.alert_reprint)
         Me.Panel4.Controls.Add(Me.PictureBox6)
         Me.Panel4.Controls.Add(Me.PictureBox5)
         Me.Panel4.Controls.Add(Me.password)
@@ -297,7 +305,7 @@ Partial Public Class part_detail
         Me.Panel4.Controls.Add(Me.PictureBox4)
         Me.Panel4.Location = New System.Drawing.Point(45, 87)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(115, 86)
+        Me.Panel4.Size = New System.Drawing.Size(376, 368)
         '
         'PictureBox6
         '
@@ -337,9 +345,9 @@ Partial Public Class part_detail
         '
         Me.PictureBox4.BackColor = System.Drawing.Color.DarkTurquoise
         Me.PictureBox4.Image = CType(resources.GetObject("PictureBox4.Image"), System.Drawing.Image)
-        Me.PictureBox4.Location = New System.Drawing.Point(-3, 0)
+        Me.PictureBox4.Location = New System.Drawing.Point(1, -2)
         Me.PictureBox4.Name = "PictureBox4"
-        Me.PictureBox4.Size = New System.Drawing.Size(394, 363)
+        Me.PictureBox4.Size = New System.Drawing.Size(376, 368)
         Me.PictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'alert_success
@@ -655,14 +663,6 @@ Partial Public Class part_detail
         'OpenFileDialog1
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
-        '
-        'alert_reprint
-        '
-        Me.alert_reprint.Image = CType(resources.GetObject("alert_reprint.Image"), System.Drawing.Image)
-        Me.alert_reprint.Location = New System.Drawing.Point(38, 113)
-        Me.alert_reprint.Name = "alert_reprint"
-        Me.alert_reprint.Size = New System.Drawing.Size(381, 320)
-        Me.alert_reprint.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'part_detail
         '
