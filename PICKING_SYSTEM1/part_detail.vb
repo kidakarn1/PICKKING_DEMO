@@ -164,6 +164,7 @@ Public Class part_detail
         InitializeComponent()
         If Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg") IsNot Nothing Then
             show_img.Image = Api.DownloadImage("http://192.168.161.102/picking_system/uploads/pic/" & Module1.M_Part_Selected & ".jpg")
+
         End If
         'show_img_part.Image = 
     End Sub
@@ -6226,6 +6227,10 @@ L_END2:
     End Sub
 
     Private Sub PictureBox1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
+
+    End Sub
+
+    Private Sub Panel5_GotFocus(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel5.GotFocus
 
     End Sub
 End Class

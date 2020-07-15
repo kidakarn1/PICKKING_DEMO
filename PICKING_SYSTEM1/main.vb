@@ -1,8 +1,14 @@
 ﻿Imports System.Runtime.InteropServices
+Imports System.Net
 Imports System.Data
 'Imports System.Data.SqlServerCe
 Imports System.Data.SqlClient
 Imports System.Configuration
+Imports System.IO
+Imports Newtonsoft.Json
+Imports Newtonsoft.Json.Linq
+Imports System.Windows.Forms.Form
+Imports System
 Public Class main
     Public scan_terminal_id = "PICK001"
     Dim myConn As SqlConnection
@@ -21,6 +27,7 @@ Public Class main
     Public ml As Integer = 0
     Public count_time As Integer = 0
     Public status As Integer = 0
+    Dim re_data As ArrayList = New ArrayList()
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
             ' myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
@@ -36,7 +43,7 @@ Public Class main
             Label5.Visible = False
             'Panel1.Visible = True
             PictureBox4.Visible = False
-            PictureBox9.Visible = False
+            'PictureBox9.Visible = False
             Label7.Visible = False
             Me.emp_cd.Focus()
 
@@ -143,8 +150,9 @@ Public Class main
                 PictureBox2.Visible = True
                 PictureBox3.Visible = True
                 PictureBox4.Visible = True
-                PictureBox9.Visible = True
+                'PictureBox9.Visible = True
                 Label7.Visible = True
+
                 'get_image_user()
             End If
         Catch ex As Exception
@@ -227,8 +235,8 @@ Public Class main
         PictureBox2.Visible = False
         PictureBox3.Visible = False
         PictureBox4.Visible = False
-        PictureBox9.Visible = False
-        Label7.Visible = false
+        'PictureBox9.Visible = False
+        Label7.Visible = False
         dat = ""
         passToanofrm = dat
         'System.Console.WriteLine("===>" + reader.Item(1))'

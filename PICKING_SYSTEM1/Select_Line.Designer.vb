@@ -19,7 +19,7 @@ Partial Public Class Select_Line
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim ListViewItem1 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem
+        Dim ListViewItem2 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Select_Line))
         Me.Panel1 = New System.Windows.Forms.Panel
         Me.Panel2 = New System.Windows.Forms.Panel
@@ -106,8 +106,8 @@ Partial Public Class Select_Line
         Me.Line_list_view.Columns.Add(Me.ColumnHeader3)
         resources.ApplyResources(Me.Line_list_view, "Line_list_view")
         Me.Line_list_view.FullRowSelect = True
-        ListViewItem1.Text = resources.GetString("Line_list_view.Items")
-        Me.Line_list_view.Items.Add(ListViewItem1)
+        ListViewItem2.Text = resources.GetString("Line_list_view.Items")
+        Me.Line_list_view.Items.Add(ListViewItem2)
         Me.Line_list_view.Name = "Line_list_view"
         Me.Line_list_view.View = System.Windows.Forms.View.Details
         '

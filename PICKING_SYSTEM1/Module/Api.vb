@@ -1,4 +1,5 @@
-﻿Imports System.Net
+﻿Imports System
+Imports System.Net
 Imports System.IO
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
@@ -51,8 +52,6 @@ Module Api
 
         Return _tmpImage
     End Function
-
-
 
 
 End Module
