@@ -22,15 +22,10 @@ Partial Public Class part_detail
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(part_detail))
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
         Me.Panel1 = New System.Windows.Forms.Panel
-        Me.Panel7 = New System.Windows.Forms.Panel
-        Me.alert_right_fa = New System.Windows.Forms.PictureBox
-        Me.alert_pa = New System.Windows.Forms.PictureBox
-        Me.alert_success_remain = New System.Windows.Forms.PictureBox
-        Me.alert_success = New System.Windows.Forms.PictureBox
-        Me.alert_reprint = New System.Windows.Forms.PictureBox
-        Me.alert_loop = New System.Windows.Forms.PictureBox
-        Me.alert_detail = New System.Windows.Forms.PictureBox
-        Me.alert_tag_remain = New System.Windows.Forms.PictureBox
+        Me.show_number_remain = New System.Windows.Forms.Label
+        Me.show_number_supply = New System.Windows.Forms.Label
+        Me.Label9 = New System.Windows.Forms.Label
+        Me.Label8 = New System.Windows.Forms.Label
         Me.Panel4 = New System.Windows.Forms.Panel
         Me.PictureBox6 = New System.Windows.Forms.PictureBox
         Me.PictureBox5 = New System.Windows.Forms.PictureBox
@@ -82,13 +77,22 @@ Partial Public Class part_detail
         Me.lb_code_pd = New System.Windows.Forms.Label
         Me.lb_code_user = New System.Windows.Forms.Label
         Me.OpenFileDialog1 = New System.Windows.Forms.OpenFileDialog
+        Me.Panel7 = New System.Windows.Forms.Panel
+        Me.alert_detail = New System.Windows.Forms.PictureBox
+        Me.alert_tag_remain = New System.Windows.Forms.PictureBox
+        Me.alert_right_fa = New System.Windows.Forms.PictureBox
+        Me.alert_pa = New System.Windows.Forms.PictureBox
+        Me.alert_success_remain = New System.Windows.Forms.PictureBox
+        Me.alert_success = New System.Windows.Forms.PictureBox
+        Me.alert_reprint = New System.Windows.Forms.PictureBox
+        Me.alert_loop = New System.Windows.Forms.PictureBox
         Me.Panel1.SuspendLayout()
-        Me.Panel7.SuspendLayout()
         Me.Panel4.SuspendLayout()
         Me.Panel5.SuspendLayout()
         Me.Panel6.SuspendLayout()
         Me.Panel3.SuspendLayout()
         Me.Panel2.SuspendLayout()
+        Me.Panel7.SuspendLayout()
         Me.SuspendLayout()
         '
         'PictureBox1
@@ -103,7 +107,6 @@ Partial Public Class part_detail
         '
         Me.Panel1.BackColor = System.Drawing.Color.MintCream
         Me.Panel1.Controls.Add(Me.Panel7)
-        Me.Panel1.Controls.Add(Me.Panel4)
         Me.Panel1.Controls.Add(Me.Panel5)
         Me.Panel1.Controls.Add(Me.Panel6)
         Me.Panel1.Controls.Add(Me.PictureBox3)
@@ -124,91 +127,57 @@ Partial Public Class part_detail
         Me.Panel1.Controls.Add(Me.Part_name)
         Me.Panel1.Controls.Add(Me.Part_No)
         Me.Panel1.Controls.Add(Me.Label1)
-        Me.Panel1.Controls.Add(Me.PictureBox2)
         Me.Panel1.Controls.Add(Me.lb_code_line)
         Me.Panel1.Controls.Add(Me.lb_code_pd)
         Me.Panel1.Controls.Add(Me.lb_code_user)
+        Me.Panel1.Controls.Add(Me.show_number_supply)
+        Me.Panel1.Controls.Add(Me.Label8)
+        Me.Panel1.Controls.Add(Me.Label9)
+        Me.Panel1.Controls.Add(Me.show_number_remain)
+        Me.Panel1.Controls.Add(Me.PictureBox2)
         Me.Panel1.Location = New System.Drawing.Point(3, 44)
         Me.Panel1.Name = "Panel1"
         Me.Panel1.Size = New System.Drawing.Size(462, 525)
         '
-        'Panel7
+        'show_number_remain
         '
-        Me.Panel7.Controls.Add(Me.alert_right_fa)
-        Me.Panel7.Controls.Add(Me.alert_pa)
-        Me.Panel7.Controls.Add(Me.alert_success_remain)
-        Me.Panel7.Controls.Add(Me.alert_success)
-        Me.Panel7.Controls.Add(Me.alert_reprint)
-        Me.Panel7.Controls.Add(Me.alert_loop)
-        Me.Panel7.Controls.Add(Me.alert_detail)
-        Me.Panel7.Controls.Add(Me.alert_tag_remain)
-        Me.Panel7.Location = New System.Drawing.Point(35, 143)
-        Me.Panel7.Name = "Panel7"
-        Me.Panel7.Size = New System.Drawing.Size(416, 365)
+        Me.show_number_remain.BackColor = System.Drawing.Color.White
+        Me.show_number_remain.Font = New System.Drawing.Font("Tahoma", 18.0!, System.Drawing.FontStyle.Bold)
+        Me.show_number_remain.ForeColor = System.Drawing.Color.Red
+        Me.show_number_remain.Location = New System.Drawing.Point(308, 361)
+        Me.show_number_remain.Name = "show_number_remain"
+        Me.show_number_remain.Size = New System.Drawing.Size(144, 31)
+        Me.show_number_remain.Text = "Label10"
         '
-        'alert_right_fa
+        'show_number_supply
         '
-        Me.alert_right_fa.Image = CType(resources.GetObject("alert_right_fa.Image"), System.Drawing.Image)
-        Me.alert_right_fa.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_right_fa.Name = "alert_right_fa"
-        Me.alert_right_fa.Size = New System.Drawing.Size(417, 365)
-        Me.alert_right_fa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.show_number_supply.BackColor = System.Drawing.Color.White
+        Me.show_number_supply.Font = New System.Drawing.Font("Tahoma", 18.0!, System.Drawing.FontStyle.Bold)
+        Me.show_number_supply.ForeColor = System.Drawing.Color.Blue
+        Me.show_number_supply.Location = New System.Drawing.Point(306, 324)
+        Me.show_number_supply.Name = "show_number_supply"
+        Me.show_number_supply.Size = New System.Drawing.Size(145, 31)
+        Me.show_number_supply.Text = "Label10"
         '
-        'alert_pa
+        'Label9
         '
-        Me.alert_pa.Image = CType(resources.GetObject("alert_pa.Image"), System.Drawing.Image)
-        Me.alert_pa.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_pa.Name = "alert_pa"
-        Me.alert_pa.Size = New System.Drawing.Size(417, 365)
-        Me.alert_pa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.Label9.BackColor = System.Drawing.Color.White
+        Me.Label9.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
+        Me.Label9.ForeColor = System.Drawing.Color.Red
+        Me.Label9.Location = New System.Drawing.Point(250, 361)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(58, 32)
+        Me.Label9.Text = "RM:"
         '
-        'alert_success_remain
+        'Label8
         '
-        Me.alert_success_remain.Image = CType(resources.GetObject("alert_success_remain.Image"), System.Drawing.Image)
-        Me.alert_success_remain.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_success_remain.Name = "alert_success_remain"
-        Me.alert_success_remain.Size = New System.Drawing.Size(417, 365)
-        Me.alert_success_remain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'alert_success
-        '
-        Me.alert_success.Image = CType(resources.GetObject("alert_success.Image"), System.Drawing.Image)
-        Me.alert_success.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_success.Name = "alert_success"
-        Me.alert_success.Size = New System.Drawing.Size(417, 365)
-        Me.alert_success.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'alert_reprint
-        '
-        Me.alert_reprint.Image = CType(resources.GetObject("alert_reprint.Image"), System.Drawing.Image)
-        Me.alert_reprint.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_reprint.Name = "alert_reprint"
-        Me.alert_reprint.Size = New System.Drawing.Size(417, 365)
-        Me.alert_reprint.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'alert_loop
-        '
-        Me.alert_loop.Image = CType(resources.GetObject("alert_loop.Image"), System.Drawing.Image)
-        Me.alert_loop.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_loop.Name = "alert_loop"
-        Me.alert_loop.Size = New System.Drawing.Size(417, 365)
-        Me.alert_loop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'alert_detail
-        '
-        Me.alert_detail.Image = CType(resources.GetObject("alert_detail.Image"), System.Drawing.Image)
-        Me.alert_detail.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_detail.Name = "alert_detail"
-        Me.alert_detail.Size = New System.Drawing.Size(417, 365)
-        Me.alert_detail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
-        '
-        'alert_tag_remain
-        '
-        Me.alert_tag_remain.Image = CType(resources.GetObject("alert_tag_remain.Image"), System.Drawing.Image)
-        Me.alert_tag_remain.Location = New System.Drawing.Point(-1, 0)
-        Me.alert_tag_remain.Name = "alert_tag_remain"
-        Me.alert_tag_remain.Size = New System.Drawing.Size(417, 365)
-        Me.alert_tag_remain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        Me.Label8.BackColor = System.Drawing.Color.White
+        Me.Label8.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
+        Me.Label8.ForeColor = System.Drawing.Color.Blue
+        Me.Label8.Location = New System.Drawing.Point(252, 324)
+        Me.Label8.Name = "Label8"
+        Me.Label8.Size = New System.Drawing.Size(58, 36)
+        Me.Label8.Text = "SP :"
         '
         'Panel4
         '
@@ -217,9 +186,9 @@ Partial Public Class part_detail
         Me.Panel4.Controls.Add(Me.password)
         Me.Panel4.Controls.Add(Me.user_id)
         Me.Panel4.Controls.Add(Me.PictureBox4)
-        Me.Panel4.Location = New System.Drawing.Point(45, 87)
+        Me.Panel4.Location = New System.Drawing.Point(39, 0)
         Me.Panel4.Name = "Panel4"
-        Me.Panel4.Size = New System.Drawing.Size(384, 368)
+        Me.Panel4.Size = New System.Drawing.Size(384, 365)
         '
         'PictureBox6
         '
@@ -261,13 +230,14 @@ Partial Public Class part_detail
         Me.PictureBox4.Image = CType(resources.GetObject("PictureBox4.Image"), System.Drawing.Image)
         Me.PictureBox4.Location = New System.Drawing.Point(1, -3)
         Me.PictureBox4.Name = "PictureBox4"
-        Me.PictureBox4.Size = New System.Drawing.Size(383, 371)
+        Me.PictureBox4.Size = New System.Drawing.Size(380, 365)
         Me.PictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Panel5
         '
         Me.Panel5.BackColor = System.Drawing.Color.DarkSlateGray
         Me.Panel5.Controls.Add(Me.PictureBox8)
+        Me.Panel5.Controls.Add(Me.Panel4)
         Me.Panel5.Controls.Add(Me.Label7)
         Me.Panel5.Controls.Add(Me.Label6)
         Me.Panel5.Controls.Add(Me.Label5)
@@ -275,9 +245,9 @@ Partial Public Class part_detail
         Me.Panel5.Controls.Add(Me.Button5)
         Me.Panel5.Controls.Add(Me.TextBox2)
         Me.Panel5.Controls.Add(Me.TextBox1)
-        Me.Panel5.Location = New System.Drawing.Point(0, 0)
+        Me.Panel5.Location = New System.Drawing.Point(6, 0)
         Me.Panel5.Name = "Panel5"
-        Me.Panel5.Size = New System.Drawing.Size(462, 525)
+        Me.Panel5.Size = New System.Drawing.Size(456, 525)
         '
         'PictureBox8
         '
@@ -468,9 +438,9 @@ Partial Public Class part_detail
         '
         Me.Label4.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
         Me.Label4.ForeColor = System.Drawing.Color.Red
-        Me.Label4.Location = New System.Drawing.Point(2, 10)
+        Me.Label4.Location = New System.Drawing.Point(3, 10)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(177, 28)
+        Me.Label4.Size = New System.Drawing.Size(176, 28)
         Me.Label4.Text = "Scan QR Code :"
         '
         'scan_qty
@@ -483,9 +453,9 @@ Partial Public Class part_detail
         '
         'text_box_success
         '
-        Me.text_box_success.Location = New System.Drawing.Point(29, 15)
+        Me.text_box_success.Location = New System.Drawing.Point(3, 12)
         Me.text_box_success.Name = "text_box_success"
-        Me.text_box_success.Size = New System.Drawing.Size(100, 23)
+        Me.text_box_success.Size = New System.Drawing.Size(58, 23)
         Me.text_box_success.TabIndex = 2
         '
         'Panel2
@@ -567,7 +537,7 @@ Partial Public Class part_detail
         Me.lot_no.Font = New System.Drawing.Font("Tahoma", 14.0!, System.Drawing.FontStyle.Bold)
         Me.lot_no.Location = New System.Drawing.Point(38, 364)
         Me.lot_no.Name = "lot_no"
-        Me.lot_no.Size = New System.Drawing.Size(356, 22)
+        Me.lot_no.Size = New System.Drawing.Size(182, 22)
         Me.lot_no.Text = "Lot No."
         '
         'text_tmp
@@ -673,6 +643,84 @@ Partial Public Class part_detail
         '
         Me.OpenFileDialog1.FileName = "OpenFileDialog1"
         '
+        'Panel7
+        '
+        Me.Panel7.Controls.Add(Me.alert_detail)
+        Me.Panel7.Controls.Add(Me.alert_tag_remain)
+        Me.Panel7.Controls.Add(Me.alert_right_fa)
+        Me.Panel7.Controls.Add(Me.alert_pa)
+        Me.Panel7.Controls.Add(Me.alert_success_remain)
+        Me.Panel7.Controls.Add(Me.alert_success)
+        Me.Panel7.Controls.Add(Me.alert_reprint)
+        Me.Panel7.Controls.Add(Me.alert_loop)
+        Me.Panel7.Location = New System.Drawing.Point(0, 43)
+        Me.Panel7.Name = "Panel7"
+        Me.Panel7.Size = New System.Drawing.Size(409, 330)
+        '
+        'alert_detail
+        '
+        Me.alert_detail.Image = CType(resources.GetObject("alert_detail.Image"), System.Drawing.Image)
+        Me.alert_detail.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_detail.Name = "alert_detail"
+        Me.alert_detail.Size = New System.Drawing.Size(417, 365)
+        Me.alert_detail.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_tag_remain
+        '
+        Me.alert_tag_remain.Image = CType(resources.GetObject("alert_tag_remain.Image"), System.Drawing.Image)
+        Me.alert_tag_remain.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_tag_remain.Name = "alert_tag_remain"
+        Me.alert_tag_remain.Size = New System.Drawing.Size(417, 365)
+        Me.alert_tag_remain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_right_fa
+        '
+        Me.alert_right_fa.Image = CType(resources.GetObject("alert_right_fa.Image"), System.Drawing.Image)
+        Me.alert_right_fa.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_right_fa.Name = "alert_right_fa"
+        Me.alert_right_fa.Size = New System.Drawing.Size(417, 365)
+        Me.alert_right_fa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_pa
+        '
+        Me.alert_pa.Image = CType(resources.GetObject("alert_pa.Image"), System.Drawing.Image)
+        Me.alert_pa.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_pa.Name = "alert_pa"
+        Me.alert_pa.Size = New System.Drawing.Size(417, 365)
+        Me.alert_pa.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_success_remain
+        '
+        Me.alert_success_remain.Image = CType(resources.GetObject("alert_success_remain.Image"), System.Drawing.Image)
+        Me.alert_success_remain.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_success_remain.Name = "alert_success_remain"
+        Me.alert_success_remain.Size = New System.Drawing.Size(417, 365)
+        Me.alert_success_remain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_success
+        '
+        Me.alert_success.Image = CType(resources.GetObject("alert_success.Image"), System.Drawing.Image)
+        Me.alert_success.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_success.Name = "alert_success"
+        Me.alert_success.Size = New System.Drawing.Size(417, 365)
+        Me.alert_success.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_reprint
+        '
+        Me.alert_reprint.Image = CType(resources.GetObject("alert_reprint.Image"), System.Drawing.Image)
+        Me.alert_reprint.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_reprint.Name = "alert_reprint"
+        Me.alert_reprint.Size = New System.Drawing.Size(417, 365)
+        Me.alert_reprint.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
+        'alert_loop
+        '
+        Me.alert_loop.Image = CType(resources.GetObject("alert_loop.Image"), System.Drawing.Image)
+        Me.alert_loop.Location = New System.Drawing.Point(-1, 0)
+        Me.alert_loop.Name = "alert_loop"
+        Me.alert_loop.Size = New System.Drawing.Size(417, 365)
+        Me.alert_loop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
+        '
         'part_detail
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
@@ -685,12 +733,12 @@ Partial Public Class part_detail
         Me.Name = "part_detail"
         Me.Text = "part_detail"
         Me.Panel1.ResumeLayout(False)
-        Me.Panel7.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
         Me.Panel5.ResumeLayout(False)
         Me.Panel6.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
+        Me.Panel7.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub
@@ -724,13 +772,6 @@ Partial Public Class part_detail
     Friend WithEvents btn_detail_part As System.Windows.Forms.Button
     Friend WithEvents PictureBox3 As System.Windows.Forms.PictureBox
     Friend WithEvents text_box_success As System.Windows.Forms.TextBox
-    Friend WithEvents alert_detail As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_tag_remain As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_pa As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_right_fa As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_success As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_success_remain As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_loop As System.Windows.Forms.PictureBox
     Friend WithEvents Panel4 As System.Windows.Forms.Panel
     Friend WithEvents PictureBox4 As System.Windows.Forms.PictureBox
     Friend WithEvents password As System.Windows.Forms.TextBox
@@ -754,6 +795,17 @@ Partial Public Class part_detail
     Friend WithEvents Button7 As System.Windows.Forms.Button
     Friend WithEvents Label7 As System.Windows.Forms.Label
     Friend WithEvents PictureBox8 As System.Windows.Forms.PictureBox
-    Friend WithEvents alert_reprint As System.Windows.Forms.PictureBox
+    Friend WithEvents Label8 As System.Windows.Forms.Label
+    Friend WithEvents show_number_remain As System.Windows.Forms.Label
+    Friend WithEvents show_number_supply As System.Windows.Forms.Label
+    Friend WithEvents Label9 As System.Windows.Forms.Label
     Friend WithEvents Panel7 As System.Windows.Forms.Panel
+    Friend WithEvents alert_detail As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_tag_remain As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_right_fa As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_pa As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_success_remain As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_success As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_reprint As System.Windows.Forms.PictureBox
+    Friend WithEvents alert_loop As System.Windows.Forms.PictureBox
 End Class

@@ -21,10 +21,11 @@ Public Class part_detail
     Public REMAIN_ID As String = "NO_DATA"
     Public ID_table_detail As String = "NO_DATA"
     Public check_process As String = "NO_OK"
-
+    Public c_num As Integer = 0
     Dim g_index As Integer = 0
     Dim id_cut_stock_FW As String = "no_data"
     Dim path As String
+    Public fa_qty_total_check As Integer = 0
     Dim a As Integer = 0
     Dim count_arr_fw As Integer = 0
     Dim count_fw_final As Integer = 0
@@ -39,6 +40,7 @@ Public Class part_detail
     Dim pclogfile As String = "logfile.csv"
     Dim data_final As String = "NOOOOO"
     Dim data_final_loop As String = "NOOOOO"
+    Public totall_qty_scan As Double = 0.0
     Public Line As Select_Line
     Dim CodeType As String = "QR"
     Public c_check As String = "no_process"
@@ -46,6 +48,7 @@ Public Class part_detail
     Dim status_alert_image As String = "NO_STATUS"
     Dim g_update As Integer = 0 '
     Dim brak_loop As Integer = 0 '
+    Public check_po_lot As String = "NODATA"
     Dim j As Integer = 0
     Dim count_update_fw As Integer = 0
     Dim count_scan As Integer = 0
@@ -54,6 +57,8 @@ Public Class part_detail
     Public Len_length_QR As Integer = 0
     Public check_scan As Integer = 0
     Public check_count__data As Integer = 0
+    Public QTY_INSERT_LOT_PO As Double = 0.0
+    Dim arr_remain_qty As ArrayList = New ArrayList()
     Dim arr_up_id As ArrayList = New ArrayList()
     Dim F_wi As ArrayList = New ArrayList()
     Dim F_item_cd As ArrayList = New ArrayList()
@@ -68,6 +73,8 @@ Public Class part_detail
     Dim F_updated_seq As ArrayList = New ArrayList()
     Dim F_com_flg As ArrayList = New ArrayList()
     Dim F_tag_remain_qty As ArrayList = New ArrayList()
+    Dim F_Create_Date As ArrayList = New ArrayList()
+    Dim F_Create_By As ArrayList = New ArrayList()
     Dim check_data As ArrayList = New ArrayList()
     '--------------------------------------------------------------
     ' Constant definitions
@@ -118,18 +125,17 @@ Public Class part_detail
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
             myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
             'myConn_Resive = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            ' myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
             'myConn_Resive.Open()
-        Catch ex As Exception 
+        Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status")
         Finally
 
             ' Dim path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
             'MsgBox(path)
             Panel4.Visible = False
-            scan_qty.Focus()
-
+            scan_qty.Visible = False
             lb_code_user.Text = main.show_code_id_user()
             lb_code_pd.Text = PD5.lb_code_pd.Text
             lb_code_line.Text = PD5.lb_code_line.Text
@@ -138,6 +144,8 @@ Public Class part_detail
             show_qty.Text = PD5.QTY.Text
             location.Text = PD5.Location.Text
             lot_no.Text = "Lot No: " + Module1.M_LOT
+            show_number_supply.Text = 0
+            show_number_remain.Text = 0
             lot_no.Hide()
             Button2.Visible = False
             Button3.Visible = False
@@ -220,6 +228,8 @@ Public Class part_detail
 
     Private Sub Button1_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
         'MsgBox("BACK")
+        Module1.show_data_supply = 0.0
+        Module1.show_data_remain = 0.0
         Module1.arr_check_lot_scan = New ArrayList()
         Module1.arr_check_PO_scan = New ArrayList()
         Module1.arr_check_QTY_scan = New ArrayList()
@@ -317,8 +327,6 @@ Public Class part_detail
 
     Private Sub scan_qty_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles scan_qty.KeyDown
 comeback:
-
-
         Select Case e.KeyCode
             Case System.Windows.Forms.Keys.Enter
                 Dim testString As String = scan_qty.Text
@@ -329,7 +337,9 @@ comeback:
                 length = testLen
                 leng_scan_qty = length
                 'MsgBox(testLen)
-                Dim req_qty = PD5.QTY.Text.Substring(6)
+                Dim req_qty As Double = 0.0
+                req_qty = CDbl(Val(PD5.QTY.Text.Substring(6)))
+
                 Dim ps = Part_No.Text.Substring(16)
                 Dim QTY_show As Integer = show_qty.Text.Substring(6)
 
@@ -356,6 +366,7 @@ comeback:
                             text_tmp.Text = supp_tag_qty
                             If Ck_dup(ListBox, order_number & supp_seq) = True Then
                                 If bool_check_scan = "ever" Then
+                                    scan_qty.Text = ""
                                     text_tmp.Text = scan_qty_total
                                     Re_scan()
                                 ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
@@ -368,6 +379,7 @@ comeback:
 
                                 ElseIf bool_check_scan = "Plase_scna_detail" Then
                                     ' MsgBox("กรุณา scan ตาม Detail", 16, "Alert")
+go_pelase_detail_webpost:
                                     Panel7.Visible = True
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
@@ -380,17 +392,15 @@ comeback:
                                     text_box_success.Focus()
                                 End If
                             Else
-                                If supp_tag_qty > req_qty And firstscan = "0" Then
+                                If show_number_supply.Text > req_qty And firstscan = "0" Then
                                     'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                     check_scan = 2
                                     check_text_box_qr_code()
                                     text_tmp.Text = supp_tag_qty
                                     remain_qty1 = supp_tag_qty - req_qty
                                     Module1.tag_remain_qty = supp_tag_qty - req_qty
-                                    'Button2.Visible = True
-                                    'MsgBox(remain_qty1)
-                                    Button3.Visible = True
-                                    Button2.Visible = False
+                                    'Button3.Visible = True
+                                    Button2.Visible = True
                                     Dim summa As Integer = supp_tag_qty - remain_qty1
                                     scan_qty_arrlist.Add(summa)
                                     scan_lot_arrlist.Add(order_number)
@@ -404,7 +414,7 @@ comeback:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสเท่ากับ Tag
-                                ElseIf req_qty = text_tmp.Text Then
+                                ElseIf req_qty = show_number_supply.Text Then
                                     'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                     check_text_box_qr_code()
                                     Button2.Visible = True
@@ -449,12 +459,26 @@ comeback:
                                             '  Bt.SysLib.Device.btBuzzer(1, stBuz)
                                             '  Bt.SysLib.Device.btVibrator(1, stVib)
                                             ' Bt.SysLib.Device.btLED(1, stLed)
+                                            text_tmp.Text = scan_qty_total
                                             Panel7.Visible = True
                                             alert_loop.Visible = True
                                             status_alert_image = "loop"
                                             text_box_success.Focus()
                                         End If
                                     Else
+                                        MsgBox("ready check")
+                                        check_po_lot = "pick_ok"
+                                        Dim qty_scan_wp = scan_qty.Text.Substring(51, 8)
+                                        totall_qty_scan += CDbl(Val(qty_scan_wp))
+                                        Dim Code_suppier As String = scan_qty.Text.Substring(37, 5)
+                                        Dim order_number_check As String = scan_qty.Text.Substring(2, 10)
+                                        Dim check_po As Boolean = check_scan_detail_PO(order_number_check, Code_suppier)
+                                        If check_po = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
+                                            bool_check_scan = "Plase_scna_detail"
+                                            GoTo go_pelase_detail_webpost
+                                        Else
+                                            inset_check_qr_part()
+                                        End If
                                         ListBox.Items.Add(order_number & supp_seq)
                                         scan_qty_total = supp_tag_qty + scan_qty_total
                                         Module1.SCAN_QTY_TOTAL = scan_qty_total
@@ -465,11 +489,12 @@ comeback:
                                         check_scan = 1
                                         Button2.Visible = True 'สำหรับเอา stock แค่ครึ่งเดียว'
 
-                                        If scan_qty_total > req_qty Then
+                                        If show_number_supply.Text > req_qty Then
+                                            MsgBox("")
                                             'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                             check_scan = 2
-                                            Button3.Visible = True
-                                            Button2.Visible = False
+                                            'Button3.Visible = True
+                                            Button2.Visible = True
                                             remain_qty1 = scan_qty_total - req_qty
                                             Dim summa As Integer = supp_tag_qty - remain_qty1
                                             scan_qty_arrlist.Add(summa)
@@ -484,7 +509,7 @@ comeback:
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
                                             GoTo exit_scan
-                                        ElseIf req_qty = text_tmp.Text Then
+                                        ElseIf req_qty = show_number_supply.Text Then
                                             'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                             Button2.Visible = True
                                             scan_qty_arrlist.Add(supp_tag_qty)
@@ -570,6 +595,7 @@ comeback:
                                 If bool_check_scan = "ever" Then
                                     text_tmp.Text = ""
                                     Re_scan_fa()
+                                    GoTo exit_keydown
                                 ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
                                     '  MsgBox("มี Tag Remain เหลืออยู่ กรุณา สแกน Tag Remain ก่อน", 16, "Alert")
                                     Panel7.Visible = True
@@ -578,6 +604,7 @@ comeback:
                                     text_box_success.Focus()
                                 ElseIf bool_check_scan = "Plase_scna_detail" Then
                                     ' MsgBox("กรุณา scan ตาม Detail", 16, "Alert")
+go_pelase_detail:
                                     Panel7.Visible = True
                                     alert_detail.Visible = True
                                     text_box_success.Visible = True
@@ -590,14 +617,14 @@ comeback:
                                 End If
                             Else
                                 'MsgBox "test123"
-                                If fa_qty > req_qty And firstscan = "0" Then
+                                If show_number_supply.Text > req_qty And firstscan = "0" Then
                                     ' MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                     text_tmp.Text = fa_qty
                                     remain_qty1 = fa_tag_qty - req_qty
                                     'Button2.Visible = True
                                     'MsgBox(remain_qty1)
-                                    Button4.Visible = True
-                                    Button2.Visible = False
+                                    'Button4.Visible = True
+                                    Button2.Visible = True
                                     Dim summa As Integer = fa_tag_qty - remain_qty1
                                     check_scan = 2
                                     scan_qty_arrlist.Add(summa)
@@ -608,8 +635,6 @@ comeback:
                                     firstscan = "1"
                                     check_text_box_qr_code()
                                     scan_qty.Visible = False
-
-
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
                                     Panel7.Visible = True
@@ -618,7 +643,7 @@ comeback:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสเท่ากับ Tag
-                                ElseIf req_qty = text_tmp.Text Then
+                                ElseIf req_qty = show_number_supply.Text Then
                                     '  MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                     Button2.Visible = True
                                     check_scan = 2
@@ -651,7 +676,16 @@ comeback:
                                     If Module1.check_count = 1 Or Module1.check_count2 = 1 Then 'มี part แล้ว'
                                         Re_scan_fa()
                                     Else
-
+                                        check_po_lot = "pick_ok"
+                                        Dim QTY_FW = scan_qty.Text.Substring(52, 6)
+                                        totall_qty_scan += CDbl(Val(QTY_FW))
+                                        Dim check_po As Boolean = check_scan_detail_PO("NO_DATA", "NO_DATA")
+                                        If check_po = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
+                                            bool_check_scan = "Plase_scna_detail"
+                                            GoTo go_pelase_detail
+                                        Else
+                                            inset_check_qr_part()
+                                        End If
                                         'เคสยิงสะสม
                                         '  MsgBox("fa_qty = " & fa_qty)
                                         ' MsgBox("scan_qty_total = " & scan_qty_total)
@@ -661,11 +695,11 @@ comeback:
                                         text_tmp.Text = scan_qty_total
                                         '  MsgBox("ยอดที่คุณสแกน : " & fa_qty, 16, "Alert")
                                         check_scan = 1
-                                        If scan_qty_total > req_qty Then
+                                        If show_number_supply.Text > req_qty Then
                                             'MsgBox(fa_qty)
                                             'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
-                                            Button4.Visible = True
-                                            Button2.Visible = False
+                                            ' Button4.Visible = True
+                                            Button2.Visible = True
                                             remain_qty1 = scan_qty_total - req_qty
                                             Dim summa As Integer = fa_qty - remain_qty1
                                             check_scan = 2
@@ -689,7 +723,7 @@ comeback:
                                             text_box_success.Focus()
                                             GoTo exit_scan
                                             'MsgBox(remain_qty1)
-                                        ElseIf req_qty = text_tmp.Text Then
+                                        ElseIf req_qty = show_number_supply.Text Then
                                             ' MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                             Button2.Visible = True
                                             check_scan = 2
@@ -770,7 +804,7 @@ exit_scan:
             Case System.Windows.Forms.Keys.F1
                 Panel4.Visible = True
                 user_id.Focus()
-
+exit_keydown:
         End Select
 
 
@@ -854,7 +888,7 @@ LOOP_INSERT:
             If check_com_flg = "0" Then
                 Module1.check_count = 0
                 If RE_check_qr() = 0 Then 'ถ้า 0 คือ insert ได้ 1 insert ไม่ได้'
-                    inset_check_qr_part()
+                    'inset_check_qr_part()
                     bool_check_scan = "no_ever"
                     Module1.check_count = 0
                     ' Return False
@@ -870,7 +904,7 @@ LOOP_INSERT:
                 If check_qr_part_in_table() = True Then 'True หมายถึง ไม่มีข้อมูล ใน ตาราง check qr  '
                     bool_check_scan = "no_ever"
                     Module1.check_count = 0
-                    inset_check_qr_part()
+                    ' inset_check_qr_part()
                     Return False
                 Else
                     bool_check_scan = "ever"
@@ -998,7 +1032,6 @@ LOOP_INSERT:
 
         '        supp_seq = scan_qty.Text.Substring(59, 3)
         Dim qr_detail_remain As String = "GD" & order_number & itemStrqr & supplier_cd & remainStr & remainqtyStr & supp_seq
-
         Dim date_qr_supply = now_date_detail.Split("-")
         Dim date_sup = date_qr_supply(0) & date_qr_supply(1) & date_qr_supply(2)
 
@@ -1037,7 +1070,8 @@ LOOP_INSERT:
                 F_updated_seq.Add(reader.Item(11))
                 F_com_flg.Add(reader.Item(13))
                 F_tag_remain_qty.Add(reader.Item(14))
-
+                F_Create_Date.Add(reader.Item(15))
+                F_Create_By.Add(reader.Item(16))
                 count += 1
                 count_arr_fw = count_arr_fw + 1
             Loop
@@ -1057,17 +1091,14 @@ LOOP_INSERT:
                 Dim updated_date As String = F_updated_date(num)
                 Dim updated_by As String = F_updated_by(num)
                 Dim updated_seq As String = F_updated_seq(num)
-
                 Dim com_flg_table As String = F_com_flg(num)
                 Dim tag_remain_qty As String = F_tag_remain_qty(num)
-
+                Dim Create_date As String = F_Create_Date(num)
+                Dim Create_By As String = F_Create_By(num)
                 num += 1
 
-                If com_flg_table = "0" Then
-                    Dim seq_fa = updated_seq.Substring(0, 3)
-                    Module1.M_SEQ_PRINT = seq_fa
-                End If
-                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty)
+                'MsgBox("data retuen  = " & item_cd)
+                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty, Create_date, Create_By)
             Next
             delete_data_check_qr_part()
         Catch ex As Exception
@@ -1086,7 +1117,10 @@ LOOP_INSERT:
         Next
         'MsgBox(remainqtyStr)
         qr_detail_remain = firstStrscan & remainqtyStr & secondStrscan
-
+        MsgBox("qr_detail_remain=====>" & qr_detail_remain)
+        MsgBox("firstStrscan = " & firstStrscan)
+        MsgBox("remainqtyStr = " & remainqtyStr)
+        MsgBox("secondStrscan = " & secondStrscan)
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
         stInfoSet.addr = "a066109719bd"
         Dim pin As StringBuilder = New StringBuilder("0000")
@@ -1100,7 +1134,7 @@ LOOP_INSERT:
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
             Bluetooth_Print_MB200i(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, wi_code, qty_detail, line_detail, user_detail, now_date_detail, now_time_detail, qrdetailSupply)
         End If
-
+remain_seq_FW:
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             'ButtonF2.Enabled = False
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
@@ -1108,6 +1142,7 @@ LOOP_INSERT:
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
+
             Bluetooth_Print_MB300i(stInfoSet, pin, pinlen1, part_no_detail, Module1.past_name, Model_detail, total_qty, loc_detail, user_detail, now_date_detail, now_time_detail, qr_detail_remain)
         End If
 
@@ -1138,7 +1173,7 @@ LOOP_INSERT:
 
         Try
             Dim x As ListViewItem
-            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 4, CAST(GETDATE() AS DATE)) ORDER BY wi ASC"
+            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE = '" & date_now_database & "' ORDER BY wi ASC"
             'MsgBox(strCommand1)
             Dim command1 As SqlCommand = New SqlCommand(strCommand1, myConn)
             reader = command1.ExecuteReader()
@@ -1158,13 +1193,6 @@ LOOP_INSERT:
         Finally
             'MsgBox("OK")
         End Try
-
-
-
-
-
-
-
 
         scan_qty_arrlist.Clear()
         scan_lot_arrlist.Clear()
@@ -1210,8 +1238,8 @@ LOOP_INSERT:
         Dim total_qty = text_tmp.Text - Module1.check_QTY
         'Button2.Enabled = False
         Button2.Visible = False
-
-
+        btn_detail_part.Visible = False
+        Button1.Visible = False
         Dim sel_where1 As String = Module1.wi
         Dim sel_where2 As String = Module1.past_numer
         Dim emp_cd As String = Module1.user_id
@@ -1292,6 +1320,8 @@ LOOP_INSERT:
                 F_updated_seq.Add(reader.Item(11))
                 F_com_flg.Add(reader.Item(13))
                 F_tag_remain_qty.Add(reader.Item(14))
+                F_Create_Date.Add(reader.Item(15))
+                F_Create_By.Add(reader.Item(16))
                 count += 1
                 count_arr_fw = count_arr_fw + 1
             Loop
@@ -1311,14 +1341,14 @@ LOOP_INSERT:
                 Dim updated_date As String = F_updated_date(num)
                 Dim updated_by As String = F_updated_by(num)
                 Dim updated_seq As String = F_updated_seq(num)
-
                 Dim com_flg_table As String = F_com_flg(num)
                 Dim tag_remain_qty As String = F_tag_remain_qty(num)
-
+                Dim Create_date As String = F_Create_Date(num)
+                Dim Create_By As String = F_Create_By(num)
                 num += 1
 
                 'MsgBox("data retuen  = " & item_cd)
-                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty)
+                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty, Create_date, Create_By)
             Next
             delete_data_check_qr_part()
         Catch ex As Exception
@@ -1330,9 +1360,6 @@ LOOP_INSERT:
 
         Dim time_qr_supply = now_time_detail.Split(":")
         Dim time_sup = time_qr_supply(0) + time_qr_supply(1) + time_qr_supply(2)
-
-
-        Dim qrdetailSupply As String = Module1.line & " " & wi_code & " " & itemStrqr & " " & Module1.check_QTY & " " & date_sup & " " & time_sup
 
 
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
@@ -1347,12 +1374,122 @@ LOOP_INSERT:
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
-
+            Dim c As Integer = 0
+            Dim text_temp_del_remain As Double = 0.0
+            text_temp_del_remain = CDbl(Val(text_tmp.Text))
+            For Each key In F_wi
+                If F_com_flg(c) = "0" Then
+                    text_temp_del_remain -= CDbl(Val(F_tag_remain_qty(c)))
+                End If
+                c += 1
+            Next
             If check_scan = 1 Then
-                qty_detail = text_tmp.Text
+                qty_detail = text_temp_del_remain 'text_tmp.Text
+            End If
+            If text_temp_del_remain < Module1.check_QTY Then
+                Module1.check_QTY = text_temp_del_remain
             End If
 
+            Dim qrdetailSupply As String = "SUP " & Module1.line & " " & wi_code & " " & itemStrqr & " " & Module1.check_QTY & " " & date_sup & " " & time_sup
+            Dim qr_detail_remain As String = "nodata"
             Bluetooth_Print_MB200i(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, wi_code, qty_detail, line_detail, user_detail, now_date_detail, now_time_detail, qrdetailSupply)
+            Dim num As Integer = 0
+            For Each key In F_wi
+                ''''''''''''''''''''''''''''''''''''
+                If F_com_flg(num) = "0" Then
+                    Dim arr_wi As String = key
+                    Dim arr_item_cd As String = F_item_cd(num)
+                    Dim arr_scan_qty As String = F_scan_qty(num)
+                    Dim arr_scan_lot As String = F_scan_lot(num)
+                    Dim arr_tag_typ As String = F_tag_typ(num)
+                    Dim arr_tag_readed As String = F_tag_readed(num)
+                    Dim arr_scan_emp As String = F_scan_emp(num)
+                    Dim arr_term_cd As String = F_term_cd(num)
+                    Dim arr_updated_date As String = F_updated_date(num)
+                    Dim arr_updated_by As String = F_updated_by(num)
+                    Dim arr_updated_seq As String = F_updated_seq(num)
+                    Dim arr_com_flg_table As String = F_com_flg(num)
+                    Dim arr_tag_remain_qty As String = F_tag_remain_qty(num)
+                    Dim select_data As String = "select top 1 * from sup_work_plan_supply_dev where ITEM_CD = '" & arr_item_cd & "' and WI ='" & arr_wi & "'"
+                    Dim command_get_detail As SqlCommand = New SqlCommand(select_data, myConn)
+                    reader = command_get_detail.ExecuteReader()
+                    Dim data_PART_NAME As String = "NO_DATA"
+                    Dim data_MODEL As String = "NO_DATA"
+                    Dim data_location As String = "NO_DATA"
+                    If reader.Read() Then
+                        data_PART_NAME = reader("ITEM_NAME").ToString
+                        data_MODEL = reader("MODEL").ToString
+                        data_location = reader("LOCATION_PART").ToString
+                        reader.Close()
+                    Else
+                        reader.Close()
+                    End If
+                    Try
+
+                        If Len(arr_tag_readed) = "103" Or Len(arr_tag_readed) = 103 Then
+                            Dim number_re_qty As Integer = Len(arr_tag_remain_qty)
+                            ' MsgBox("02")
+                            Dim charArray_re_qty() As Char = arr_tag_remain_qty.ToCharArray
+                            ' MsgBox("03")
+                            Dim regit As Integer = 7 - number_re_qty
+                            'MsgBox("04")
+                            Dim n As Integer = 0
+                            'MsgBox("05")
+                            Dim RESULT_QTY As String = ""
+                            'MsgBox("06")
+                            Dim keys As Integer = 0
+                            For i As Integer = 1 To 6 Step +1
+                                Dim data_rigit As String = ""
+                                If i = regit Then
+                                    data_rigit = charArray_re_qty(keys)
+                                    regit = regit + 1
+                                    keys = keys + 1
+                                Else
+                                    data_rigit = " "
+                                    n = n + 1
+                                End If
+                                RESULT_QTY &= data_rigit
+                            Next
+                            ' MsgBox("07")
+                            qr_detail_remain = arr_tag_readed.Substring(0, 52) & RESULT_QTY & arr_tag_readed.Substring(58)
+                        ElseIf Len(arr_tag_readed) = "62" Or Len(arr_tag_readed) = 62 Then
+                            Dim keys As Integer = 0
+                            Dim number_re_qty As Integer = Len(arr_tag_remain_qty)
+                            Dim regit As Integer = 9 - number_re_qty
+                            Dim charArray_re_qty() As Char = arr_tag_remain_qty.ToCharArray
+                            Dim RESULT_QTY As String = ""
+                            For i As Integer = 0 To 8 Step +1
+                                Dim data_rigit As String = ""
+                                If i = regit Then
+                                    data_rigit = charArray_re_qty(keys)
+                                    regit = regit + 1
+                                    keys = keys + 1
+                                Else
+                                    data_rigit = "0"
+                                End If
+                                RESULT_QTY &= data_rigit
+                            Next
+                            qr_detail_remain = arr_tag_readed.Substring(0, 50) & RESULT_QTY & arr_tag_readed.Substring(59, 3)
+                        End If
+
+
+                        MsgBox(qr_detail_remain)
+                        If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                            Module1.M_SEQ_PRINT = arr_updated_seq.Substring(0, 3) 'plan seq'
+                            Dim data_date_time = arr_updated_date.Split(" ")
+                            Dim data_date = data_date_time(0)
+                            Dim data_time = data_date_time(1)
+                            Dim data_date_format = date_detail.ToString(data_date)
+                            Dim data_time_format = date_detail.ToString(data_time)
+                            Bluetooth_Print_MB300i(stInfoSet, pin, pinlen1, arr_item_cd, data_PART_NAME, data_MODEL, arr_tag_remain_qty, data_location, arr_updated_by, data_date_format, data_time_format, qr_detail_remain)
+                        End If
+                    Catch ex As Exception
+                        MsgBox("ERROR Fail" & vbNewLine & ex.Message, 16, "Status ")
+                    End Try
+                End If
+                '''''''''''''''''''''''''''''''''''''''''''''''''''
+                num += 1
+            Next
         End If
         'MsgBox("------------------<>")
         Try
@@ -1373,22 +1510,14 @@ LOOP_INSERT:
                 ' Dim pick_scan As Integer = Integer.Parse(text_tmp.Text)
                 ' MsgBox("4")
                 If check_scan = 1 Then
-                    total_pig_qty = CDbl(Val(reader("PICK_QTY").ToString)) + CDbl(Val(text_tmp.Text))
-                    'MsgBox("total_pig_qty1= " & total_pig_qty)
+                    total_pig_qty = CDbl(Val(reader("PICK_QTY").ToString)) + CDbl(Val(Module1.check_QTY))
                 ElseIf check_scan = 2 Then
-                    If reader("qty").ToString = text_tmp.Text Then
-                        total_pig_qty = text_tmp.Text
-                        'MsgBox("total_pig_qty2= " & total_pig_qty)
+                    If reader("qty").ToString = Module1.check_QTY Then
+                        total_pig_qty = Module1.check_QTY
                     Else
-                        'MsgBox("ELSE = " & reader("PICK_QTY").ToString)
-                        total_pig_qty = CDbl(Val(reader("PICK_QTY").ToString)) + CDbl(Val(text_tmp.Text))
-                        ' MsgBox("total_pig_qty3= " & total_pig_qty)
+                        total_pig_qty = CDbl(Val(reader("PICK_QTY").ToString)) + CDbl(Val(Module1.check_QTY))
                     End If
-
-
                 End If
-
-                'MsgBox("5")
             Loop
             reader.Close()
             If check_scan = 1 Then
@@ -1410,7 +1539,7 @@ LOOP_INSERT:
 
         Try
             Dim x As ListViewItem
-            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 4, CAST(GETDATE() AS DATE)) ORDER BY wi ASC"
+            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE  = '" & date_now_database & "' ORDER BY wi ASC"
             'MsgBox("====>>>" & strCommand1)
             Dim command1 As SqlCommand = New SqlCommand(strCommand1, myConn)
             reader = command1.ExecuteReader()
@@ -1457,19 +1586,10 @@ LOOP_INSERT:
         Catch ex As Exception
 
         End Try
-
-
-
-
-
         scan_qty_arrlist.Clear()
         scan_lot_arrlist.Clear()
         scan_read_arrlist.Clear()
         scan_seq_arrlist.Clear()
-
-
-
-
         scan_location.text_box_location.Text = ""
         'scan_pick.temp_loc.Text = String.Empty
         scan_location.text_box_location.Focus()
@@ -1482,11 +1602,11 @@ LOOP_INSERT:
         comp_flg = "0"
         firstscan = "0"
 
-
         Button2.Visible = False
 
         set_default_data()
         'MsgBox("End the process")
+        Panel7.Visible = False
         check_process = "OK"
         set_image()
         PictureBox3.Visible = True
@@ -1511,6 +1631,7 @@ LOOP_INSERT:
         Dim total_qty = text_tmp.Text - Module1.check_QTY
         Button3.Visible = False
         Dim req_qty = PD5.QTY.Text.Substring(6)
+
         Dim sel_where1 As String = Select_Line.get_wi()
         Dim ps = Part_No.Text.Substring(16)
         Dim get_name = Select_Line.get_Part_Name()
@@ -1631,8 +1752,10 @@ LOOP_INSERT:
                 F_updated_seq.Add(reader.Item(11))
                 F_com_flg.Add(reader.Item(13))
                 F_tag_remain_qty.Add(reader.Item(14))
-
+                F_Create_Date.Add(reader.Item(15))
+                F_Create_By.Add(reader.Item(16))
                 count += 1
+                count_arr_fw = count_arr_fw + 1
             Loop
             reader.Close()
             Dim array_id() As Object = F_wi.ToArray()
@@ -1650,19 +1773,14 @@ LOOP_INSERT:
                 Dim updated_date As String = F_updated_date(num)
                 Dim updated_by As String = F_updated_by(num)
                 Dim updated_seq As String = F_updated_seq(num)
-
                 Dim com_flg_table As String = F_com_flg(num)
                 Dim tag_remain_qty As String = F_tag_remain_qty(num)
-
+                Dim Create_date As String = F_Create_Date(num)
+                Dim Create_By As String = F_Create_By(num)
                 num += 1
 
                 'MsgBox("data retuen  = " & item_cd)
-
-                If com_flg_table = "0" Then
-                    Module1.M_SEQ_PRINT = updated_seq
-                End If
-
-                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty)
+                sup_scan_pick_detail(count, wi, item_cd, scan_qty, scan_lot, tag_typ, tag_readed, scan_emp, term_cd, updated_date, updated_by, updated_seq, com_flg_table, tag_remain_qty, Create_date, Create_By)
             Next
             delete_data_check_qr_part()
         Catch ex As Exception
@@ -1697,6 +1815,7 @@ LOOP_INSERT:
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
             loc_detail = location.Text.Substring(10)
             Bluetooth_Print_MB300i(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, remain_qty_detail, loc_detail, user_detail, now_date_detail, now_time_detail, qr_detail_remain)
+
         End If
 
         Try
@@ -1726,7 +1845,7 @@ LOOP_INSERT:
             Dim line_id = Select_Line.given_code_line()
             line_id = lb_code_line.Text.Substring(10)
             Dim x As ListViewItem
-            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 4, CAST(GETDATE() AS DATE)) ORDER BY wi ASC"
+            Dim strCommand1 As String = "SELECT item_cd, wi, qty  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & Module1.line & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE = '" & date_now_database & "' ORDER BY wi ASC"
             Dim command1 As SqlCommand = New SqlCommand(strCommand1, myConn)
             reader = command1.ExecuteReader()
             Dim num As Integer
@@ -1763,47 +1882,24 @@ LOOP_INSERT:
             End If
 
             For i = 0 To numarrlist - 1
-
-
-                ' Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq ,tag_remain_qty,com_flg ) VALUES ('" & Module1.wi & "','" & past & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "','" & total_qty & "','" & com_flg & "')"
-                'มีการแก้ไขข้อมูล ยังไม่ได้ลอง'
-
-                'MsgBox(strCommand2)
-                ' Dim strCommand2 As String = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq) VALUES ('" & wi & "','" & past & "','" & scan_qty_arrlist(i) & "','" & scan_lot_arrlist(i) & "','1','" & scan_read_arrlist(i) & "','" & emp_cd & "','" & term_id & "','" & date_now & "','" & emp_cd & "','" & scan_seq_arrlist(i) & "')"
-                'MsgBox(strCommand2)
-                'Dim strCommand3 As String = "UPDATE sup_scan_pick_detail SET update_date = '" & date_now & "' , pick_flg = '1' , update_by = '" & emp_cd & "' , term_cd = '" & term_id & "' , pick_qty = '" & req_qty.Text & "'  WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
-                'MsgBox(strCommand)
-                ' Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
-                'reader = command2.ExecuteReader()
-                ' reader.Close()
-
             Next
         Catch ex As Exception
             MsgBox("Can not insert in to database detail <btn3>")
         End Try
-
-
-
-
         scan_qty_arrlist.Clear()
         scan_lot_arrlist.Clear()
         scan_read_arrlist.Clear()
         scan_seq_arrlist.Clear()
-
-
         scan_location.text_box_location.Text = ""
         text_tmp.Text = String.Empty
         ListBox.Items.Clear()
         scan_qty.Text = String.Empty
-
         remain_qty.Text = ""
         remain_qty_detail = 0
         remain_qty1 = 0
-
         scan_qty_total = 0
         comp_flg = "0"
         firstscan = "0"
-
         scan_location.text_box_location.Focus()
         Button3.Visible = False
 
@@ -1813,6 +1909,7 @@ LOOP_INSERT:
         'Select_Line.part = Me
         set_default_data()
         'MsgBox("End the process")
+        Panel7.Visible = False
         check_process = "OK"
         set_image()
         PictureBox3.Visible = True
@@ -4205,9 +4302,22 @@ L_END2:
                 ' MsgBox("condition t = " & t)
             End If
             'MsgBox("text_tmp = " & text_tmp.Text)
-
-            strCommand2 = "INSERT INTO check_qr_part (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,S_number , com_flg ,tag_remain_qty ) VALUES ('" & Module1.wi & "','" & Module1.past_numer & "','" & text_tmp.Text & "','" & order_number & "','1','" & scan_qr & "','" & Module1.user_id & "','" & S_number & "','" & date_now & "','" & Module1.user_id & "','" & tag_seq & "','" & S_number & "','" & com_flg & "','" & t & "')"
-            ' MsgBox(strCommand2)
+            MsgBox("QTY_INSERT_LOT_PO = " & QTY_INSERT_LOT_PO)
+            If QTY_INSERT_LOT_PO > 0 Then
+                com_flg = 0
+                t = QTY_INSERT_LOT_PO
+                QTY_INSERT_LOT_PO = 0 'set = 0'
+            ElseIf QTY_INSERT_LOT_PO <= 0 Then
+                com_flg = 1
+                t = 0
+                QTY_INSERT_LOT_PO = 0 'set = 0'
+            End If
+            Module1.show_data_remain += t 'show RM'
+            Module1.show_data_supply += text_tmp.Text
+            set_show_remain() 'show RM'
+            set_show_supply()
+            strCommand2 = "INSERT INTO check_qr_part (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,S_number , com_flg ,tag_remain_qty  , CREATE_DATE , CREATE_BY) VALUES ('" & Module1.wi & "','" & Module1.past_numer & "','" & text_tmp.Text & "','" & order_number & "','1','" & scan_qr & "','" & Module1.user_id & "','" & S_number & "','" & date_now & "','" & Module1.user_id & "','" & tag_seq & "','" & S_number & "','" & com_flg & "','" & t & "' , '" & date_now & "' , '" & Module1.user_id & "')"
+            MsgBox(strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
@@ -4227,7 +4337,7 @@ L_END2:
             MsgBox(strCommand2)
         End Try
     End Sub
-    Public Function sup_scan_pick_detail(ByVal count As String, ByVal F_wi As String, ByVal F_item_cd As String, ByVal scan_qty As String, ByVal scan_lot As String, ByVal tag_typ As String, ByVal tag_readed As String, ByVal scan_emp As String, ByVal term_cd As String, ByVal updated_date As String, ByVal updated_by As String, ByVal updated_seq As String, ByVal com_flg_table As String, ByVal tag_remain_qty As String)
+    Public Function sup_scan_pick_detail(ByVal count As String, ByVal F_wi As String, ByVal F_item_cd As String, ByVal scan_qty As String, ByVal scan_lot As String, ByVal tag_typ As String, ByVal tag_readed As String, ByVal scan_emp As String, ByVal term_cd As String, ByVal updated_date As String, ByVal updated_by As String, ByVal updated_seq As String, ByVal com_flg_table As String, ByVal tag_remain_qty As String, ByVal create_date As String, ByVal create_by As String)
         ', ByVal F_item_cd As String, ByVal F_scan_qty As String, ByVal F_scan_lot As String, ByVal F_tag_typ As String, ByVal F_tag_readed As String, ByVal F_scan_emp As String, ByVal F_term_cd As String, ByVal F_updated_date As String, ByVal F_updated_by As String, ByVal F_updated_seq As String, ByVal com_flg As String, ByVal total_qty As String
         Dim Len_length As Integer = length
         Dim strCommand2 As String = "no data"
@@ -4239,7 +4349,7 @@ L_END2:
                 'MsgBox("check_remain = 1")
                 If REMAIN_ID <> "NO_DATA" Then
                     ' MsgBox("check update_qty_sup_scan_pick_detail(" & REMAIN_ID & tag_remain_qty & ")")
-                    update_qty_sup_scan_pick_detail(REMAIN_ID, tag_remain_qty)
+                    update_qty_sup_scan_pick_detail(REMAIN_ID, tag_remain_qty, scan_qty, updated_date, updated_by)
 
                     If Len_length = 62 Then
                         WEB_POST_Cut_stock_frith_in_out(PO, F_item_cd, scan_qty, tag_readed, updated_seq, com_flg_table, tag_remain_qty)
@@ -4248,13 +4358,14 @@ L_END2:
                         For Each key3 In Module1.arr_check_QTY_scan
                             brak_loop = brak_loop + 1
                         Next
+
                         FW_Cut_stock_frith_in_out(PO, F_item_cd, scan_qty, tag_readed, updated_seq, com_flg_table, tag_remain_qty, scan_lot)
                     End If
                 End If
             Else
                 'MsgBox("check_remain = 0")
                 ' Dim total_qty = text_tmp.Text - Module1.check_QTY
-                strCommand2 = "INSERT INTO sup_scan_pick_detail (wi , item_cd , scan_qty ,scan_lot , tag_typ , tag_readed , scan_emp, term_cd , updated_date , updated_by , tag_seq  , com_flg , tag_remain_qty) VALUES ('" & F_wi & "' ,'" & F_item_cd & "','" & scan_qty & "' ,'" & scan_lot & "','" & tag_typ & "','" & tag_readed & "','" & scan_emp & "','" & term_cd & "','" & updated_date & "','" & updated_by & "','" & updated_seq & "','" & com_flg_table & "','" & tag_remain_qty & "')"
+                strCommand2 = "INSERT INTO sup_scan_pick_detail (wi , item_cd , scan_qty ,scan_lot , tag_typ , tag_readed , scan_emp, term_cd , updated_date , updated_by , tag_seq  , com_flg , tag_remain_qty , CREATE_DATE , CREATE_BY) VALUES ('" & F_wi & "' ,'" & F_item_cd & "','" & scan_qty & "' ,'" & scan_lot & "','" & tag_typ & "','" & tag_readed & "','" & scan_emp & "','" & term_cd & "','" & updated_date & "','" & updated_by & "','" & updated_seq & "','" & com_flg_table & "','" & tag_remain_qty & "' , '" & create_date & "' , '" & create_by & "')"
                 ' strCommand2 = "INSERT INTO sup_scan_pick_detail (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,com_flg,tag_remain_qty) VALUES ('" & F_wi & "','" & F_item_cd & "','" & F_scan_qty & "','" & F_scan_lot & "','1','" & F_tag_typ & "','" & F_scan_emp & "','" & F_term_cd & "','" & F_updated_date & "','" & F_updated_by & "','" & F_updated_seq & "','" & com_flg & "','" & total_qty & "')"
                 ' MsgBox(strCommand2)
                 Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
@@ -4272,6 +4383,9 @@ L_END2:
                 End If
 
             End If
+            Dim used_qty As Double = 0.0
+            used_qty = CDbl(Val(scan_qty)) - CDbl(Val(tag_remain_qty))
+            insert_pick_log(REMAIN_ID, F_wi, used_qty, create_date, create_by, updated_date, updated_by, scan_lot, updated_seq, F_item_cd)
         Catch ex As Exception
             MsgBox("ERROR sup_scan_pick_detail Insert " & vbNewLine & ex.Message, 16, "ALERT")
             MsgBox("data sql  = " & strCommand2)
@@ -4301,7 +4415,7 @@ L_END2:
 
     End Sub
     Public Sub Re_scan_fa()
-        ' MsgBox("Scan ซ้ำ!!!!! มีการสแกนแล้วเมื่อสักครู่ ครับผม ", 16, "Alert")
+        'MsgBox("Scan ซ้ำ!!!!! มีการสแกนแล้วเมื่อสักครู่ ครับผม ", 16, "Alert")
         'MsgBox("data = " & scan_qty_total)
         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
@@ -4321,12 +4435,16 @@ L_END2:
         ' Bt.SysLib.Device.btBuzzer(1, stBuz)
         ' Bt.SysLib.Device.btVibrator(1, stVib)
         ' Bt.SysLib.Device.btLED(1, stLed)
+        MsgBox("01")
         Panel7.Visible = True
+        MsgBox("02")
         alert_loop.Visible = True
+        MsgBox("03")
         status_alert_image = "loop_re_scan_fa"
+        MsgBox("04")
+        text_box_success.Visible = True
+        MsgBox("05")
         text_box_success.Focus()
-
-
     End Sub
     Public Sub Re_scan_default()
         Dim Len_length As Integer = Len(scan_qty.Text)
@@ -4364,7 +4482,7 @@ L_END2:
         scan_qty.Text = ""
         scan_qty.Focus()
     End Sub
-    Public Sub update_qty_sup_scan_pick_detail(ByVal id As String, ByVal qty_database As Integer)
+    Public Sub update_qty_sup_scan_pick_detail(ByVal id As String, ByVal qty_database As Integer, ByVal scan_qty_default As Double, ByVal up_date_date As String, ByVal up_date_by As String)
         Dim Len_length As Integer = Len(scan_qty.Text)
         'MsgBox("0")
         Dim S_number As String = main.scan_terminal_id
@@ -4391,18 +4509,32 @@ L_END2:
             End If
             'MsgBox("002")
             If Module1.M_check_remain = "have_data" Then
-                If qty_database = 0 Then
+                Dim remain As Double = 0
+                Dim strCommand As String = "SELECT *  FROM sup_scan_pick_detail   where id='" & id & "' and com_flg = '0'"
+                Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
+                reader = command.ExecuteReader()
+
+                If reader.Read Then
+                    remain = CDbl(Val(reader("tag_remain_qty").ToString())) - CDbl(Val(scan_qty_default))
+                End If
+
+                If remain <= 0 Then
                     com_flg = 1
-                    sum_qty = qty_database
+                    sum_qty = 0
                 Else
                     com_flg = 0
-                    sum_qty = qty_database
+                    sum_qty = remain
                 End If
             End If
             'MsgBox("003")
             reader.Close()
-            Dim str_update As String = "update sup_scan_pick_detail set com_flg  = '" & com_flg & "' ,tag_remain_qty = '" & sum_qty & "' where id = '" & id & "'"
-            'MsgBox(str_update)
+            MsgBox("----->")
+            Dim time As DateTime = DateTime.Now
+            Dim format As String = "yyyy-MM-dd HH:mm:ss"
+            Dim date_now = time.ToString(format)
+
+            Dim str_update As String = "update sup_scan_pick_detail set com_flg  = '" & com_flg & "' ,tag_remain_qty = '" & sum_qty & "'  , updated_date = '" & up_date_date & "' , updated_by = '" & up_date_by & "' where id = '" & id & "'"
+            MsgBox(str_update)
             'MsgBox("004")
             Dim command2 As SqlCommand = New SqlCommand(str_update, myConn)
             'MsgBox("005")
@@ -4484,6 +4616,8 @@ L_END2:
         scan_qty.Visible = False
     End Sub
     Public Sub set_default_data()
+        Module1.show_data_supply = 0.0
+        Module1.show_data_remain = 0.0
         Module1.total_qty = 0
         Module1.total_database = 0
         Module1.check_pick_detail = 0
@@ -4521,6 +4655,7 @@ L_END2:
     Private Sub btn_detail_part_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btn_detail_part.Click
         'Dim page_PO_NO As PO_NO = New PO_NO()
         'page_PO_NO.Show()
+
         get_data_tetail()
     End Sub
 
@@ -4599,10 +4734,10 @@ L_END2:
         Dim check_com_flg As String = "NO_DATA"
         Dim id As String = "NO_DATA"
         'reader.Close()
-        Dim strCommand As String = "SELECT COUNT(id) as c, com_flg  as com_flg   FROM check_qr_part   where item_cd = ' " & Module1.past_numer & " ' and scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '1' group by com_flg"
+        Dim strCommand As String = "SELECT COUNT(id) as c, com_flg  as com_flg   FROM check_qr_part   where item_cd = '" & Module1.past_numer & "' and scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '1' group by com_flg"
         Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
         reader = command.ExecuteReader()
-        '  MsgBox("strCommand == >" & strCommand)
+        ' MsgBox("strCommand == >" & strCommand)
         'Dim LI As New ListViewItem 'new obj ''
         Do While reader.Read = True
             count = reader("c").ToString()
@@ -4652,6 +4787,8 @@ L_END2:
                 total_qty = 0
                 com_flg = 1
             End If
+
+
             Dim strCommand2 As String = "update sup_frith_in_out set qty  = '" & total_qty & "' ,com_flg = '" & com_flg & "' where id = '" & id & "'"
             'MsgBox("UPDATE = " & strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
@@ -4683,13 +4820,19 @@ re_check:
             Loop
             reader.Close()
             fa_use_total = scan_qty + Convert.ToInt32(fa_use)
-            If fa_use_total = qty_stock Then
+            If fa_use_total >= qty_stock Then
                 com_flg = 1
             ElseIf fa_use_total < qty_stock Then
                 com_flg = 0
             End If
+
+
+            If fa_use_total > qty_stock Then 'ถ้า scan มากกว่า stock ก็เก็บเท่าที่มี stock'
+                fa_use_total = qty_stock
+            End If
+
             Dim strCommand2 As String = "update sup_frith_in_out_fa set fa_use  = '" & fa_use_total & "' ,fa_com_flg = '" & com_flg & "' where fa_id = '" & id_cut_stock_FW & "'"
-            'MsgBox("UPDATE = " & strCommand2)
+            MsgBox("UPDATE = " & strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
@@ -4796,44 +4939,106 @@ re_check:
         Dim testLen As Integer = Len(scan_qty.Text)
         Dim num As Integer = 0
         Dim status As Boolean = False
-
+        Dim count As Integer = 0
         If testLen = 62 Then
             'MsgBox("FUNCTION check_scan_detail_PO")
             For Each key In Module1.arr_pick_detail_po
-                Dim code_suppier As String = Module1.arr_pick_detail_lot(num).ToString
+                count += 1
+            Next
+            If c_num <= (count - 1) Then
+                Dim code_suppier As String = Module1.arr_pick_detail_lot(c_num).ToString
                 code_suppier = code_suppier.Substring(0, 5)
-                Dim po As String = Module1.arr_pick_detail_po(num).ToString
-                Dim QTY As String = Module1.arr_pick_detail_qty(num).ToString
-                'MsgBox(code_suppier & " = " & scan_code_suppier)
-                ' MsgBox(po & " = " & scan_po)
+                Dim po As String = Module1.arr_pick_detail_po(c_num).ToString
+                Dim QTY As String = Module1.arr_pick_detail_qty(c_num).ToString
+                MsgBox(code_suppier & " = " & scan_code_suppier)
+                MsgBox(po & " = " & scan_po)
                 If code_suppier = scan_code_suppier And po = scan_po Then
+                    MsgBox("==totall_qty_scan===" & totall_qty_scan)
+                    MsgBox("QTY fifo = " & QTY)
+                    If totall_qty_scan >= QTY Then
+                        If check_po_lot = "pick_ok" Then
+                            MsgBox("PICK_OK ===>")
+                            Dim qty_add As Double = 0.0
+                            Dim data_remain As Double = 0.0
+                            qty_add = CDbl(Val(QTY))
+                            MsgBox("QTY PO" & QTY)
+                            data_remain = totall_qty_scan - qty_add
+                            If data_remain >= 0 Then 'การเก็บ remain'
+                                MsgBox(data_remain)
+                                QTY_INSERT_LOT_PO = data_remain
+                                arr_remain_qty.Add(data_remain)
+                            End If
+                            c_num += 1
+                            totall_qty_scan = 0.0
+                            check_po_lot = ""
+                        End If
+                    ElseIf totall_qty_scan < QTY Then
+                    End If
                     status = True
                 End If
                 num = num + 1
-            Next
+            ElseIf c_num > (count - 1) Then
+                MsgBox("สแกน ตาม fifo แล้ว")
+            End If
             'MsgBox("check_scan_detail_PO = " & status)
 
-        ElseIf testLen = 103 Then
 
-            Dim lot_scan As String = scan_qty.Text.Substring(58, 4)
-            ' MsgBox("lot")
+
+        ElseIf testLen = 103 Then
             For Each key In Module1.arr_pick_detail_lot
-                Dim lot As String = Module1.arr_pick_detail_lot(num).ToString
+                count += 1
+            Next
+            If c_num <= (count - 1) Then
+                Dim lot_scan As String = scan_qty.Text.Substring(58, 4)
+                ' MsgBox("lot")
+                ' For Each key In Module1.arr_pick_detail_lot
+                Dim lot As String = Module1.arr_pick_detail_lot(c_num).ToString
                 'Dim po As String = Module1.arr_pick_detail_po(num).ToString
-                Dim QTY As String = Module1.arr_pick_detail_qty(num).ToString
+                Dim QTY As String = Module1.arr_pick_detail_qty(c_num).ToString
                 'MsgBox(code_suppier & " = " & scan_code_suppier)
                 ' MsgBox(po & " = " & scan_po)
+                QTY_INSERT_LOT_PO = 0
                 If lot_scan = lot Then
+                    MsgBox("==totall_qty_scan===" & totall_qty_scan)
+                    If totall_qty_scan >= QTY Then
+                        If check_po_lot = "pick_ok" Then
+                            MsgBox("PICK_OK ===>")
+                            Dim qty_add As Double = 0.0
+                            Dim data_remain As Double = 0.0
+                            qty_add = CDbl(Val(QTY))
+                            data_remain = totall_qty_scan - qty_add
+
+                            If data_remain >= 0 Then 'การเก็บ remain'
+                                MsgBox(data_remain)
+                                QTY_INSERT_LOT_PO = data_remain
+                                arr_remain_qty.Add(data_remain)
+
+                            End If
+                            c_num += 1
+                            totall_qty_scan = 0.0
+                            check_po_lot = ""
+                        End If
+                    ElseIf totall_qty_scan < QTY Then
+                    End If
                     status = True
                 End If
                 num = num + 1
-            Next
+
+            ElseIf c_num > (count - 1) Then
+                MsgBox("สแกน ตาม fifo แล้ว")
+            End If
+            'Next
         End If
         Return status
 
-
     End Function
-
+    Public Sub set_show_supply()
+        'show_supply.Text = Module1.show_data_remain
+        show_number_supply.Text = CDbl(Val(Module1.show_data_supply)) - CDbl(Val(Module1.show_data_remain))
+    End Sub
+    Public Sub set_show_remain()
+        show_number_remain.Text = Module1.show_data_remain
+    End Sub
     Private Sub PictureBox3_Click(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
 
     End Sub
@@ -5143,11 +5348,11 @@ re_check:
 
     End Sub
 
-    Private Sub alert_detail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles alert_detail.Click
+    Private Sub alert_detail_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
 
-    Private Sub alert_tag_remain_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles alert_tag_remain.Click
+    Private Sub alert_tag_remain_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
 
@@ -5165,11 +5370,11 @@ re_check:
 
     End Sub
 
-    Private Sub alert_pa_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles alert_pa.Click
+    Private Sub alert_pa_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
 
-    Private Sub alert_loop_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles alert_loop.Click
+    Private Sub alert_loop_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
 
@@ -5415,6 +5620,7 @@ re_check:
 
     End Sub
     Public Sub get_data_tetail()
+        scan_qty.Visible = False
         Panel6.Visible = True
         Dim x As ListViewItem = New ListViewItem()
         ListView2.Items.Clear()
@@ -5517,6 +5723,7 @@ Exit_count2:
     End Sub
 
     Private Sub Button6_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button6.Click
+        scan_qty.Visible = True
         Panel6.Visible = False
         scan_qty.Focus()
     End Sub
@@ -5710,7 +5917,6 @@ Exit_count2:
             bBufWork = System.Text.Encoding.GetEncoding(932).GetBytes("K9B" & "Part Name : " & part_name)
             bBufWork.CopyTo(bBuf, len)
             len = len + bBufWork.Length
-
 
 
             bESC.CopyTo(bBuf, len)
@@ -6196,11 +6402,7 @@ Exit_count2:
                 sw.Write(DateTime.Now.ToString("dd/MM/yyyy,HH:mm:ss,"))
                 sw.Write("TEST" & vbCrLf)
                 sw.Close()
-
-
-
             End If
-
             Return
 L_END1:
             ret = Bluetooth.btBluetoothSPPDisconnect()
@@ -6233,4 +6435,30 @@ L_END2:
     Private Sub Panel5_GotFocus(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel5.GotFocus
 
     End Sub
+    Public Sub insert_pick_log(ByVal REMAIN_ID As String, ByVal F_wi As String, ByVal used_qty As Double, ByVal create_date As String, ByVal create_by As String, ByVal updated_date As String, ByVal updated_by As String, ByVal scan_lot As String, ByVal updated_seq As String, ByVal F_item_cd As String)
+        Try
+            MsgBox("READY insert logs")
+            Dim strCommand123 As String = "SELECT   id as i   FROM sup_scan_pick_detail  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "'  and item_cd ='" & F_item_cd & "'"
+            Dim command123 As SqlCommand = New SqlCommand(strCommand123, myConn)
+            reader = command123.ExecuteReader() 'ติดบรรทัดนี้'
+            Dim id As Integer = 0
+            REMAIN_ID = 0
+            If reader.Read Then
+                REMAIN_ID = reader("i").ToString()
+            Else
+                MsgBox("QUERY sup_scan_pick_detail NO ID")
+            End If
+        reader.Close()
+
+            Dim str_insert_log = "INSERT INTO sup_pick_log (REF_ID , WI_NO , USED_QTY , CREATED_DATE , CREATED_BY , UPDATED_DATE , UPDATED_BY) VALUES ('" & REMAIN_ID & "','" & F_wi & "' , '" & used_qty & "','" & create_date & "','" & create_by & "' , '" & updated_date & "','" & updated_by & "')"
+        MsgBox(str_insert_log)
+        Dim command2 As SqlCommand = New SqlCommand(str_insert_log, myConn)
+        reader = command2.ExecuteReader()
+            reader.Close()
+        Catch ex As Exception
+            MsgBox("insert_pick_log_erro" & vbNewLine & ex.Message, "FAILL")
+        End Try
+    End Sub
+
+
 End Class

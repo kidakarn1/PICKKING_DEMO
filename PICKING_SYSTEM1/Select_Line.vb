@@ -27,12 +27,13 @@ Public Class Select_Line
         Try
 LOOP_MAIN_OPEN:
             myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source=192.168.10.13\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
             myConn.Open()
         Catch ex As Exception
             MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status line")
         Finally
             'MsgBox("====>>>")
+            Module1.M_QTY_LOT_ALL = 0
             combobox_line()
             ComboBox1.SelectedIndex = 0
             load_data()
@@ -116,7 +117,7 @@ LOOP_MAIN_OPEN:
                 reader.Close()
                 date_now_get = date_now_database
             End If
-
+            Module1.date_now_database = date_now_get
             Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY , sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE = '" & date_now_get & "' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC" 'แบบ list ออกมา ในวัน พน ในการpick แต่จะมีปัญหาคือ ถ้าถึงวันศุกร์ แล้วต้องจัดแผนวันจัน จะมองไม่เห็นข้อมูล จะมองเห็นแค่ วันเสาร์'
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY, sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN '2020-07-07' AND '2020-07-07' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
             'MsgBox("strCommand = " & strCommand)
@@ -305,7 +306,7 @@ LOOP_MAIN_OPEN:
 
     Public Function GET_DATA_WEB_POST(ByVal code_line As String, ByVal code_part As String, ByVal code_wi As String)
 
-        Dim strCommand As String = "SELECT sd.*,F_I_O.LT ,F_I_O.QTY_OF_LOT , F_I_O.PO  FROM ( SELECT ss_f.item_cd, ss_f.com_flg,ss_f.LOT_RECEIVE as LT , ss_f.qty as QTY_OF_LOT ,ss_f.PUCH_ODR_CD as PO  , SUBSTRING (LOT_RECEIVE, 6, 8) AS date_lot FROM sup_frith_in_out ss_f WHERE ss_f.com_flg <> 1 ) F_I_O INNER JOIN sup_work_plan_supply_dev sd ON F_I_O.item_cd = sd.ITEM_CD WHERE sd.line_cd = '" & code_line & "' AND sd.item_cd = '" & code_part & "' AND sd.wi = '" & code_wi & "' AND ( ps_unit_numerator <> '' AND sd.location_part <> '' ) AND sd.pick_flg != 1 AND sd.WORK_ODR_DLV_DATE BETWEEN CAST ( GETDATE() AS DATE ) AND DATEADD( DAY, 4, CAST (GETDATE() AS DATE)) ORDER BY sd.wi, F_I_O.date_lot DESC" 'ใช้ที่บ้านแบบใหม่
+        Dim strCommand As String = "SELECT sd.*,F_I_O.LT ,F_I_O.QTY_OF_LOT , F_I_O.PO  FROM ( SELECT ss_f.item_cd, ss_f.com_flg,ss_f.LOT_RECEIVE as LT , ss_f.qty as QTY_OF_LOT ,ss_f.PUCH_ODR_CD as PO  , SUBSTRING (LOT_RECEIVE, 6, 8) AS date_lot FROM sup_frith_in_out ss_f WHERE ss_f.com_flg <> 1 ) F_I_O INNER JOIN sup_work_plan_supply_dev sd ON F_I_O.item_cd = sd.ITEM_CD WHERE sd.line_cd = '" & code_line & "' AND sd.item_cd = '" & code_part & "' AND sd.wi = '" & code_wi & "' AND ( ps_unit_numerator <> '' AND sd.location_part <> '' ) AND sd.pick_flg != 1 AND sd.WORK_ODR_DLV_DATE  = '" & Module1.date_now_database & "' ORDER BY sd.wi, F_I_O.date_lot DESC" 'ใช้ที่บ้านแบบใหม่
         'Dim strCommand As String = "SELECT sd.*,F_I_O.LT ,F_I_O.QTY_OF_LOT , F_I_O.PO  FROM ( SELECT ss_f.item_cd, ss_f.com_flg,ss_f.LOT_RECEIVE as LT , ss_f.qty as QTY_OF_LOT ,ss_f.PUCH_ODR_CD as PO  , SUBSTRING (LOT_RECEIVE, 6, 8) AS date_lot FROM sup_frith_in_out ss_f WHERE ss_f.com_flg <> 1 ) F_I_O INNER JOIN sup_work_plan_supply_dev sd ON F_I_O.item_cd = sd.ITEM_CD WHERE sd.line_cd = '" & code_line & "' AND sd.item_cd = '" & code_part & "' AND sd.wi = '" & code_wi & "' AND ( ps_unit_numerator <> '' AND sd.location_part <> '' ) AND sd.pick_flg != 1 AND sd.WORK_ODR_DLV_DATE  BETWEEN '2020-07-07' AND '2020-07-07' ORDER BY sd.wi, F_I_O.date_lot DESC"
         Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
         'MsgBox(strCommand)
@@ -344,7 +345,7 @@ LOOP_MAIN_OPEN:
     End Function
 
     Public Sub GET_DATA_FW(ByVal code_line As String, ByVal code_part As String, ByVal code_wi As String)
-        Dim strCommand As String = "SELECT item_cd, item_name , qty , location_part , wi ,MODEL , PICK_QTY  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & code_line & "' AND item_cd = '" & code_part & "'AND wi  = '" & code_wi & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN CAST(GETDATE() AS DATE) AND DATEADD(DAY, 4, CAST(GETDATE() AS DATE)) ORDER BY wi ASC"
+        Dim strCommand As String = "SELECT item_cd, item_name , qty , location_part , wi ,MODEL , PICK_QTY  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & code_line & "' AND item_cd = '" & code_part & "'AND wi  = '" & code_wi & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE  = '" & Module1.date_now_database & "' ORDER BY wi ASC"
         ' Dim strCommand As String = "SELECT item_cd, item_name , qty , location_part , wi ,MODEL , PICK_QTY  FROM sup_work_plan_supply_dev WHERE line_cd  = '" & code_line & "' AND item_cd = '" & code_part & "'AND wi  = '" & code_wi & "' AND (ps_unit_numerator <> '' AND location_part <> '') AND pick_flg != 1 AND WORK_ODR_DLV_DATE BETWEEN '2020-06-24' AND '2020-06-24' ORDER BY wi ASC"
 
         Dim Model As String = Nothing
@@ -519,7 +520,7 @@ NEXT_END_FW:
     End Sub
     Public Function get_data_qty_po_lot(ByVal code_line As String, ByVal code_part As String, ByVal code_wi As String)
         Module1.M_CHECK_TYPE = "WEB_POST"
-        Dim strCommand As String = "SELECT sd.*,F_I_O.LT ,F_I_O.QTY_OF_LOT , F_I_O.PO  FROM ( SELECT ss_f.item_cd, ss_f.com_flg,ss_f.LOT_RECEIVE as LT , ss_f.qty as QTY_OF_LOT ,ss_f.PUCH_ODR_CD as PO  , SUBSTRING (LOT_RECEIVE, 6, 8) AS date_lot FROM sup_frith_in_out ss_f WHERE ss_f.com_flg <> 1 ) F_I_O INNER JOIN sup_work_plan_supply_dev sd ON F_I_O.item_cd = sd.ITEM_CD WHERE sd.line_cd = '" & code_line & "' AND sd.item_cd = '" & code_part & "' AND sd.wi = '" & code_wi & "' AND ( ps_unit_numerator <> '' AND sd.location_part <> '' ) AND sd.pick_flg != 1 AND sd.WORK_ODR_DLV_DATE BETWEEN CAST ( GETDATE() AS DATE ) AND DATEADD( DAY, 4, CAST (GETDATE() AS DATE)) ORDER BY sd.wi, F_I_O.date_lot ASC" 'ใช้ที่บ้านแบบใหม่
+        Dim strCommand As String = "SELECT sd.*,F_I_O.LT ,F_I_O.QTY_OF_LOT , F_I_O.PO  FROM ( SELECT ss_f.item_cd, ss_f.com_flg,ss_f.LOT_RECEIVE as LT , ss_f.qty as QTY_OF_LOT ,ss_f.PUCH_ODR_CD as PO  , SUBSTRING (LOT_RECEIVE, 6, 8) AS date_lot FROM sup_frith_in_out ss_f WHERE ss_f.com_flg <> 1 ) F_I_O INNER JOIN sup_work_plan_supply_dev sd ON F_I_O.item_cd = sd.ITEM_CD WHERE sd.line_cd = '" & code_line & "' AND sd.item_cd = '" & code_part & "' AND sd.wi = '" & code_wi & "' AND ( ps_unit_numerator <> '' AND sd.location_part <> '' ) AND sd.pick_flg != 1 AND sd.WORK_ODR_DLV_DATE  = '" & Module1.date_now_database & "' ORDER BY sd.wi, F_I_O.date_lot ASC" 'ใช้ที่บ้านแบบใหม่
         Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
         reader = command.ExecuteReader()
         Dim number As Integer = 1
@@ -633,7 +634,7 @@ NEXT_END_WEB_POST:
                 reader.Close()
                 date_now_get = date_now_database
             End If
-
+            Module1.date_now_database = date_now_get
             Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY , sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE = '" & date_now_get & "' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC" 'แบบ list ออกมา ในวัน พน ในการpick แต่จะมีปัญหาคือ ถ้าถึงวันศุกร์ แล้วต้องจัดแผนวันจัน จะมองไม่เห็นข้อมูล จะมองเห็นแค่ วันเสาร์'
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.PICK_QTY, sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN '2020-07-07' AND '2020-07-07' AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
             'MsgBox("strCommand = " & strCommand)

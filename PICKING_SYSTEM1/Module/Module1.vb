@@ -5,6 +5,9 @@ Imports System.Data.SqlClient
 Imports System.Configuration
 Module Module1
     Public check_query As Integer = 0
+    Public date_now_database As String = "NOOO_DATE"
+    Public show_data_supply As Double = 0.0
+    Public show_data_remain As Double = 0.0
     Public user_id = "No data"
     Public hand_number = "No data"
     Public CODE_PD As String = "No data"
