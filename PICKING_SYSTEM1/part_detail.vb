@@ -154,6 +154,8 @@ Public Class part_detail
             alert_detail.Visible = False
             alert_pa.Visible = False
             alert_tag_remain.Visible = False
+            alert_pickdetail_number.Visible = False
+            alert_pickdetail_ok.Visible = False
             'show_pln.Visible = False
             ' show_pln.Visible = False
             text_box_success.Visible = False
@@ -339,10 +341,11 @@ comeback:
                 'MsgBox(testLen)
                 Dim req_qty As Double = 0.0
                 req_qty = CDbl(Val(PD5.QTY.Text.Substring(6)))
-
+                Dim number_remain As Double = 0.0
+                number_remain = CDbl(Val(show_number_remain.Text))
                 Dim ps = Part_No.Text.Substring(16)
                 Dim QTY_show As Integer = show_qty.Text.Substring(6)
-
+                'MsgBox("number_remain = " & number_remain)
                 If comp_flg = "0" Then
                     ' MsgBox(testLen)
                     If testLen = 62 Then
@@ -358,8 +361,6 @@ comeback:
                         Dim FirstCharacter As Integer = testString.IndexOf(SearchForThis)
 
                         item_cd_scan = scan_qty.Text.Substring(12, FirstCharacter - 12)
-
-
                         order_number = scan_qty.Text.Substring(2, 10)
                         If ps = item_cd_scan Then
                             'เคสเหลือจาก Tag 
@@ -390,9 +391,21 @@ go_pelase_detail_webpost:
                                     alert_reprint.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
+                                ElseIf bool_check_scan = "scan_ok_pickdetail" Then
+go_scan_ok_pickdetail:
+                                    Panel7.Visible = True
+                                    alert_pickdetail_ok.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
+                                ElseIf bool_check_scan = "pick_detail_number" Then
+go_pick_detail_number:
+                                    Panel7.Visible = True
+                                    alert_pickdetail_number.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
                                 End If
                             Else
-                                If show_number_supply.Text > req_qty And firstscan = "0" Then
+                                If show_number_supply.Text > req_qty And firstscan = "0" And number_remain > 0 Then
                                     'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                     check_scan = 2
                                     check_text_box_qr_code()
@@ -414,7 +427,7 @@ go_pelase_detail_webpost:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสเท่ากับ Tag
-                                ElseIf req_qty = show_number_supply.Text Then
+                                ElseIf req_qty = show_number_supply.Text And number_remain = 0 Then
                                     'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                     check_text_box_qr_code()
                                     Button2.Visible = True
@@ -431,6 +444,27 @@ go_pelase_detail_webpost:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสยิงสะสม
+                                ElseIf show_number_supply.Text = req_qty And number_remain > 0 Then
+                                    'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
+                                    check_scan = 2
+                                    check_text_box_qr_code()
+                                    text_tmp.Text = supp_tag_qty
+                                    remain_qty1 = supp_tag_qty - req_qty
+                                    Module1.tag_remain_qty = supp_tag_qty - req_qty
+                                    'Button3.Visible = True
+                                    Button2.Visible = True
+                                    Dim summa As Integer = supp_tag_qty - remain_qty1
+                                    scan_qty_arrlist.Add(summa)
+                                    scan_lot_arrlist.Add(order_number)
+                                    scan_read_arrlist.Add(scan_qty.Text)
+                                    scan_seq_arrlist.Add(order_number & supp_seq)
+                                    scan_qty.Visible = False
+                                    comp_flg = "1"
+                                    Panel7.Visible = True
+                                    alert_success_remain.Visible = True
+                                    status_alert_image = "success_remain"
+                                    text_box_success.Focus()
+                                    GoTo exit_scan
                                 Else
                                     sup_seq_scan_no = sup_seq_scan_no + 1
                                     sup_list.Add(supp_seq)
@@ -472,13 +506,21 @@ go_pelase_detail_webpost:
                                         totall_qty_scan += CDbl(Val(qty_scan_wp))
                                         Dim Code_suppier As String = scan_qty.Text.Substring(37, 5)
                                         Dim order_number_check As String = scan_qty.Text.Substring(2, 10)
-                                        Dim check_po As Boolean = check_scan_detail_PO(order_number_check, Code_suppier)
-                                        If check_po = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
+                                        Dim check_po As Integer = check_scan_detail_PO(order_number_check, Code_suppier)
+                                        If check_po = 0 Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
                                             bool_check_scan = "Plase_scna_detail"
                                             GoTo go_pelase_detail_webpost
-                                        Else
+                                        ElseIf check_po = 2 Then
+                                            bool_check_scan = "pick_detail_number"
+                                            GoTo go_pick_detail_number
+                                        ElseIf check_po = 3 Then
+                                            bool_check_scan = "scan_ok_pickdetail"
+                                            GoTo go_scan_ok_pickdetail
+                                        ElseIf check_po = 1 Then
                                             inset_check_qr_part()
                                         End If
+                                        number_remain = CDbl(Val(show_number_remain.Text)) 'เอาค่า remain แปลง'
+                                        MsgBox("number_remain = " & number_remain)
                                         ListBox.Items.Add(order_number & supp_seq)
                                         scan_qty_total = supp_tag_qty + scan_qty_total
                                         Module1.SCAN_QTY_TOTAL = scan_qty_total
@@ -489,8 +531,8 @@ go_pelase_detail_webpost:
                                         check_scan = 1
                                         Button2.Visible = True 'สำหรับเอา stock แค่ครึ่งเดียว'
 
-                                        If show_number_supply.Text > req_qty Then
-                                            MsgBox("")
+                                        If show_number_supply.Text > req_qty And number_remain > 0 Then
+                                            'MsgBox("")
                                             'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                             check_scan = 2
                                             'Button3.Visible = True
@@ -509,7 +551,7 @@ go_pelase_detail_webpost:
                                             status_alert_image = "success_remain"
                                             text_box_success.Focus()
                                             GoTo exit_scan
-                                        ElseIf req_qty = show_number_supply.Text Then
+                                        ElseIf req_qty = show_number_supply.Text And number_remain = 0 Then
                                             'MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                             Button2.Visible = True
                                             scan_qty_arrlist.Add(supp_tag_qty)
@@ -524,6 +566,26 @@ go_pelase_detail_webpost:
                                             status_alert_image = "success"
                                             text_box_success.Focus()
                                             GoTo exit_scan
+                                        ElseIf show_number_supply.Text = req_qty And number_remain > 0 Then
+                                            'MsgBox("")
+                                            'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
+                                            check_scan = 2
+                                            'Button3.Visible = True
+                                            Button2.Visible = True
+                                            remain_qty1 = scan_qty_total - req_qty
+                                            Dim summa As Integer = supp_tag_qty - remain_qty1
+                                            scan_qty_arrlist.Add(summa)
+                                            scan_lot_arrlist.Add(order_number)
+                                            scan_read_arrlist.Add(scan_qty.Text)
+                                            scan_seq_arrlist.Add(order_number & supp_seq)
+                                            comp_flg = "1"
+                                            scan_qty.Visible = False
+                                            check_text_box_qr_code()
+                                            Panel7.Visible = True
+                                            alert_success_remain.Visible = True
+                                            status_alert_image = "success_remain"
+                                            text_box_success.Focus()
+                                            GoTo exit_scan
                                         Else
                                             scan_qty_arrlist.Add(supp_tag_qty)
                                             scan_lot_arrlist.Add(order_number)
@@ -532,7 +594,6 @@ go_pelase_detail_webpost:
                                         End If
 
                                     End If
-
                                     scan_qty.Text = ""
                                     scan_qty.Focus()
 
@@ -614,10 +675,22 @@ go_pelase_detail:
                                     alert_reprint.Visible = True
                                     text_box_success.Visible = True
                                     text_box_success.Focus()
+                                ElseIf bool_check_scan = "scan_ok_pickdetail" Then
+go_scan_ok_pickdetail_fw:
+                                    Panel7.Visible = True
+                                    alert_pickdetail_ok.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
+                                ElseIf bool_check_scan = "pick_detail_number" Then
+go_pick_detail_number_fw:
+                                    Panel7.Visible = True
+                                    alert_pickdetail_number.Visible = True
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
                                 End If
                             Else
                                 'MsgBox "test123"
-                                If show_number_supply.Text > req_qty And firstscan = "0" Then
+                                If show_number_supply.Text > req_qty And firstscan = "0" And number_remain > 0 Then
                                     ' MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                     text_tmp.Text = fa_qty
                                     remain_qty1 = fa_tag_qty - req_qty
@@ -643,7 +716,7 @@ go_pelase_detail:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสเท่ากับ Tag
-                                ElseIf req_qty = show_number_supply.Text Then
+                                ElseIf req_qty = show_number_supply.Text And number_remain = 0 Then
                                     '  MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                     Button2.Visible = True
                                     check_scan = 2
@@ -663,9 +736,33 @@ go_pelase_detail:
                                     text_box_success.Focus()
                                     GoTo exit_scan
                                     'เคสยิงสะสม
+                                ElseIf show_number_supply.Text = req_qty And firstscan = "0" And number_remain > 0 Then
+                                    ' MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
+                                    text_tmp.Text = fa_qty
+                                    remain_qty1 = fa_tag_qty - req_qty
+                                    'Button2.Visible = True
+                                    'MsgBox(remain_qty1)
+                                    'Button4.Visible = True
+                                    Button2.Visible = True
+                                    Dim summa As Integer = fa_tag_qty - remain_qty1
+                                    check_scan = 2
+                                    scan_qty_arrlist.Add(summa)
+                                    scan_lot_arrlist.Add(fa_lot_no)
+                                    scan_read_arrlist.Add(scan_qty.Text)
+                                    scan_seq_arrlist.Add(fa_shift_seq & fa_lot_no & fa_tag_seq)
+                                    comp_flg = "1"
+                                    firstscan = "1"
+                                    check_text_box_qr_code()
+                                    scan_qty.Visible = False
+                                    text_box_success.Visible = True
+                                    text_box_success.Focus()
+                                    Panel7.Visible = True
+                                    alert_success_remain.Visible = True
+                                    status_alert_image = "success_remain"
+                                    text_box_success.Focus()
+                                    GoTo exit_scan
                                 Else
                                     'MsgBox("test")
-
                                     'fa_tag_seq = fa_tag_seq + 1
                                     fa_seq = fa_seq + 1
                                     sup_list.Add(fa_shift_seq & fa_lot_no & fa_tag_seq)
@@ -679,13 +776,20 @@ go_pelase_detail:
                                         check_po_lot = "pick_ok"
                                         Dim QTY_FW = scan_qty.Text.Substring(52, 6)
                                         totall_qty_scan += CDbl(Val(QTY_FW))
-                                        Dim check_po As Boolean = check_scan_detail_PO("NO_DATA", "NO_DATA")
-                                        If check_po = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
+                                        Dim check_po As Integer = check_scan_detail_PO("NO_DATA", "NO_DATA")
+                                        If check_po = 0 Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
                                             bool_check_scan = "Plase_scna_detail"
                                             GoTo go_pelase_detail
-                                        Else
+                                        ElseIf check_po = 2 Then
+                                            bool_check_scan = "pick_detail_number"
+                                            GoTo go_pick_detail_number_fw
+                                        ElseIf check_po = 3 Then
+                                            bool_check_scan = "scan_ok_pickdetail"
+                                            GoTo go_scan_ok_pickdetail_fw
+                                        ElseIf check_po = 1 Then
                                             inset_check_qr_part()
                                         End If
+                                        number_remain = CDbl(Val(show_number_remain.Text))
                                         'เคสยิงสะสม
                                         '  MsgBox("fa_qty = " & fa_qty)
                                         ' MsgBox("scan_qty_total = " & scan_qty_total)
@@ -695,7 +799,7 @@ go_pelase_detail:
                                         text_tmp.Text = scan_qty_total
                                         '  MsgBox("ยอดที่คุณสแกน : " & fa_qty, 16, "Alert")
                                         check_scan = 1
-                                        If show_number_supply.Text > req_qty Then
+                                        If show_number_supply.Text > req_qty And number_remain > 0 Then
                                             'MsgBox(fa_qty)
                                             'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                             ' Button4.Visible = True
@@ -723,7 +827,7 @@ go_pelase_detail:
                                             text_box_success.Focus()
                                             GoTo exit_scan
                                             'MsgBox(remain_qty1)
-                                        ElseIf req_qty = show_number_supply.Text Then
+                                        ElseIf req_qty = show_number_supply.Text And number_remain = 0 Then
                                             ' MsgBox("คุณสแกนครบแล้ว", 16, "Alert")
                                             Button2.Visible = True
                                             check_scan = 2
@@ -740,6 +844,29 @@ go_pelase_detail:
                                             Panel7.Visible = True
                                             alert_success.Visible = True
                                             status_alert_image = "success"
+                                            text_box_success.Focus()
+                                            GoTo exit_scan
+                                        ElseIf show_number_supply.Text = req_qty And number_remain > 0 Then
+                                            'MsgBox(fa_qty)
+                                            'MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
+                                            ' Button4.Visible = True
+                                            Button2.Visible = True
+                                            remain_qty1 = scan_qty_total - req_qty
+                                            Dim summa As Integer = fa_qty - remain_qty1
+                                            check_scan = 2
+                                            scan_qty_arrlist.Add(summa)
+                                            scan_lot_arrlist.Add(fa_lot_no)
+                                            scan_read_arrlist.Add(scan_qty.Text)
+                                            scan_seq_arrlist.Add(fa_shift_seq & fa_lot_no & fa_tag_seq)
+                                            comp_flg = "1"
+                                            firstscan = "1"
+                                            check_text_box_qr_code()
+                                            scan_qty.Visible = False
+                                            text_box_success.Visible = True
+                                            text_box_success.Focus()
+                                            Panel7.Visible = True
+                                            alert_success_remain.Visible = True
+                                            status_alert_image = "success_remain"
                                             text_box_success.Focus()
                                             GoTo exit_scan
                                         Else
@@ -881,8 +1008,15 @@ exit_keydown:
 
         If status = 0 Then 'ตวจสอบว่า remain ว่ามีมั้ย ใน item_cd'
 LOOP_INSERT:
-            If check_scan_detail_PO(order_number, Code_suppier) = False Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
+            Dim check_detail_po As Integer = check_scan_detail_PO(order_number, Code_suppier)
+            If check_detail_po = 0 Then 'check ว่า scan ถูกใน  pickdetail มั้ย'
                 bool_check_scan = "Plase_scna_detail"
+                Return True
+            ElseIf check_detail_po = 2 Then
+                bool_check_scan = "pick_detail_number"
+                Return True
+            ElseIf check_detail_po = 3 Then
+                bool_check_scan = "scan_ok_pickdetail"
                 Return True
             End If
             If check_com_flg = "0" Then
@@ -4938,7 +5072,8 @@ re_check:
     Public Function check_scan_detail_PO(ByVal scan_po As String, ByVal scan_code_suppier As String)
         Dim testLen As Integer = Len(scan_qty.Text)
         Dim num As Integer = 0
-        Dim status As Boolean = False
+        Dim check_c As Integer = 0
+        Dim status As Integer = 0
         Dim count As Integer = 0
         If testLen = 62 Then
             'MsgBox("FUNCTION check_scan_detail_PO")
@@ -4946,6 +5081,22 @@ re_check:
                 count += 1
             Next
             If c_num <= (count - 1) Then
+                ''''''''''''check ว่า ให้ยิงตามลำดับ''''''''''''''''''
+                For Each key In Module1.arr_pick_detail_po
+                    Dim check_code_suppier As String = Module1.arr_pick_detail_lot(check_c).ToString
+                    check_code_suppier = check_code_suppier.Substring(0, 5)
+                    Dim check_po As String = Module1.arr_pick_detail_po(check_c).ToString
+                    If check_code_suppier = scan_code_suppier And check_po = scan_po Then
+                        If check_c <> c_num Then 'g'
+                            MsgBox("!=")
+                            status = 2
+                        End If
+                    Else
+                        status = 0
+                    End If
+                    check_c = check_c + 1
+                Next
+                '''''''''''''''''''''''''''''''
                 Dim code_suppier As String = Module1.arr_pick_detail_lot(c_num).ToString
                 code_suppier = code_suppier.Substring(0, 5)
                 Dim po As String = Module1.arr_pick_detail_po(c_num).ToString
@@ -4974,22 +5125,37 @@ re_check:
                         End If
                     ElseIf totall_qty_scan < QTY Then
                     End If
-                    status = True
+                    status = 1 '1 = ถูก'
                 End If
                 num = num + 1
             ElseIf c_num > (count - 1) Then
-                MsgBox("สแกน ตาม fifo แล้ว")
+                status = 3 'scan ครบแล้ว'
+                '  MsgBox("สแกน ตาม fifo แล้ว")
             End If
-            'MsgBox("check_scan_detail_PO = " & status)
-
 
 
         ElseIf testLen = 103 Then
+
+
             For Each key In Module1.arr_pick_detail_lot
                 count += 1
             Next
             If c_num <= (count - 1) Then
+                ''''''''''''check ว่า ให้ยิงตามลำดับ''''''''''''''''''
                 Dim lot_scan As String = scan_qty.Text.Substring(58, 4)
+                For Each key In Module1.arr_pick_detail_lot
+                    Dim check_lot As String = Module1.arr_pick_detail_lot(num).ToString
+                    If lot_scan = check_lot Then
+                        If check_c <> c_num Then 'g'
+                            MsgBox("!=")
+                            status = 2
+                        End If
+                    Else
+                        status = 0
+                    End If
+                    check_c = check_c + 1
+                Next
+                '''''''END'''''''''''''''''''''
                 ' MsgBox("lot")
                 ' For Each key In Module1.arr_pick_detail_lot
                 Dim lot As String = Module1.arr_pick_detail_lot(c_num).ToString
@@ -5020,15 +5186,17 @@ re_check:
                         End If
                     ElseIf totall_qty_scan < QTY Then
                     End If
-                    status = True
+                    status = 1
                 End If
                 num = num + 1
 
             ElseIf c_num > (count - 1) Then
-                MsgBox("สแกน ตาม fifo แล้ว")
+                status = 3
+                '  MsgBox("สแกน ตาม fifo แล้ว")
             End If
             'Next
         End If
+        MsgBox("status = " & status)
         Return status
 
     End Function
@@ -5073,7 +5241,54 @@ re_check:
 
 
                 If leng_scan_qty = 62 Then
-                    If bool_check_scan = "HAVE_TAG_REMAIN" Then
+                    If bool_check_scan = "scan_ok_pickdetail" Then
+                        Panel7.Visible = False
+                        alert_pickdetail_ok.Visible = False
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Text=  ""
+                        scan_qty.Focus()
+                    ElseIf bool_check_scan = "pick_detail_number" Then
+                        Panel7.Visible = False
+                        alert_pickdetail_number.Visible = False
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Text = ""
+                        scan_qty.Focus()
+                    ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
                         Panel7.Visible = False
                         alert_tag_remain.Visible = False
                         text_tmp.Text = ""
@@ -5183,10 +5398,36 @@ re_check:
                     End If
 
                 ElseIf leng_scan_qty = 76 Then
-                    If status_alert_image = "alert_right_fa" Then
+                If status_alert_image = "alert_right_fa" Then
+                    Panel7.Visible = False
+                    alert_right_fa.Visible = False
+                    'MsgBox("Please scan FA tag on the top right")
+                    Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                    Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                    Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                    stBuz.dwOn = 200
+                    stBuz.dwOff = 100
+                    stBuz.dwCount = 2
+                    stBuz.bVolume = 3
+                    stBuz.bTone = 1
+                    stVib.dwOn = 200
+                    stVib.dwOff = 100
+                    stVib.dwCount = 2
+                    stLed.dwOn = 200
+                    stLed.dwOff = 100
+                    stLed.dwCount = 2
+                    stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                    Bt.SysLib.Device.btBuzzer(1, stBuz)
+                    Bt.SysLib.Device.btVibrator(1, stVib)
+                    Bt.SysLib.Device.btLED(1, stLed)
+                    scan_qty.Text = ""
+                    scan_qty.Focus()
+                End If
+
+                ElseIf leng_scan_qty = 103 Then
+                    If bool_check_scan = "scan_ok_pickdetail" Then
                         Panel7.Visible = False
-                        alert_right_fa.Visible = False
-                        'MsgBox("Please scan FA tag on the top right")
+                        alert_pickdetail_ok.Visible = False
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
                         Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
                         Dim stLed As New Bt.LibDef.BT_LED_PARAM()
@@ -5207,10 +5448,30 @@ re_check:
                         Bt.SysLib.Device.btLED(1, stLed)
                         scan_qty.Text = ""
                         scan_qty.Focus()
-                    End If
-
-                ElseIf leng_scan_qty = 103 Then
-                    If bool_check_scan = "HAVE_TAG_REMAIN" Then
+                    ElseIf bool_check_scan = "pick_detail_number" Then
+                        Panel7.Visible = False
+                        alert_pickdetail_number.Visible = False
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        scan_qty.Text = ""
+                        scan_qty.Focus()
+                    ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
                         Panel7.Visible = False
                         alert_tag_remain.Visible = False
                         Re_scan_default()
@@ -6459,6 +6720,5 @@ L_END2:
             MsgBox("insert_pick_log_erro" & vbNewLine & ex.Message, "FAILL")
         End Try
     End Sub
-
 
 End Class
