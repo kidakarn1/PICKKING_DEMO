@@ -42,6 +42,8 @@ Public Class img_user
         Try
             If Api.DownloadImage("http://192.168.82.23/member/photo/" & Module1.user_id & ".jpg") IsNot Nothing Then
                 PictureBox2.Image = Api.DownloadImage("http://192.168.82.23/member/photo/" & Module1.user_id & ".jpg")
+                Dim result As String = Api.update_data("http://192.168.161.102/exp_api3party/Api_cut_stock_web_post/get_data_service?ITEM_CD=%221234%22")
+                MsgBox("status = " & result)
             End If
 
         Catch ex As Exception

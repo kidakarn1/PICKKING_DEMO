@@ -1224,11 +1224,15 @@ L_END2:
     End Sub
 
     Private Sub PictureBox6_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox6.Click
+        main.ml = 0
+        main.Timer1.Enabled = False
         main.Show()
         Me.Hide()
     End Sub
 
     Private Sub PictureBox8_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox8.Click
+        main.ml = 0
+        main.Timer1.Enabled = False
         main.Show()
         Me.Hide()
     End Sub

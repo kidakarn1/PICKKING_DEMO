@@ -46,12 +46,11 @@ Public Class main
             'PictureBox9.Visible = False
             Label7.Visible = False
             Me.emp_cd.Focus()
-
+            ' get_image_user()
             Panel2.Visible = False
 
         End Try
     End Sub
-
     Private Sub Label1_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
     End Sub
 
@@ -216,9 +215,17 @@ Public Class main
     End Sub
 
     Private Sub PictureBox1_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox1.Click
-        Dim PD As Select_PD = New Select_PD()
-        PD.Show()
-        Me.Hide()
+        Timer1.Enabled = True
+        loader()
+        Application.DoEvents()
+        Try
+            Dim PD As Select_PD = New Select_PD()
+            PD.Show()
+            Me.Hide()
+        Catch ex As Exception
+            MsgBox("load faill")
+        End Try
+
     End Sub
 
     Private Sub PictureBox4_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox4.Click
@@ -303,7 +310,6 @@ Public Class main
     Private Sub PictureBox3_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox3.Click
         Timer1.Enabled = True
         loader()
-
         Application.DoEvents()
         Try
             Dim reprint As reprint = New reprint()

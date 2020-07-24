@@ -498,9 +498,10 @@ go_pick_detail_number:
                                             alert_loop.Visible = True
                                             status_alert_image = "loop"
                                             text_box_success.Focus()
+                                            GoTo exit_keydown
                                         End If
                                     Else
-                                        MsgBox("ready check")
+                                        'MsgBox("ready check")
                                         check_po_lot = "pick_ok"
                                         Dim qty_scan_wp = scan_qty.Text.Substring(51, 8)
                                         totall_qty_scan += CDbl(Val(qty_scan_wp))
@@ -520,7 +521,7 @@ go_pick_detail_number:
                                             inset_check_qr_part()
                                         End If
                                         number_remain = CDbl(Val(show_number_remain.Text)) 'เอาค่า remain แปลง'
-                                        MsgBox("number_remain = " & number_remain)
+                                        'MsgBox("number_remain = " & number_remain)
                                         ListBox.Items.Add(order_number & supp_seq)
                                         scan_qty_total = supp_tag_qty + scan_qty_total
                                         Module1.SCAN_QTY_TOTAL = scan_qty_total
@@ -772,6 +773,7 @@ go_pick_detail_number_fw:
 
                                     If Module1.check_count = 1 Or Module1.check_count2 = 1 Then 'มี part แล้ว'
                                         Re_scan_fa()
+                                        GoTo exit_keydown
                                     Else
                                         check_po_lot = "pick_ok"
                                         Dim QTY_FW = scan_qty.Text.Substring(52, 6)
@@ -930,6 +932,7 @@ exit_scan:
 
             Case System.Windows.Forms.Keys.F1
                 Panel4.Visible = True
+
                 user_id.Focus()
 exit_keydown:
         End Select
@@ -1004,7 +1007,7 @@ exit_keydown:
         '  If check_lot_scan_web_post() = True Then 'CHECK LOT ว่า ถูกต้องหรือไม่'
         Dim status As Integer = 0
 
-        status = check_remain_in_detail_test(order_number, tag_seq)
+        status = check_remain_in_detail_test(order_number, tag_seq, qty_scan)
 
         If status = 0 Then 'ตวจสอบว่า remain ว่ามีมั้ย ใน item_cd'
 LOOP_INSERT:
@@ -1049,10 +1052,10 @@ LOOP_INSERT:
                 bool_check_scan = "ever"
                 Return True
             End If
-        ElseIf check_remain_in_detail_test(order_number, tag_seq) = 2 Then 'ตวจสอบว่า remain ว่ามีมั้ย ใน item_cd'
+        ElseIf check_remain_in_detail_test(order_number, tag_seq, qty_scan) = 2 Then 'ตวจสอบว่า remain ว่ามีมั้ย ใน item_cd'
             bool_check_scan = "HAVE_TAG_REMAIN"
             Return True
-        ElseIf check_remain_in_detail_test(order_number, tag_seq) = 1 Then
+        ElseIf check_remain_in_detail_test(order_number, tag_seq, qty_scan) = 1 Then
             GoTo LOOP_INSERT
         End If
         Return True
@@ -1079,6 +1082,63 @@ LOOP_INSERT:
         Return status
     End Function
 
+    Public Function check_reprint_stock(ByVal l_size As String, ByVal old_qty As String, ByVal textbox As String, ByVal new_qty As String)
+
+        If l_size = "62" Then
+            Dim PO As String = textbox.Substring(2, 10)
+            Dim textbox_split = textbox.Split(" ")
+            Dim item_cd As String = textbox_split(0)
+            Dim data_item_cd As String = item_cd.Substring(12)
+            Dim sql As String = "select item_cd , qty , id ,PUCH_ODR_CD from sup_frith_in_out where item_cd ='" & data_item_cd & "' and  PUCH_ODR_CD ='" & PO & "'"
+            Dim qty_double As Double = 0.0
+            Dim new_qty_double As Double = 0.0
+            Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
+            reader = cmd.ExecuteReader()
+            If reader.Read() Then
+
+                Dim QTY_STOCK = reader("qty").ToString()
+                qty_double = CDbl(Val(reader("qty").ToString))
+                new_qty_double = CDbl(Val(new_qty))
+                reader.Close()
+                If qty_double >= new_qty_double Then
+                    Return "SUCCESS"
+                Else
+                    Return "FAILL"
+                End If
+            Else
+                reader.Close()
+                Return "NO_DATA"
+            End If
+
+        ElseIf l_size = "103" Then
+            Dim qty_double As Double = 0.0
+            Dim new_qty_double As Double = 0.0
+            Dim old2 As String = textbox.Substring(58)
+            Dim data = old2.Split(" ")
+            Dim lot_fa As String = data(0)
+            Dim full_text = textbox.Split(" ")
+            Dim data_item_cd As String = full_text(0)
+            Dim item_cd = data_item_cd.Substring(19)
+            Dim sql As String = "select fa_item_cd , fa_lot , fa_total from sup_frith_in_out_fa where fa_item_cd ='" & item_cd & "' and  fa_lot ='" & lot_fa & "'"
+            Dim cmd As SqlCommand = New SqlCommand(sql, myConn)
+            reader = cmd.ExecuteReader()
+            If reader.Read() Then
+                qty_double = CDbl(Val(reader("fa_total").ToString))
+                new_qty_double = CDbl(Val(new_qty))
+                Dim QTY_STOCK = reader("fa_total").ToString()
+                reader.Close()
+                If qty_double >= new_qty_double Then
+                    Return "SUCCESS"
+                Else
+                    Return "FAILL"
+                End If
+            Else
+                reader.Close()
+                Return "NO_DATA"
+            End If
+        End If
+        Return 0
+    End Function
     Private Sub Button4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button4.Click
         'scan แบบ FA'
         Dim total_qty = text_tmp.Text - Module1.check_QTY
@@ -1251,10 +1311,10 @@ LOOP_INSERT:
         Next
         'MsgBox(remainqtyStr)
         qr_detail_remain = firstStrscan & remainqtyStr & secondStrscan
-        MsgBox("qr_detail_remain=====>" & qr_detail_remain)
-        MsgBox("firstStrscan = " & firstStrscan)
-        MsgBox("remainqtyStr = " & remainqtyStr)
-        MsgBox("secondStrscan = " & secondStrscan)
+        'MsgBox("qr_detail_remain=====>" & qr_detail_remain)
+        'MsgBox("firstStrscan = " & firstStrscan)
+        'MsgBox("remainqtyStr = " & remainqtyStr)
+        'MsgBox("secondStrscan = " & secondStrscan)
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
         stInfoSet.addr = "a066109719bd"
         Dim pin As StringBuilder = New StringBuilder("0000")
@@ -1607,7 +1667,7 @@ remain_seq_FW:
                         End If
 
 
-                        MsgBox(qr_detail_remain)
+                        'MsgBox(qr_detail_remain)
                         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
                             Module1.M_SEQ_PRINT = arr_updated_seq.Substring(0, 3) 'plan seq'
                             Dim data_date_time = arr_updated_date.Split(" ")
@@ -4436,7 +4496,7 @@ L_END2:
                 ' MsgBox("condition t = " & t)
             End If
             'MsgBox("text_tmp = " & text_tmp.Text)
-            MsgBox("QTY_INSERT_LOT_PO = " & QTY_INSERT_LOT_PO)
+            'MsgBox("QTY_INSERT_LOT_PO = " & QTY_INSERT_LOT_PO)
             If QTY_INSERT_LOT_PO > 0 Then
                 com_flg = 0
                 t = QTY_INSERT_LOT_PO
@@ -4451,7 +4511,7 @@ L_END2:
             set_show_remain() 'show RM'
             set_show_supply()
             strCommand2 = "INSERT INTO check_qr_part (wi,item_cd,scan_qty,scan_lot,tag_typ,tag_readed,scan_emp,term_cd,updated_date,updated_by,tag_seq,S_number , com_flg ,tag_remain_qty  , CREATE_DATE , CREATE_BY) VALUES ('" & Module1.wi & "','" & Module1.past_numer & "','" & text_tmp.Text & "','" & order_number & "','1','" & scan_qr & "','" & Module1.user_id & "','" & S_number & "','" & date_now & "','" & Module1.user_id & "','" & tag_seq & "','" & S_number & "','" & com_flg & "','" & t & "' , '" & date_now & "' , '" & Module1.user_id & "')"
-            MsgBox(strCommand2)
+            'MsgBox(strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
@@ -4520,6 +4580,10 @@ L_END2:
             Dim used_qty As Double = 0.0
             used_qty = CDbl(Val(scan_qty)) - CDbl(Val(tag_remain_qty))
             insert_pick_log(REMAIN_ID, F_wi, used_qty, create_date, create_by, updated_date, updated_by, scan_lot, updated_seq, F_item_cd)
+
+            If Len_length = 62 Then 'ตัด เฉพาะ WEBPOST API'
+                cut_stock_FASYSTEM(F_item_cd, PO, updated_seq, used_qty)
+            End If
         Catch ex As Exception
             MsgBox("ERROR sup_scan_pick_detail Insert " & vbNewLine & ex.Message, 16, "ALERT")
             MsgBox("data sql  = " & strCommand2)
@@ -4569,15 +4633,15 @@ L_END2:
         ' Bt.SysLib.Device.btBuzzer(1, stBuz)
         ' Bt.SysLib.Device.btVibrator(1, stVib)
         ' Bt.SysLib.Device.btLED(1, stLed)
-        MsgBox("01")
+        ' MsgBox("01")
         Panel7.Visible = True
-        MsgBox("02")
+        ' MsgBox("02")
         alert_loop.Visible = True
-        MsgBox("03")
+        'MsgBox("03")
         status_alert_image = "loop_re_scan_fa"
-        MsgBox("04")
+        ' MsgBox("04")
         text_box_success.Visible = True
-        MsgBox("05")
+        'MsgBox("05")
         text_box_success.Focus()
     End Sub
     Public Sub Re_scan_default()
@@ -4662,7 +4726,6 @@ L_END2:
             End If
             'MsgBox("003")
             reader.Close()
-            MsgBox("----->")
             Dim time As DateTime = DateTime.Now
             Dim format As String = "yyyy-MM-dd HH:mm:ss"
             Dim date_now = time.ToString(format)
@@ -4750,6 +4813,7 @@ L_END2:
         scan_qty.Visible = False
     End Sub
     Public Sub set_default_data()
+        Module1.SCAN_QTY_TOTAL = 0.0
         Module1.show_data_supply = 0.0
         Module1.show_data_remain = 0.0
         Module1.total_qty = 0
@@ -4924,7 +4988,7 @@ L_END2:
 
 
             Dim strCommand2 As String = "update sup_frith_in_out set qty  = '" & total_qty & "' ,com_flg = '" & com_flg & "' where id = '" & id & "'"
-            'MsgBox("UPDATE = " & strCommand2)
+            'MsgBox("UPDATE WEBPOST = " & strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
@@ -4961,12 +5025,17 @@ re_check:
             End If
 
 
-            If fa_use_total > qty_stock Then 'ถ้า scan มากกว่า stock ก็เก็บเท่าที่มี stock'
+            If fa_use_total < qty_stock Then
+                Dim used_qty As Double = 0.0
+                used_qty = CDbl(Val(fa_use_total)) - CDbl(Val(tag_remain_qty))
+                fa_use_total = used_qty
+                MsgBox(" used_qty = " & used_qty)
+            ElseIf fa_use_total >= qty_stock Then 'ถ้า scan มากกว่า stock ก็เก็บเท่าที่มี stock'
                 fa_use_total = qty_stock
             End If
 
             Dim strCommand2 As String = "update sup_frith_in_out_fa set fa_use  = '" & fa_use_total & "' ,fa_com_flg = '" & com_flg & "' where fa_id = '" & id_cut_stock_FW & "'"
-            MsgBox("UPDATE = " & strCommand2)
+            'MsgBox("UPDATE = " & strCommand2)
             Dim command2 As SqlCommand = New SqlCommand(strCommand2, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
@@ -4977,7 +5046,7 @@ re_check:
         Return True
     End Function
 
-    Public Function check_remain_in_detail_test(ByVal order_number As String, ByVal tag_seq As String)
+    Public Function check_remain_in_detail_test(ByVal order_number As String, ByVal tag_seq As String, ByVal scan_qty As String)
         Try
             Dim count_data As String = Nothing
             Dim strCommand123 As String = "SELECT COUNT(id) as c,  id as i   FROM sup_scan_pick_detail  where com_flg = '0' and item_cd ='" & Module1.past_numer & "'  GROUP BY id"
@@ -4999,7 +5068,7 @@ re_check:
             If status = 1 Then
                 Dim count_remain As String = Nothing
                 Dim check_qe_status As Integer = Remain_check_qr_part(order_number, tag_seq)
-                Dim strCommand1234 As String = "SELECT COUNT(id) as c   , scan_lot , tag_seq  FROM sup_scan_pick_detail  where scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '0' GROUP BY scan_lot,tag_seq"
+                Dim strCommand1234 As String = "SELECT COUNT(id) as c   , scan_lot , tag_seq  FROM sup_scan_pick_detail  where scan_lot = '" & order_number & "' and tag_seq = '" & tag_seq & "' and com_flg = '0' and scan_qty <> '" & scan_qty & "' GROUP BY scan_lot,tag_seq"
                 Dim command1234 As SqlCommand = New SqlCommand(strCommand1234, myConn)
                 reader = command1234.ExecuteReader()
                 If check_qe_status = 4 Then
@@ -5009,7 +5078,7 @@ re_check:
                     Do While reader.Read
                         count_remain = reader("c").ToString()
                         If count_remain <> Nothing Or count_remain = "0" Then
-                            MsgBox("count = " & reader("c").ToString())
+                            'MsgBox("count = " & reader("c").ToString())
                         Else
                             status = 1 'scan เจอ'
                         End If
@@ -5017,10 +5086,10 @@ re_check:
                     reader.Close()
                 Else
                     reader.Close()
-                    If query_join_check() = 1 Then
+                    If query_join_check(scan_qty) = 1 Then
                         status = 1
                     End If
-                    If query_join_check() = 0 Then
+                    If query_join_check(scan_qty) = 0 Then
                         status = 2
                     End If
                 End If
@@ -5031,16 +5100,16 @@ re_check:
         End Try
         Return 0
     End Function
-    Public Function query_join_check()
-        Dim str_join As String = "SELECT COUNT (sp.id) AS c FROM sup_scan_pick_detail sp, check_qr_part cp WHERE sp.item_cd = cp.item_cd AND sp.scan_lot = cp.scan_lot AND sp.tag_seq = cp.tag_seq"
+    Public Function query_join_check(ByVal scan_qty As String)
+        Dim str_join As String = "SELECT COUNT (sp.id) AS c, cp.scan_qty AS tmp_qty, sp.scan_qty AS master_qty FROM sup_scan_pick_detail sp, check_qr_part cp WHERE sp.item_cd = cp.item_cd AND sp.scan_lot = cp.scan_lot AND sp.tag_seq = cp.tag_seq AND ( cp.scan_qty <> '" & scan_qty & "' OR sp.scan_qty <> '" & scan_qty & "' ) GROUP BY cp.scan_qty, sp.scan_qty "
         Dim command_join As SqlCommand = New SqlCommand(str_join, myConn)
         reader = command_join.ExecuteReader()
         Dim status = 0
         Do While reader.Read
-            If reader("c").ToString() = "0" Then
-                status = 0
-            Else
+            If reader("c").ToString() = "1" Then
                 status = 1
+            Else
+                status = 0
             End If
         Loop
         reader.Close()
@@ -5088,8 +5157,9 @@ re_check:
                     Dim check_po As String = Module1.arr_pick_detail_po(check_c).ToString
                     If check_code_suppier = scan_code_suppier And check_po = scan_po Then
                         If check_c <> c_num Then 'g'
-                            MsgBox("!=")
+                            'MsgBox("!=")
                             status = 2
+                            Return status
                         End If
                     Else
                         status = 0
@@ -5101,21 +5171,21 @@ re_check:
                 code_suppier = code_suppier.Substring(0, 5)
                 Dim po As String = Module1.arr_pick_detail_po(c_num).ToString
                 Dim QTY As String = Module1.arr_pick_detail_qty(c_num).ToString
-                MsgBox(code_suppier & " = " & scan_code_suppier)
-                MsgBox(po & " = " & scan_po)
+                ' MsgBox(code_suppier & " = " & scan_code_suppier)
+                ' MsgBox(po & " = " & scan_po)
                 If code_suppier = scan_code_suppier And po = scan_po Then
-                    MsgBox("==totall_qty_scan===" & totall_qty_scan)
-                    MsgBox("QTY fifo = " & QTY)
+                    ' MsgBox("==totall_qty_scan===" & totall_qty_scan)
+                    'MsgBox("QTY fifo = " & QTY)
                     If totall_qty_scan >= QTY Then
                         If check_po_lot = "pick_ok" Then
-                            MsgBox("PICK_OK ===>")
+                            ' MsgBox("PICK_OK ===>")
                             Dim qty_add As Double = 0.0
                             Dim data_remain As Double = 0.0
                             qty_add = CDbl(Val(QTY))
-                            MsgBox("QTY PO" & QTY)
+                            ' MsgBox("QTY PO" & QTY)
                             data_remain = totall_qty_scan - qty_add
                             If data_remain >= 0 Then 'การเก็บ remain'
-                                MsgBox(data_remain)
+                                'MsgBox(data_remain)
                                 QTY_INSERT_LOT_PO = data_remain
                                 arr_remain_qty.Add(data_remain)
                             End If
@@ -5144,11 +5214,12 @@ re_check:
                 ''''''''''''check ว่า ให้ยิงตามลำดับ''''''''''''''''''
                 Dim lot_scan As String = scan_qty.Text.Substring(58, 4)
                 For Each key In Module1.arr_pick_detail_lot
-                    Dim check_lot As String = Module1.arr_pick_detail_lot(num).ToString
+                    Dim check_lot As String = Module1.arr_pick_detail_lot(check_c).ToString
                     If lot_scan = check_lot Then
                         If check_c <> c_num Then 'g'
-                            MsgBox("!=")
+                            'MsgBox("!=")
                             status = 2
+                            Return status
                         End If
                     Else
                         status = 0
@@ -5165,17 +5236,17 @@ re_check:
                 ' MsgBox(po & " = " & scan_po)
                 QTY_INSERT_LOT_PO = 0
                 If lot_scan = lot Then
-                    MsgBox("==totall_qty_scan===" & totall_qty_scan)
+                    ' MsgBox("==totall_qty_scan===" & totall_qty_scan)
                     If totall_qty_scan >= QTY Then
                         If check_po_lot = "pick_ok" Then
-                            MsgBox("PICK_OK ===>")
+                            ' MsgBox("PICK_OK ===>")
                             Dim qty_add As Double = 0.0
                             Dim data_remain As Double = 0.0
                             qty_add = CDbl(Val(QTY))
                             data_remain = totall_qty_scan - qty_add
 
                             If data_remain >= 0 Then 'การเก็บ remain'
-                                MsgBox(data_remain)
+                                'MsgBox(data_remain)
                                 QTY_INSERT_LOT_PO = data_remain
                                 arr_remain_qty.Add(data_remain)
 
@@ -5196,7 +5267,7 @@ re_check:
             End If
             'Next
         End If
-        MsgBox("status = " & status)
+        'MsgBox("status = " & status)
         Return status
 
     End Function
@@ -5259,11 +5330,13 @@ re_check:
                         stLed.dwOff = 100
                         stLed.dwCount = 2
                         stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
-
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
-                        scan_qty.Text=  ""
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "pick_detail_number" Then
                         Panel7.Visible = False
@@ -5286,6 +5359,9 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
@@ -5314,6 +5390,10 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "Plase_scna_detail" Then
                         Panel7.Visible = False
@@ -5340,6 +5420,9 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "success" Then
@@ -5370,6 +5453,10 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "loop_re_scan" Then
                         Panel7.Visible = False
@@ -5392,37 +5479,46 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
-                        text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     End If
 
                 ElseIf leng_scan_qty = 76 Then
-                If status_alert_image = "alert_right_fa" Then
-                    Panel7.Visible = False
-                    alert_right_fa.Visible = False
-                    'MsgBox("Please scan FA tag on the top right")
-                    Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
-                    Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
-                    Dim stLed As New Bt.LibDef.BT_LED_PARAM()
-                    stBuz.dwOn = 200
-                    stBuz.dwOff = 100
-                    stBuz.dwCount = 2
-                    stBuz.bVolume = 3
-                    stBuz.bTone = 1
-                    stVib.dwOn = 200
-                    stVib.dwOff = 100
-                    stVib.dwCount = 2
-                    stLed.dwOn = 200
-                    stLed.dwOff = 100
-                    stLed.dwCount = 2
-                    stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
-                    Bt.SysLib.Device.btBuzzer(1, stBuz)
-                    Bt.SysLib.Device.btVibrator(1, stVib)
-                    Bt.SysLib.Device.btLED(1, stLed)
-                    scan_qty.Text = ""
-                    scan_qty.Focus()
-                End If
+                    If status_alert_image = "alert_right_fa" Then
+                        Panel7.Visible = False
+                        alert_right_fa.Visible = False
+                        'MsgBox("Please scan FA tag on the top right")
+                        Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
+                        Dim stVib As New Bt.LibDef.BT_VIBRATOR_PARAM()
+                        Dim stLed As New Bt.LibDef.BT_LED_PARAM()
+                        stBuz.dwOn = 200
+                        stBuz.dwOff = 100
+                        stBuz.dwCount = 2
+                        stBuz.bVolume = 3
+                        stBuz.bTone = 1
+                        stVib.dwOn = 200
+                        stVib.dwOff = 100
+                        stVib.dwCount = 2
+                        stLed.dwOn = 200
+                        stLed.dwOff = 100
+                        stLed.dwCount = 2
+                        stLed.bColor = Bt.LibDef.BT_LED_MAGENTA
+                        Bt.SysLib.Device.btBuzzer(1, stBuz)
+                        Bt.SysLib.Device.btVibrator(1, stVib)
+                        Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        End If
+                        scan_qty.Text = ""
+                        scan_qty.Focus()
+                    End If
 
                 ElseIf leng_scan_qty = 103 Then
                     If bool_check_scan = "scan_ok_pickdetail" Then
@@ -5446,6 +5542,11 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "pick_detail_number" Then
@@ -5469,6 +5570,11 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
@@ -5496,6 +5602,10 @@ re_check:
                         Bt.SysLib.Device.btBuzzer(1, stBuz)
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "Plase_scna_detail" Then
                         Panel7.Visible = False
@@ -5520,7 +5630,11 @@ re_check:
                         Bt.SysLib.Device.btVibrator(1, stVib)
                         Bt.SysLib.Device.btLED(1, stLed)
                         scan_qty.Text = ""
-                        text_tmp.Text = scan_qty_total
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = scan_qty_total
+                        End If
                         scan_qty.Focus()
                     ElseIf status_alert_image = "Part_incorrect" Then
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
@@ -5544,6 +5658,9 @@ re_check:
                         'text_tmp.Text = Module1.SCAN_QTY_TOTAL
                         Panel7.Visible = False
                         alert_pa.Visible = False
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "success" Then
@@ -5574,6 +5691,10 @@ re_check:
                         'text_tmp.Text = Module1.SCAN_QTY_TOTAL
                         Panel7.Visible = False
                         alert_loop.Visible = False
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        End If
+                        scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf status_alert_image = "loop_re_scan_fa" Then
                         Dim stBuz As New Bt.LibDef.BT_BUZZER_PARAM()
@@ -5597,7 +5718,11 @@ re_check:
                         'text_tmp.Text = Module1.SCAN_QTY_TOTAL
                         Panel7.Visible = False
                         alert_loop.Visible = False
-                        text_tmp.Text = scan_qty_total
+                        If text_tmp.Text = "0" Then
+                            text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = scan_qty_total
+                        End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     End If
@@ -5655,7 +5780,7 @@ re_check:
 
     End Sub
 
-    Private Sub PictureBox6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox6.Click
+    Private Sub PictureBox6_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
         Panel4.Visible = False
         scan_qty.Focus()
     End Sub
@@ -5669,13 +5794,15 @@ re_check:
 
     Private Sub PictureBox5_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox5.Click
         Dim strCommand12345678 As String = "select count(su.su_id) as c_id  , su.sug_id as per from sys_users su  , sys_user_groups sug  where su.emp_id = '" & user_id.Text & "' and su.sys_pass = '" & password.Text & "' and su.sug_id  = sug.sug_id and su.enable = '1' GROUP BY su.sug_id"
-        MsgBox(strCommand12345678)
+        'MsgBox(strCommand12345678)
         Dim cmd As SqlCommand = New SqlCommand(strCommand12345678, myConn)
         reader = cmd.ExecuteReader()
 
         If reader.Read() Then
             If reader("c_id").ToString() = "1" And reader("per").ToString() <> "3" Then
                 Module1.user_reprint = user_id.Text()
+                Label11.Text = "QTY BEFOR : 0"
+                Label10.Text = "QTY AFTER : 0"
                 Panel5.Visible = True
                 Panel4.Visible = False
                 TextBox1.Focus()
@@ -5688,13 +5815,12 @@ re_check:
         reader.Close()
     End Sub
 
-    Private Sub PictureBox4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox4.Click
+    Private Sub PictureBox4_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
 
     End Sub
 
     Private Sub Button5_Click_3(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button5.Click
         Dim L_data = Len(TextBox1.Text)
-
         If L_data = "62" Then
             Dim re_qty As String = TextBox2.Text
             Dim re_qty_number As Double = 0.0
@@ -5723,9 +5849,8 @@ re_check:
             Dim sp_qr = new_qr_re_print.Split("               ")
             Dim data_arr As String = sp_qr(0)
             Dim part_no_detail As String = data_arr.Substring(12)
-
             Dim str As String = "select * from sup_work_plan_supply_dev where ITEM_CD = '" & part_no_detail & "'"
-            MsgBox(str)
+            'MsgBox(str)
             Dim cmd As SqlCommand = New SqlCommand(str, myConn)
             reader = cmd.ExecuteReader()
             Dim part_name_detail As String = "NOATA"
@@ -5763,15 +5888,28 @@ re_check:
             stInfoSet1.addr = "a066109719bd"
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
-
-            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
-            Else
-                MsgBox("connect faill")
-
+            Dim n_old As Double = 0.0
+            n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
+            Dim old_qty As String = n_old
+            Dim check = check_reprint_stock("62", old_qty, TextBox1.Text, re_qty_number)
+            If check = "SUCCESS" Then
+                If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                    Dim PO As String = TextBox1.Text.Substring(2, 10)
+                    Dim seq_text As String = TextBox1.Text.Substring(59, 3)
+                    Dim textbox_split = TextBox1.Text.Split(" ")
+                    Dim item_cd As String = textbox_split(0)
+                    Dim data_item_cd As String = item_cd.Substring(12)
+                    insert_log(old_qty, "1", PO, seq_text, data_item_cd)
+                    Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Else
+                    MsgBox("connect faill")
+                End If
+            ElseIf check = "FAILL" Then
+                MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
+            ElseIf check = "NO_DATA" Then
+                MsgBox("ไม่พบข้อมูล QR นี้")
             End If
-
-            MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
+            ' MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
         ElseIf L_data = "103" Then
             Dim re_qty As String = TextBox2.Text
             Dim re_qty_number As Double = 0.0
@@ -5798,10 +5936,10 @@ re_check:
                 End If
                 RESULT_QTY &= data_rigit
             Next
-            MsgBox("====>" & n & "<========" & RESULT_QTY)
+            ' MsgBox("====>" & n & "<========" & RESULT_QTY)
             Dim new_qr_re_print As String = new_qr & RESULT_QTY & qty_old2
-            MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
-            MsgBox(TextBox1.Text.Substring(52, 6))
+            ' MsgBox(new_qr_re_print & " ===>length => " & Len(new_qr_re_print))
+            '  MsgBox(TextBox1.Text.Substring(52, 6))
             Dim sp_qr = new_qr_re_print.Split(" ")
             Dim data_arr As String = sp_qr(0)
             Dim part_no_detail As String = data_arr.Substring(19)
@@ -5816,12 +5954,12 @@ re_check:
             Next
             Dim cut_rigit = TextBox1.Text.Split(" ")
             Dim b As String = cut_rigit(check_null)
-            MsgBox("check_null = " & check_null)
-            MsgBox("cut_rigit = " & cut_rigit(check_null))
-            MsgBox("b = " & b)
+            '  MsgBox("check_null = " & check_null)
+            ' MsgBox("cut_rigit = " & cut_rigit(check_null))
+            ' MsgBox("b = " & b)
             Dim SEQ As String = TextBox1.Text.Substring(16, 3) 'SEQ FA'
             Dim str As String = "select * from sup_work_plan_supply_dev where ITEM_CD = '" & part_no_detail & "'"
-            MsgBox(str)
+            '  MsgBox(str)
             Dim cmd As SqlCommand = New SqlCommand(str, myConn)
             reader = cmd.ExecuteReader()
             Dim part_name_detail As String = "NOATA"
@@ -5859,14 +5997,32 @@ re_check:
             stInfoSet1.addr = "a066109719bd"
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
-
             M_reprint = "FW"
-            If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
-                Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
-            Else
-                MsgBox("connect faill")
+            Dim old_qty As String = TextBox1.Text.Substring(52, 6)
+            Dim check = check_reprint_stock("103", Trim(old_qty), TextBox1.Text, re_qty_number)
+            'MsgBox(check)
+            If check = "SUCCESS" Then
+                If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
+                    Dim old2 As String = TextBox1.Text.Substring(58)
+                    Dim data = old2.Split(" ")
+                    Dim lot_fa As String = data(0)
+                    Dim full_text = TextBox1.Text.Split(" ")
+                    Dim data_item_cd As String = full_text(0)
+                    Dim item_cd = data_item_cd.Substring(19)
+                    Dim plan_seq As String = TextBox1.Text.Substring(16, 3)
+                    Dim lot_sep As String = TextBox1.Text.Substring(58, 4)
+                    Dim tag_number As String = TextBox1.Text.Substring(100, 3)
+                    Dim tag_seq As String = plan_seq + lot_sep + tag_number
+                    insert_log(Trim(old_qty), "0", lot_fa, tag_seq, item_cd)
+                    Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
+                Else
+                    MsgBox("connect faill")
+                End If
+            ElseIf check = "FAILL" Then
+                MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
+            ElseIf check = "NO_DATA" Then
+                MsgBox("ไม่พบข้อมูล QR นี้")
             End If
-
         Else
             MsgBox("QR CODE ไม่ถูกต้อง")
         End If
@@ -5990,23 +6146,42 @@ Exit_count2:
     End Sub
 
     Private Sub Button7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button7.Click
+        Label11.Text = "QTY BEFOR : 0"
         TextBox1.Text = ""
         TextBox2.Text = ""
+        Label10.Text = "QTY AFTER : 0"
         TextBox1.Focus()
     End Sub
 
     Private Sub TextBox1_Text_key_down(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles TextBox1.KeyDown
         Select Case e.KeyCode
             Case System.Windows.Forms.Keys.Enter
+                ' MsgBox("001")
+                If Len(TextBox1.Text) = "62" Then
+                    ' MsgBox("1")
+                    Dim n_old As Double = 0.0
+                    n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
+                    Dim qty_old As String = n_old
+                    'check_sock("62", qty_old)
+                    Label11.Text = "QTY BEFOR :" & qty_old
+                ElseIf Len(TextBox1.Text) = "103" Then
+                    ' MsgBox("2")
+                    Dim qty_old As String = TextBox1.Text.Substring(52, 6)
+                    'check_sock("103", qty_old)
+                    Label11.Text = "QTY BEFOR :" & Trim(qty_old)
+                Else
+                    Label11.Text = "QTY BEFOR : 0"
+                End If
                 TextBox2.Focus()
         End Select
     End Sub
 
-    Private Sub PictureBox8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox8.Click
+    Private Sub PictureBox8_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox8.Click, PictureBox6.Click
         user_id.Text = ""
         password.Text = ""
         scan_qty.Focus()
         Panel5.Visible = False
+        Panel4.Visible = False
     End Sub
 
     Private Sub Bluetooth_Reprint(ByVal stInfoSet As LibDef.BT_BLUETOOTH_TARGET, ByVal pin As StringBuilder, ByVal pinlen As UInt32, ByVal part_number As String, ByVal part_name As String, ByVal part_model As String, ByVal reprint_qty As String, ByVal loc_detail As String, ByVal user_detail As String, ByVal date_detail As String, ByVal time_detail As String, ByVal qr_detail_remain As String, ByVal seq As String)
@@ -6698,7 +6873,7 @@ L_END2:
     End Sub
     Public Sub insert_pick_log(ByVal REMAIN_ID As String, ByVal F_wi As String, ByVal used_qty As Double, ByVal create_date As String, ByVal create_by As String, ByVal updated_date As String, ByVal updated_by As String, ByVal scan_lot As String, ByVal updated_seq As String, ByVal F_item_cd As String)
         Try
-            MsgBox("READY insert logs")
+            'MsgBox("READY insert logs")
             Dim strCommand123 As String = "SELECT   id as i   FROM sup_scan_pick_detail  where scan_lot = '" & scan_lot & "' and tag_seq = '" & updated_seq & "'  and item_cd ='" & F_item_cd & "'"
             Dim command123 As SqlCommand = New SqlCommand(strCommand123, myConn)
             reader = command123.ExecuteReader() 'ติดบรรทัดนี้'
@@ -6709,16 +6884,47 @@ L_END2:
             Else
                 MsgBox("QUERY sup_scan_pick_detail NO ID")
             End If
-        reader.Close()
+            reader.Close()
 
             Dim str_insert_log = "INSERT INTO sup_pick_log (REF_ID , WI_NO , USED_QTY , CREATED_DATE , CREATED_BY , UPDATED_DATE , UPDATED_BY) VALUES ('" & REMAIN_ID & "','" & F_wi & "' , '" & used_qty & "','" & create_date & "','" & create_by & "' , '" & updated_date & "','" & updated_by & "')"
-        MsgBox(str_insert_log)
-        Dim command2 As SqlCommand = New SqlCommand(str_insert_log, myConn)
-        reader = command2.ExecuteReader()
+            ' MsgBox(str_insert_log)
+            Dim command2 As SqlCommand = New SqlCommand(str_insert_log, myConn)
+            reader = command2.ExecuteReader()
             reader.Close()
         Catch ex As Exception
             MsgBox("insert_pick_log_erro" & vbNewLine & ex.Message, "FAILL")
         End Try
     End Sub
+    Public Sub cut_stock_FASYSTEM(ByVal F_item_cd As String, ByVal PO As String, ByVal updated_seq As String, ByVal used_qty As String)
+        Try
+            'MsgBox("http://192.168.161.102/exp_api3party/Api_cut_stock_web_post/get_data_service?ITEM_CD=" & F_item_cd & "&PO=" & PO & "&SEQ=" & updated_seq & " &QTY=" & used_qty)
+            Dim result As String = Api.update_data("http://192.168.161.102/exp_api3party/Api_cut_stock_web_post/get_data_service?ITEM_CD=" & F_item_cd & "&PO=" & PO & "&SEQ=" & updated_seq & " &QTY=" & used_qty)
+            'MsgBox("status = " & result)
+            If result <> "SUCCESS" Then
+                MsgBox("FALL UPDATE CUT_STOCK P_NICE = " & result)
+            End If
+        Catch ex As Exception
+            MsgBox("FAILL cut_stock_FASYSTEM" & vbNewLine & ex.Message, "FAILL")
+        End Try
+    End Sub
+    Public Function insert_log(ByVal bef_qty As String, ByVal status As String, ByVal lot As String, ByVal seq As String, ByVal item_cd As String)
+        Dim time As DateTime = DateTime.Now
+        Dim format As String = "yyyy-MM-dd HH:mm:ss"
+        Dim date_now = time.ToString(format)
+        Dim str As String = "insert into sys_logs_reprint (reprint_by , reprint_date , reprint_aft , reprint_bef , qr_read , status , reprint_lot , reprint_seq , reprint_item_cd) values('" & user_id.Text & "' , '" & date_now & "' , '" & TextBox2.Text & "' , '" & bef_qty & "' , '" & TextBox1.Text & "' , '" & status & "' , '" & lot & "' , '" & seq & "' , '" & item_cd & "')"
+        'MsgBox("str = " & str)
+        Dim command2 As SqlCommand = New SqlCommand(str, myConn)
+        reader = command2.ExecuteReader()
+        reader.Close()
+        Return 0
+    End Function
 
+
+    Private Sub TextBox2_KeyDown(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyEventArgs)
+
+    End Sub
+
+    Private Sub TextBox2_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles TextBox2.TextChanged
+        Label10.Text = "QTY AFTER : " & TextBox2.Text
+    End Sub
 End Class

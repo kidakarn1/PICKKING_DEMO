@@ -3,6 +3,9 @@ Imports PICKING_SYSTEM.Page_projects
 Imports System.Data
 
 Public Class Select_Line
+    Public status As Integer = 0
+    Public ml As Integer = 0
+    Public count_time As Integer = 0
     Dim myConn As SqlConnection
     Dim x As ListViewItem
     Dim sel_itemSpa As String = "                        "
@@ -42,6 +45,7 @@ LOOP_MAIN_OPEN:
             btn_ok.Visible = False
             check_action = 2
             Panel3.Visible = False
+            Panel8.Visible = False
         End Try
     End Sub
 
@@ -201,20 +205,33 @@ LOOP_MAIN_OPEN:
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+        ml = 0
+        Timer1.Enabled = True
+        Panel8.Visible = True
+        loader()
+        Application.DoEvents()
         Line_list_view.Items.Clear()
         Module1.M_CHECK_LOT_COUNT_FW = New ArrayList()
         Dim page As Page_projects = New Page_projects()
+        Timer1.Enabled = False
+        Panel8.Visible = False
         page.PD.Show()
         Me.Close()
     End Sub
-
+    Public Sub loader()
+        Panel8.Visible = True
+    End Sub
     Private Sub Button2_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btn_ok.Click
+        Timer1.Enabled = True
+        loader()
+        Application.DoEvents()
         Try
-
             query_detail_location()
             If Module1.check_query = 1 Then
                 Dim p_scan As scan_location = New scan_location()
                 p_scan.PD4 = Me
+                Panel8.Visible = False
+                Timer1.Enabled = False
                 p_scan.Show()
                 Me.Hide()
             End If
@@ -689,5 +706,93 @@ NEXT_END_WEB_POST:
 
     Private Sub Button2_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button2.Click
         Panel3.Visible = False
+    End Sub
+
+    Private Sub Panel2_GotFocus_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub PictureBox10_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+
+    Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Timer1.Tick
+        ml += 1
+        status += 5
+        If ml <= 1 Then
+            PictureBox10.Visible = True
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 2 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = True
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 3 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = True
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 4 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = True
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 5 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = True
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 6 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = True
+            PictureBox16.Visible = False
+            PictureBox17.Visible = False
+        ElseIf ml = 7 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = True
+            PictureBox17.Visible = False
+        ElseIf ml = 8 Then
+            PictureBox10.Visible = False
+            PictureBox11.Visible = False
+            PictureBox12.Visible = False
+            PictureBox13.Visible = False
+            PictureBox14.Visible = False
+            PictureBox15.Visible = False
+            PictureBox16.Visible = False
+            PictureBox17.Visible = True
+            ml = 0
+        End If
+
     End Sub
 End Class

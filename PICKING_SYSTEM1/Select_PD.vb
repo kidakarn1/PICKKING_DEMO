@@ -53,6 +53,9 @@ Public Class Select_PD
     End Sub
 
     Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Btb_pd_back.Click
+        main.ml = 0
+        main.Timer1.Enabled = False
+        main.Panel2.Visible = False
         Me.Close() 'จาก close'
         main.Show()
 

@@ -1,8 +1,8 @@
 ﻿Imports System
 Imports System.Net
+Imports Newtonsoft.Json.Linq
 Imports System.IO
 Imports Newtonsoft.Json
-Imports Newtonsoft.Json.Linq
 Imports System.Windows.Forms.Form
 
 
@@ -54,4 +54,31 @@ Module Api
     End Function
 
 
+    Public Function update_data(ByVal _URL As String) As String
+        Dim _tmpImage As Image = Nothing
+        Dim re_data = "NO_DATA"
+        Try
+            ' Open a connection
+            Dim _HttpWebRequest As System.Net.HttpWebRequest = CType(System.Net.HttpWebRequest.Create(_URL), System.Net.HttpWebRequest)
+
+            _HttpWebRequest.AllowWriteStreamBuffering = True
+            _HttpWebRequest.Timeout = 20000
+
+            Dim _WebResponse As System.Net.WebResponse = _HttpWebRequest.GetResponse()
+            ' Open data stream:
+            Using data As New StreamReader(_WebResponse.GetResponseStream())
+                re_data = data.ReadToEnd
+                MsgBox("re_data" & re_data)
+                'MsgBox(data.ReadToEnd)
+                '  For Each key In data.ReadToEnd
+                're_data &= key
+                ' Next 'return to json '
+            End Using
+            _WebResponse.Close()
+        Catch _Exception As Exception
+            MsgBox("FALL WOW")
+            Return Nothing
+        End Try
+        Return re_data
+    End Function
 End Module
