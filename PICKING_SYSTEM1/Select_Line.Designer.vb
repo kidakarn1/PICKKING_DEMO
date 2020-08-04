@@ -20,9 +20,19 @@ Partial Public Class Select_Line
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Select_Line))
-        Dim ListViewItem3 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem
+        Dim ListViewItem1 As System.Windows.Forms.ListViewItem = New System.Windows.Forms.ListViewItem
         Me.Panel1 = New System.Windows.Forms.Panel
         Me.Panel2 = New System.Windows.Forms.Panel
+        Me.Panel8 = New System.Windows.Forms.Panel
+        Me.Label10 = New System.Windows.Forms.Label
+        Me.PictureBox17 = New System.Windows.Forms.PictureBox
+        Me.PictureBox11 = New System.Windows.Forms.PictureBox
+        Me.PictureBox10 = New System.Windows.Forms.PictureBox
+        Me.PictureBox12 = New System.Windows.Forms.PictureBox
+        Me.PictureBox13 = New System.Windows.Forms.PictureBox
+        Me.PictureBox14 = New System.Windows.Forms.PictureBox
+        Me.PictureBox15 = New System.Windows.Forms.PictureBox
+        Me.PictureBox16 = New System.Windows.Forms.PictureBox
         Me.Panel3 = New System.Windows.Forms.Panel
         Me.Panel4 = New System.Windows.Forms.Panel
         Me.Button2 = New System.Windows.Forms.Button
@@ -48,22 +58,12 @@ Partial Public Class Select_Line
         Me.Line_PD = New System.Windows.Forms.Label
         Me.Line_Emp_cd = New System.Windows.Forms.Label
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
-        Me.Panel8 = New System.Windows.Forms.Panel
-        Me.Label10 = New System.Windows.Forms.Label
-        Me.PictureBox17 = New System.Windows.Forms.PictureBox
-        Me.PictureBox11 = New System.Windows.Forms.PictureBox
-        Me.PictureBox10 = New System.Windows.Forms.PictureBox
-        Me.PictureBox12 = New System.Windows.Forms.PictureBox
-        Me.PictureBox13 = New System.Windows.Forms.PictureBox
-        Me.PictureBox14 = New System.Windows.Forms.PictureBox
-        Me.PictureBox15 = New System.Windows.Forms.PictureBox
-        Me.PictureBox16 = New System.Windows.Forms.PictureBox
         Me.Timer1 = New System.Windows.Forms.Timer
         Me.Panel1.SuspendLayout()
         Me.Panel2.SuspendLayout()
+        Me.Panel8.SuspendLayout()
         Me.Panel3.SuspendLayout()
         Me.Panel4.SuspendLayout()
-        Me.Panel8.SuspendLayout()
         Me.SuspendLayout()
         '
         'Panel1
@@ -91,6 +91,67 @@ Partial Public Class Select_Line
         Me.Panel2.Controls.Add(Me.Line_Emp_cd)
         resources.ApplyResources(Me.Panel2, "Panel2")
         Me.Panel2.Name = "Panel2"
+        '
+        'Panel8
+        '
+        Me.Panel8.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel8.Controls.Add(Me.Label10)
+        Me.Panel8.Controls.Add(Me.PictureBox17)
+        Me.Panel8.Controls.Add(Me.PictureBox11)
+        Me.Panel8.Controls.Add(Me.PictureBox10)
+        Me.Panel8.Controls.Add(Me.PictureBox12)
+        Me.Panel8.Controls.Add(Me.PictureBox13)
+        Me.Panel8.Controls.Add(Me.PictureBox14)
+        Me.Panel8.Controls.Add(Me.PictureBox15)
+        Me.Panel8.Controls.Add(Me.PictureBox16)
+        resources.ApplyResources(Me.Panel8, "Panel8")
+        Me.Panel8.Name = "Panel8"
+        '
+        'Label10
+        '
+        resources.ApplyResources(Me.Label10, "Label10")
+        Me.Label10.ForeColor = System.Drawing.Color.White
+        Me.Label10.Name = "Label10"
+        '
+        'PictureBox17
+        '
+        resources.ApplyResources(Me.PictureBox17, "PictureBox17")
+        Me.PictureBox17.Name = "PictureBox17"
+        '
+        'PictureBox11
+        '
+        resources.ApplyResources(Me.PictureBox11, "PictureBox11")
+        Me.PictureBox11.Name = "PictureBox11"
+        '
+        'PictureBox10
+        '
+        resources.ApplyResources(Me.PictureBox10, "PictureBox10")
+        Me.PictureBox10.Name = "PictureBox10"
+        '
+        'PictureBox12
+        '
+        resources.ApplyResources(Me.PictureBox12, "PictureBox12")
+        Me.PictureBox12.Name = "PictureBox12"
+        '
+        'PictureBox13
+        '
+        resources.ApplyResources(Me.PictureBox13, "PictureBox13")
+        Me.PictureBox13.Name = "PictureBox13"
+        '
+        'PictureBox14
+        '
+        resources.ApplyResources(Me.PictureBox14, "PictureBox14")
+        Me.PictureBox14.Name = "PictureBox14"
+        '
+        'PictureBox15
+        '
+        resources.ApplyResources(Me.PictureBox15, "PictureBox15")
+        Me.PictureBox15.Name = "PictureBox15"
+        '
+        'PictureBox16
+        '
+        resources.ApplyResources(Me.PictureBox16, "PictureBox16")
+        Me.PictureBox16.Name = "PictureBox16"
         '
         'Panel3
         '
@@ -191,8 +252,8 @@ Partial Public Class Select_Line
         Me.Line_list_view.Columns.Add(Me.ColumnHeader3)
         resources.ApplyResources(Me.Line_list_view, "Line_list_view")
         Me.Line_list_view.FullRowSelect = True
-        ListViewItem3.Text = resources.GetString("Line_list_view.Items")
-        Me.Line_list_view.Items.Add(ListViewItem3)
+        ListViewItem1.Text = resources.GetString("Line_list_view.Items")
+        Me.Line_list_view.Items.Add(ListViewItem1)
         Me.Line_list_view.Name = "Line_list_view"
         Me.Line_list_view.View = System.Windows.Forms.View.Details
         '
@@ -247,67 +308,6 @@ Partial Public Class Select_Line
         resources.ApplyResources(Me.PictureBox1, "PictureBox1")
         Me.PictureBox1.Name = "PictureBox1"
         '
-        'Panel8
-        '
-        Me.Panel8.BackColor = System.Drawing.Color.DarkSlateGray
-        Me.Panel8.Controls.Add(Me.Label10)
-        Me.Panel8.Controls.Add(Me.PictureBox17)
-        Me.Panel8.Controls.Add(Me.PictureBox11)
-        Me.Panel8.Controls.Add(Me.PictureBox10)
-        Me.Panel8.Controls.Add(Me.PictureBox12)
-        Me.Panel8.Controls.Add(Me.PictureBox13)
-        Me.Panel8.Controls.Add(Me.PictureBox14)
-        Me.Panel8.Controls.Add(Me.PictureBox15)
-        Me.Panel8.Controls.Add(Me.PictureBox16)
-        resources.ApplyResources(Me.Panel8, "Panel8")
-        Me.Panel8.Name = "Panel8"
-        '
-        'Label10
-        '
-        resources.ApplyResources(Me.Label10, "Label10")
-        Me.Label10.ForeColor = System.Drawing.Color.White
-        Me.Label10.Name = "Label10"
-        '
-        'PictureBox17
-        '
-        resources.ApplyResources(Me.PictureBox17, "PictureBox17")
-        Me.PictureBox17.Name = "PictureBox17"
-        '
-        'PictureBox11
-        '
-        resources.ApplyResources(Me.PictureBox11, "PictureBox11")
-        Me.PictureBox11.Name = "PictureBox11"
-        '
-        'PictureBox10
-        '
-        resources.ApplyResources(Me.PictureBox10, "PictureBox10")
-        Me.PictureBox10.Name = "PictureBox10"
-        '
-        'PictureBox12
-        '
-        resources.ApplyResources(Me.PictureBox12, "PictureBox12")
-        Me.PictureBox12.Name = "PictureBox12"
-        '
-        'PictureBox13
-        '
-        resources.ApplyResources(Me.PictureBox13, "PictureBox13")
-        Me.PictureBox13.Name = "PictureBox13"
-        '
-        'PictureBox14
-        '
-        resources.ApplyResources(Me.PictureBox14, "PictureBox14")
-        Me.PictureBox14.Name = "PictureBox14"
-        '
-        'PictureBox15
-        '
-        resources.ApplyResources(Me.PictureBox15, "PictureBox15")
-        Me.PictureBox15.Name = "PictureBox15"
-        '
-        'PictureBox16
-        '
-        resources.ApplyResources(Me.PictureBox16, "PictureBox16")
-        Me.PictureBox16.Name = "PictureBox16"
-        '
         'Timer1
         '
         '
@@ -322,9 +322,9 @@ Partial Public Class Select_Line
         Me.Name = "Select_Line"
         Me.Panel1.ResumeLayout(False)
         Me.Panel2.ResumeLayout(False)
+        Me.Panel8.ResumeLayout(False)
         Me.Panel3.ResumeLayout(False)
         Me.Panel4.ResumeLayout(False)
-        Me.Panel8.ResumeLayout(False)
         Me.ResumeLayout(False)
 
     End Sub

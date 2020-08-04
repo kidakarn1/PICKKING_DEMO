@@ -213,13 +213,14 @@ Public Class reprint
             Dim user_detail As String = Module1.user_reprint
             Dim qr_detail_reprint As String = new_qr_re_print
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            MsgBox(main.number_printter_bt)
+            stInfoSet1.addr = main.number_printter_bt
             Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet.addr = "a066109719bd"
+            stInfoSet.addr = main.number_printter_bt
             Dim pin As StringBuilder = New StringBuilder("0000")
             Dim pin1 As StringBuilder = New StringBuilder("0000")
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
             Dim n_old As Double = 0.0
@@ -227,6 +228,7 @@ Public Class reprint
             Dim old_qty As String = n_old
             Dim check = check_reprint("62", old_qty, TextBox1.Text, re_qty_number)
             If check = "SUCCESS" Then
+loop_check_open_bt_wp:
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
                     Dim PO As String = TextBox1.Text.Substring(2, 10)
                     Dim seq_text As String = TextBox1.Text.Substring(59, 3)
@@ -236,7 +238,9 @@ Public Class reprint
                     insert_log(old_qty, "1", PO, seq_text, data_item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
-                    MsgBox("connect faill")
+                    MsgBox("กรุณาเปิดเครื่องปริ้น")
+                    ' alert_open_printer.Visible = True
+                    GoTo loop_check_open_bt_wp
                 End If
             ElseIf check = "FAILL" Then
                 MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
@@ -322,9 +326,9 @@ Public Class reprint
             Dim user_detail As String = Module1.user_reprint
             Dim qr_detail_reprint As String = new_qr_re_print
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet.addr = "a066109719bd"
+            stInfoSet.addr = main.number_printter_bt
             Dim pin As StringBuilder = New StringBuilder("0000")
             Dim pin1 As StringBuilder = New StringBuilder("0000")
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -336,6 +340,7 @@ Public Class reprint
             Dim check = check_reprint("103", Trim(old_qty), TextBox1.Text, re_qty_number)
             'MsgBox(check)
             If check = "SUCCESS" Then
+loop_check_open_bt:
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
                     Dim old2 As String = TextBox1.Text.Substring(58)
                     Dim data = old2.Split(" ")
@@ -350,7 +355,9 @@ Public Class reprint
                     insert_log(Trim(old_qty), "0", lot_fa, tag_seq, item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
-                    MsgBox("connect faill")
+                    ' MsgBox("connect faill")
+                    MsgBox("กรุณาเปิดเครื่องปริ้น")
+                    GoTo loop_check_open_bt
                 End If
             ElseIf check = "FAILL" Then
                 MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
@@ -1206,16 +1213,14 @@ L_END2:
 
     Private Sub reprint_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn.Open()
-        Catch ex As Exception
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status in ")
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
+            alert_open_printer.Visible = False
             Panel5.Hide()
             ' TextBox2.Enabled = False
             main.loader()
-            Label1.Text = "QTY BEFOR : 0"
+            Label1.Text = "QTY BEFORE : 0"
             Label2.Text = "QTY AFTER : 0"
             main.Panel2.Visible = False
             ' main.Panel2.Visible = False
@@ -1242,7 +1247,7 @@ L_END2:
     End Sub
 
     Private Sub Button7_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button7.Click
-        Label1.Text = "QTY BEFOR : 0"
+        Label1.Text = "QTY BEFORE : 0"
         TextBox1.Text = ""
         TextBox2.Text = ""
         Label2.Text = "QTY AFTER : 0"
@@ -1264,30 +1269,19 @@ L_END2:
                     n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
                     Dim qty_old As String = n_old
                     'check_sock("62", qty_old)
-                    Label1.Text = "QTY BEFOR :" & qty_old
+                    Label1.Text = "QTY BEFORE :" & qty_old
                 ElseIf Len(TextBox1.Text) = "103" Then
                     ' MsgBox("2")
                     Dim qty_old As String = TextBox1.Text.Substring(52, 6)
                     'check_sock("103", qty_old)
-                    Label1.Text = "QTY BEFOR :" & Trim(qty_old)
+                    Label1.Text = "QTY BEFORE :" & Trim(qty_old)
                 Else
-                    Label1.Text = "QTY BEFOR : 0"
+                    Label1.Text = "QTY BEFORE : 0"
                 End If
                 TextBox2.Focus()
         End Select
     End Sub
-    Public Function check_sock(ByVal l_size As String, ByVal qty_old As String)
 
-        If l_size = "62" Then
-            Dim qr_read = TextBox1.Text
-            ' Dim item_cd = qr_read.Substring()
-
-            Dim str = "select * from  sup_frith_in_out where "
-        End If
-
-
-        Return 0
-    End Function
     Private Sub Label2_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label2.ParentChanged
 
     End Sub

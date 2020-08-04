@@ -6,7 +6,8 @@ Public Class Select_Line
     Public status As Integer = 0
     Public ml As Integer = 0
     Public count_time As Integer = 0
-    Dim myConn As SqlConnection
+    'Dim myConn As SqlConnection
+    Public myConn = "NOO"
     Dim x As ListViewItem
     Dim sel_itemSpa As String = "                        "
     Dim sel_where As String = ""
@@ -29,11 +30,8 @@ Public Class Select_Line
     Private Sub selLine_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
 LOOP_MAIN_OPEN:
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn.Open()
-        Catch ex As Exception
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status line")
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
             'MsgBox("====>>>")
             Module1.M_QTY_LOT_ALL = 0

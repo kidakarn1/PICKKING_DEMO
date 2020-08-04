@@ -10,8 +10,11 @@ Imports Newtonsoft.Json.Linq
 Imports System.Windows.Forms.Form
 Imports System
 Public Class main
-    Public scan_terminal_id = "PICK001"
-    Dim myConn As SqlConnection
+    Public scan_terminal_id = "NO_DATA" 'GetIPAddress()
+    Public pin_printer = "NO_DATA" 'GetIPAddress()
+    Public number_printter_bt = "NO_DATA" 'GetIPAddress()
+    Public ip_address As String = GetIPAddress()
+    'Dim myConn As SqlConnection
     Dim path As String
     Public Str As String
     Public count_emp_id As Integer
@@ -28,15 +31,16 @@ Public Class main
     Public count_time As Integer = 0
     Public status As Integer = 0
     Dim re_data As ArrayList = New ArrayList()
+    Public myConn = "NOO"
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn.Open()
-        Catch ex As Exception
-
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status in ")
+            'myConn = New SqlConnection("Data Source= 192.168.10.19\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
+            'myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
+            'myConn.Open()
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
+            set_data_handheld()
             Panel1.Show()
             PictureBox8.Visible = False
             Label4.Visible = False
@@ -48,7 +52,7 @@ Public Class main
             Me.emp_cd.Focus()
             ' get_image_user()
             Panel2.Visible = False
-
+            setting.Visible = False
         End Try
     End Sub
     Private Sub Label1_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
@@ -149,7 +153,7 @@ Public Class main
                 PictureBox2.Visible = True
                 PictureBox3.Visible = True
                 PictureBox4.Visible = True
-                'PictureBox9.Visible = True
+                setting.Visible = True
                 Label7.Visible = True
 
                 'get_image_user()
@@ -229,6 +233,7 @@ Public Class main
     End Sub
 
     Private Sub PictureBox4_Click_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox4.Click
+        setting.Visible = False
         Label4.Visible = False
         Label5.Visible = False
         pd_user = ""
@@ -415,5 +420,64 @@ Public Class main
 
     Private Sub Panel2_GotFocus_1(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Panel2.GotFocus
 
+    End Sub
+    Private Function GetIPAddress()
+
+        Dim strHostName As String
+
+        Dim strIPAddress As String
+
+        strHostName = System.Net.Dns.GetHostName()
+
+        strIPAddress = System.Net.Dns.GetHostByName(strHostName).AddressList(1).ToString()
+        'MsgBox("re_turn strIPAddress" & strIPAddress)
+
+        Return strIPAddress
+        'MessageBox.Show("Host Name: " & strHostName & "; IP Address: " & strIPAddress)
+    End Function
+    Public Sub set_data_handheld()
+        Dim ip_han As String = GetIPAddress()
+        Dim str_get As String = "select * from DEVICE_MASTER DM , DEVICE_SETTING_LOG DSL  where DM.DEVICE_IP = '" & ip_han & "' and DM.DEVICE_NAME = DSL.DEVICE_PAIR1 and DM.DEVICE_STATUS = '1' and DSL.STATUS = '1'"
+        Dim command As SqlCommand = New SqlCommand(str_get, myConn)
+        reader = command.ExecuteReader()
+        Dim DEVICE_NAME As String = "NO_DTAA"
+        Dim DEVICE_PIN As String = "NO_DTAA"
+        Dim DEVICE_BT As String = "NO_DTAA"
+        Dim DEVICE_PAIR1 As String = "NO_DATA"
+        Dim DEVICE_PAIR2 As String = "NO_DATA"
+        If reader.Read() Then
+            DEVICE_PAIR2 = reader("DEVICE_PAIR2").ToString()
+            DEVICE_PAIR1 = reader("DEVICE_PAIR1").ToString()
+        Else
+            MsgBox("เครื่องยิงไม่มีข้อมูลในระบบ")
+        End If
+        reader.Close()
+        Dim get_bt As String = "select * from DEVICE_MASTER  where  DEVICE_NAME = '" & DEVICE_PAIR2 & "' and  DEVICE_STATUS = '1'"
+        ' MsgBox(get_bt)
+        Dim command2 As SqlCommand = New SqlCommand(get_bt, myConn)
+        reader = command2.ExecuteReader()
+        If reader.Read() Then
+            DEVICE_BT = reader("DEVICE_BT").ToString()
+            pin_printer = reader("DEVICE_PIN").ToString()
+        Else
+            MsgBox("เครื่องยิงไม่มีข้อมูลในระบบ")
+        End If
+        reader.Close()
+        scan_terminal_id = DEVICE_PAIR1
+        pin_printer = DEVICE_PIN
+        number_printter_bt = DEVICE_BT
+        ' MsgBox("number_printter_bt" & number_printter_bt)
+    End Sub
+    Private Sub setting_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles setting.Click
+        Try
+            Timer1.Enabled = True
+            loader()
+            Application.DoEvents()
+            Dim setting As setting = New setting()
+            setting.Show()
+            Me.Hide()
+        Catch ex As Exception
+            MsgBox("error next page setting")
+        End Try
     End Sub
 End Class

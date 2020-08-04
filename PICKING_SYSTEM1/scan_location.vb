@@ -53,7 +53,8 @@ Public Class scan_location
     Public Const ESC As [Byte] = &H1B
     Public Const LF As [Byte] = &HA
 
-    Dim myConn As SqlConnection
+    'Dim myConn As SqlConnection
+    Public myConn = "NOO"
     Public PD4 As Select_Line
     Dim path As String
     Dim imagefile As String
@@ -66,11 +67,8 @@ Public Class scan_location
     Private Sub scan_location_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
             getwi = PD4.get_wi()
-            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            myConn.Open()
-        Catch ex As Exception
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status scan")
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
             Panel2.Visible = False
 

@@ -21,6 +21,7 @@ Partial Public Class reprint
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(reprint))
         Me.Panel5 = New System.Windows.Forms.Panel
+        Me.alert_open_printer = New System.Windows.Forms.PictureBox
         Me.Label2 = New System.Windows.Forms.Label
         Me.Label1 = New System.Windows.Forms.Label
         Me.PictureBox8 = New System.Windows.Forms.PictureBox
@@ -45,6 +46,7 @@ Partial Public Class reprint
         'Panel5
         '
         Me.Panel5.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel5.Controls.Add(Me.alert_open_printer)
         Me.Panel5.Controls.Add(Me.Label2)
         Me.Panel5.Controls.Add(Me.Label1)
         Me.Panel5.Controls.Add(Me.PictureBox8)
@@ -58,6 +60,14 @@ Partial Public Class reprint
         Me.Panel5.Location = New System.Drawing.Point(3, 37)
         Me.Panel5.Name = "Panel5"
         Me.Panel5.Size = New System.Drawing.Size(462, 525)
+        '
+        'alert_open_printer
+        '
+        Me.alert_open_printer.Image = CType(resources.GetObject("alert_open_printer.Image"), System.Drawing.Image)
+        Me.alert_open_printer.Location = New System.Drawing.Point(23, 80)
+        Me.alert_open_printer.Name = "alert_open_printer"
+        Me.alert_open_printer.Size = New System.Drawing.Size(417, 365)
+        Me.alert_open_printer.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Label2
         '
@@ -245,4 +255,5 @@ Partial Public Class reprint
     Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents Label2 As System.Windows.Forms.Label
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
+    Friend WithEvents alert_open_printer As System.Windows.Forms.PictureBox
 End Class

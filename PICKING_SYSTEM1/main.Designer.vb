@@ -21,6 +21,7 @@ Partial Public Class main
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(main))
         Me.Panel3 = New System.Windows.Forms.Panel
+        Me.setting = New System.Windows.Forms.PictureBox
         Me.Panel2 = New System.Windows.Forms.Panel
         Me.Label10 = New System.Windows.Forms.Label
         Me.PictureBox17 = New System.Windows.Forms.PictureBox
@@ -61,6 +62,7 @@ Partial Public Class main
         'Panel3
         '
         Me.Panel3.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel3.Controls.Add(Me.setting)
         Me.Panel3.Controls.Add(Me.Panel2)
         Me.Panel3.Controls.Add(Me.Label6)
         Me.Panel3.Controls.Add(Me.Label7)
@@ -75,7 +77,15 @@ Partial Public Class main
         Me.Panel3.Controls.Add(Me.PictureBox1)
         Me.Panel3.Location = New System.Drawing.Point(3, 3)
         Me.Panel3.Name = "Panel3"
-        Me.Panel3.Size = New System.Drawing.Size(478, 596)
+        Me.Panel3.Size = New System.Drawing.Size(478, 605)
+        '
+        'setting
+        '
+        Me.setting.Image = CType(resources.GetObject("setting.Image"), System.Drawing.Image)
+        Me.setting.Location = New System.Drawing.Point(10, 522)
+        Me.setting.Name = "setting"
+        Me.setting.Size = New System.Drawing.Size(67, 65)
+        Me.setting.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage
         '
         'Panel2
         '
@@ -235,7 +245,6 @@ Partial Public Class main
         '
         'PictureBox4
         '
-        Me.PictureBox4.BackColor = System.Drawing.Color.DarkSlateGray
         Me.PictureBox4.Image = CType(resources.GetObject("PictureBox4.Image"), System.Drawing.Image)
         Me.PictureBox4.Location = New System.Drawing.Point(397, 522)
         Me.PictureBox4.Name = "PictureBox4"
@@ -283,7 +292,7 @@ Partial Public Class main
         Me.Panel1.Controls.Add(Me.PictureBox6)
         Me.Panel1.Location = New System.Drawing.Point(-1, 88)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(475, 447)
+        Me.Panel1.Size = New System.Drawing.Size(475, 453)
         '
         'PictureBox8
         '
@@ -374,7 +383,7 @@ Partial Public Class main
         Me.AutoScaleDimensions = New System.Drawing.SizeF(96.0!, 96.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi
         Me.BackColor = System.Drawing.Color.DarkSlateGray
-        Me.ClientSize = New System.Drawing.Size(478, 565)
+        Me.ClientSize = New System.Drawing.Size(478, 567)
         Me.ControlBox = False
         Me.Controls.Add(Me.Panel1)
         Me.Controls.Add(Me.Panel3)
@@ -422,5 +431,6 @@ Partial Public Class main
     Friend WithEvents Timer1 As System.Windows.Forms.Timer
     Friend WithEvents Panel2 As System.Windows.Forms.Panel
     Friend WithEvents Label10 As System.Windows.Forms.Label
+    Friend WithEvents setting As System.Windows.Forms.PictureBox
 
 End Class

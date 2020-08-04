@@ -123,13 +123,8 @@ Public Class part_detail
             Dim en As Int32 = path.LastIndexOf("\")
             path = path.Substring(0, en)
             path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn_Resive = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=FASYSTEM;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            ' myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-            myConn.Open()
-            'myConn_Resive.Open()
-        Catch ex As Exception
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status")
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
 
             ' Dim path = Me.GetType().Assembly.GetModules()(0).FullyQualifiedName
@@ -146,6 +141,7 @@ Public Class part_detail
             lot_no.Text = "Lot No: " + Module1.M_LOT
             show_number_supply.Text = 0
             show_number_remain.Text = 0
+            want_to_tag.Text = 0
             lot_no.Hide()
             Button2.Visible = False
             Button3.Visible = False
@@ -165,7 +161,9 @@ Public Class part_detail
             alert_right_fa.Visible = False
             Panel5.Visible = False
             alert_reprint.Visible = False
+            alert_open_printer.Visible = False
             Panel7.Visible = False
+
             get_data_tetail()
             'check_qr_part()
         End Try
@@ -690,7 +688,6 @@ go_pick_detail_number_fw:
                                     text_box_success.Focus()
                                 End If
                             Else
-                                'MsgBox "test123"
                                 If show_number_supply.Text > req_qty And firstscan = "0" And number_remain > 0 Then
                                     ' MsgBox("คุณสแกนครบแล้ว และมีเศษในกล่องชิ้นงาน", 16, "Alert")
                                     text_tmp.Text = fa_qty
@@ -1316,13 +1313,13 @@ LOOP_INSERT:
         'MsgBox("remainqtyStr = " & remainqtyStr)
         'MsgBox("secondStrscan = " & secondStrscan)
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-        stInfoSet.addr = "a066109719bd"
+        stInfoSet.addr = main.number_printter_bt
         Dim pin As StringBuilder = New StringBuilder("0000")
 
         Dim pinlen As UInt32 = CType(pin.Length, UInt32)
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -1332,7 +1329,7 @@ remain_seq_FW:
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             'ButtonF2.Enabled = False
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -1557,14 +1554,15 @@ remain_seq_FW:
 
 
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-        stInfoSet.addr = "a066109719bd"
+        stInfoSet.addr = main.number_printter_bt
         Dim pin As StringBuilder = New StringBuilder("0000")
 
         Dim pinlen As UInt32 = CType(pin.Length, UInt32)
+loop_check_open_printer:
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             'ButtonF2.Enabled = False
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -1586,6 +1584,7 @@ remain_seq_FW:
 
             Dim qrdetailSupply As String = "SUP " & Module1.line & " " & wi_code & " " & itemStrqr & " " & Module1.check_QTY & " " & date_sup & " " & time_sup
             Dim qr_detail_remain As String = "nodata"
+
             Bluetooth_Print_MB200i(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, wi_code, qty_detail, line_detail, user_detail, now_date_detail, now_time_detail, qrdetailSupply)
             Dim num As Integer = 0
             For Each key In F_wi
@@ -1684,6 +1683,10 @@ remain_seq_FW:
                 '''''''''''''''''''''''''''''''''''''''''''''''''''
                 num += 1
             Next
+        Else 'check ถ้าไม่เปิดเครื่องปริ้นให้แสดง POP UP'
+            Panel7.Visible = True
+            alert_open_printer.Visible = True
+            GoTo loop_check_open_printer
         End If
         'MsgBox("------------------<>")
         Try
@@ -1719,7 +1722,7 @@ remain_seq_FW:
                 ' MsgBox("strCommand = " & strCommand)
             ElseIf check_scan = 2 Then
                 strCommand = "UPDATE sup_work_plan_supply_dev SET update_date = '" & date_now & "' , pick_flg = '1' , PICK_QTY = '" & total_pig_qty & "' , update_by = '" & emp_cd & "' , term_cd = '" & term_id & "'   WHERE wi  = '" & sel_where1 & "' AND item_cd = '" & sel_where2 & "'"
-                ' MsgBox("strCommand = " & strCommand)
+                'MsgBox("strCommand = " & strCommand)
             End If
             'MsgBox(strCommand)
             Dim command As SqlCommand = New SqlCommand(strCommand, myConn)
@@ -1984,14 +1987,14 @@ remain_seq_FW:
 
 
         Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-        stInfoSet.addr = "a066109719bd"
+        stInfoSet.addr = main.number_printter_bt
         Dim pin As StringBuilder = New StringBuilder("0000")
 
         Dim pinlen As UInt32 = CType(pin.Length, UInt32)
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             'ButtonF2.Enabled = False
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -2003,7 +2006,7 @@ remain_seq_FW:
         If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
             'ButtonF2.Enabled = False
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim pin1 As StringBuilder = New StringBuilder("0000")
 
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
@@ -2134,8 +2137,9 @@ remain_seq_FW:
 
             ret = Bluetooth.btBluetoothPairing(stInfoSet, pinlen, pin)
             If ret <> LibDef.BT_OK Then
-                disp = "btBluetoothPairing error ret[" & ret & "]"
-                MessageBox.Show(disp, "Error")
+                ' MsgBox("กรุณา เปิดเครื่องปริ้นด้วย")
+                'disp = "btBluetoothPairing error ret[" & ret & "]"
+                'MessageBox.Show(disp, "Error")
                 Return bRet
             End If
 
@@ -2145,7 +2149,11 @@ remain_seq_FW:
                 MessageBox.Show(disp, "Error")
                 Return bRet
             End If
+            alert_open_printer.Visible = False 'ปิด alert Printet'
+            Panel7.Visible = False 'ปิด alert Printet'
 
+            Panel7.Enabled = False
+            alert_open_printer.Enabled = False
             bRet = True
             Return bRet
         Catch ex As Exception
@@ -5274,8 +5282,10 @@ re_check:
     Public Sub set_show_supply()
         'show_supply.Text = Module1.show_data_remain
         show_number_supply.Text = CDbl(Val(Module1.show_data_supply)) - CDbl(Val(Module1.show_data_remain))
+        want_to_tag.Text = CDbl(Val(show_qty.Text.Substring(6))) - CDbl(Val(show_number_supply.Text))
     End Sub
     Public Sub set_show_remain()
+
         show_number_remain.Text = Module1.show_data_remain
     End Sub
     Private Sub PictureBox3_Click(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs)
@@ -5299,10 +5309,8 @@ re_check:
 
     End Sub
     Public Sub next_image(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles text_box_success.KeyDown
-        ' MsgBox(leng_scan_qty)
         Select Case e.KeyCode
             Case System.Windows.Forms.Keys.Enter
-                'MsgBox("===>" & bool_check_scan)
                 If check_process = "OK" Then
                     status_alert_image = ""
                     Dim Line As Select_Line = New Select_Line()
@@ -5545,7 +5553,7 @@ re_check:
                         If text_tmp.Text = "0" Then
                             text_tmp.Text = 0
                         Else
-                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                            text_tmp.Text = scan_qty_total
                         End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
@@ -5573,7 +5581,7 @@ re_check:
                         If text_tmp.Text = "0" Then
                             text_tmp.Text = 0
                         Else
-                            text_tmp.Text = Module1.SCAN_QTY_TOTAL
+                            text_tmp.Text = scan_qty_total
                         End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
@@ -5604,6 +5612,8 @@ re_check:
                         Bt.SysLib.Device.btLED(1, stLed)
                         If text_tmp.Text = "0" Then
                             text_tmp.Text = 0
+                        Else
+                            text_tmp.Text = scan_qty_total
                         End If
                         scan_qty.Text = ""
                         scan_qty.Focus()
@@ -5801,7 +5811,7 @@ re_check:
         If reader.Read() Then
             If reader("c_id").ToString() = "1" And reader("per").ToString() <> "3" Then
                 Module1.user_reprint = user_id.Text()
-                Label11.Text = "QTY BEFOR : 0"
+                Label11.Text = "QTY BEFORE : 0"
                 Label10.Text = "QTY AFTER : 0"
                 Panel5.Visible = True
                 Panel4.Visible = False
@@ -5879,13 +5889,13 @@ re_check:
             Dim user_detail As String = Module1.user_reprint
             Dim qr_detail_reprint As String = new_qr_re_print
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet.addr = "a066109719bd"
+            stInfoSet.addr = main.number_printter_bt
             Dim pin As StringBuilder = New StringBuilder("0000")
             Dim pin1 As StringBuilder = New StringBuilder("0000")
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
             Dim n_old As Double = 0.0
@@ -5893,6 +5903,7 @@ re_check:
             Dim old_qty As String = n_old
             Dim check = check_reprint_stock("62", old_qty, TextBox1.Text, re_qty_number)
             If check = "SUCCESS" Then
+loop_check_open_bt:
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
                     Dim PO As String = TextBox1.Text.Substring(2, 10)
                     Dim seq_text As String = TextBox1.Text.Substring(59, 3)
@@ -5902,7 +5913,9 @@ re_check:
                     insert_log(old_qty, "1", PO, seq_text, data_item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
-                    MsgBox("connect faill")
+                    'MsgBox("connect faill")
+                    MsgBox("กรุณาเปิดเครื่องปริ้น")
+                    GoTo loop_check_open_bt
                 End If
             ElseIf check = "FAILL" Then
                 MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
@@ -5988,13 +6001,13 @@ re_check:
             Dim user_detail As String = Module1.user_reprint
             Dim qr_detail_reprint As String = new_qr_re_print
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            stInfoSet.addr = "a066109719bd"
+            stInfoSet.addr = main.number_printter_bt
             Dim pin As StringBuilder = New StringBuilder("0000")
             Dim pin1 As StringBuilder = New StringBuilder("0000")
             Dim pinlen1 As UInt32 = CType(pin1.Length, UInt32)
-            stInfoSet1.addr = "a066109719bd"
+            stInfoSet1.addr = main.number_printter_bt
             M_reprint = "WEB_POST"
             Dim pinlen As UInt32 = CType(pin.Length, UInt32)
             M_reprint = "FW"
@@ -6002,6 +6015,7 @@ re_check:
             Dim check = check_reprint_stock("103", Trim(old_qty), TextBox1.Text, re_qty_number)
             'MsgBox(check)
             If check = "SUCCESS" Then
+loop_open_printer:
                 If Bluetooth_Connect_MB200i(stInfoSet, pin, pinlen) = True Then
                     Dim old2 As String = TextBox1.Text.Substring(58)
                     Dim data = old2.Split(" ")
@@ -6016,7 +6030,9 @@ re_check:
                     insert_log(Trim(old_qty), "0", lot_fa, tag_seq, item_cd)
                     Bluetooth_Reprint(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, Model_detail, re_qty_number, loc_detail, user_detail, now_date_detail, now_time_detail, new_qr_re_print, SEQ)
                 Else
-                    MsgBox("connect faill")
+                    'MsgBox("connect faill")
+                    MsgBox("กรุณาเปิดเครื่องปริ้น")
+                    GoTo loop_open_printer
                 End If
             ElseIf check = "FAILL" Then
                 MsgBox("QTY ใน stock ไม่เพียงพอต่อการ reprint ")
@@ -6071,6 +6087,10 @@ re_check:
                                             'MsgBox(num & " ," & count_scan & "===SETing")
                                         End If
                                     End If
+
+                                    If total_qty  > QTY  Then
+                                        total_qty = QTY
+                                    End If
                                     ListView2.Items(num).SubItems(3).Text = total_qty
                                     i = i + 1
                                 Next
@@ -6121,6 +6141,9 @@ re_check:
                                             'MsgBox(num & " ," & count_scan & "===SETing")
                                         End If
                                     End If
+                                    If total_qty > QTY Then
+                                        total_qty = QTY
+                                    End If
                                     ListView2.Items(num).SubItems(3).Text = total_qty
 exit_loop:
                                     i = i + 1
@@ -6146,7 +6169,7 @@ Exit_count2:
     End Sub
 
     Private Sub Button7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button7.Click
-        Label11.Text = "QTY BEFOR : 0"
+        Label11.Text = "QTY BEFORE : 0"
         TextBox1.Text = ""
         TextBox2.Text = ""
         Label10.Text = "QTY AFTER : 0"
@@ -6163,14 +6186,14 @@ Exit_count2:
                     n_old = CDbl(Val(TextBox1.Text.Substring(51, 8)))
                     Dim qty_old As String = n_old
                     'check_sock("62", qty_old)
-                    Label11.Text = "QTY BEFOR :" & qty_old
+                    Label11.Text = "QTY BEFORE :" & qty_old
                 ElseIf Len(TextBox1.Text) = "103" Then
                     ' MsgBox("2")
                     Dim qty_old As String = TextBox1.Text.Substring(52, 6)
                     'check_sock("103", qty_old)
-                    Label11.Text = "QTY BEFOR :" & Trim(qty_old)
+                    Label11.Text = "QTY BEFORE :" & Trim(qty_old)
                 Else
-                    Label11.Text = "QTY BEFOR : 0"
+                    Label11.Text = "QTY BEFORE : 0"
                 End If
                 TextBox2.Focus()
         End Select

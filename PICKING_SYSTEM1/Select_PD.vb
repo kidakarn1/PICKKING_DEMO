@@ -5,7 +5,8 @@ Imports System.Data.SqlClient
 Imports System.Configuration
 Imports PICKING_SYSTEM
 Public Class Select_PD
-    Dim myConn As SqlConnection
+    'Dim myConn As SqlConnection
+    Public myConn = "NOO"
     Dim reader As SqlDataReader
     Public given_code_pd As String
     Dim dat As String = String.Empty
@@ -17,12 +18,8 @@ Public Class Select_PD
 
     Private Sub Select_PD_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
         Try
-            myConn = New SqlConnection("Data Source=192.168.161.101;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=pcs_admin;Password=P@ss!fa")
-            'myConn = New SqlConnection("Data Source= 192.168.43.42\SQLEXPRESS2017,1433;Initial Catalog=tbkkfa01_dev;Integrated Security=False;User Id=sa;Password=p@sswd;")
-
-            myConn.Open()
-        Catch ex As Exception
-            MsgBox("Connect Database Fail" & vbNewLine & ex.Message, 16, "Status naja")
+            Dim connect_db = New connect()
+            myConn = connect_db.conn()
         Finally
 
             query_sys_department()
