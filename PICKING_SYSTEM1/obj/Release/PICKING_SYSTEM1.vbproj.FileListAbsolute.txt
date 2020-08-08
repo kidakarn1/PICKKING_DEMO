@@ -35,3 +35,5 @@ C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKIN
 C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Release\PICKING_SYSTEM.Home.resources
 C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Release\PICKING_SYSTEM.reprint.resources
 C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Release\PICKING_SYSTEM.test_gif.resources
+C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Release\PICKING_SYSTEM.select_pick_add.resources
+C:\Users\kidakarn_i\Documents\Visual Studio 2008\Projects\PICKING_SYSTEM1\PICKING_SYSTEM1\obj\Release\PICKING_SYSTEM.setting.resources

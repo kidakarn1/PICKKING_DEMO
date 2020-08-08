@@ -596,7 +596,6 @@ NEXT_END_WEB_POST:
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.LVL AS LVL, sw.PICK_FLG as PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN CAST (GETDATE() AS DATE) AND '" & Module1.time_scan & "' AND AA.LINE_CD = '" & sel_where & "'  ORDER BY AA.wi1 ASC" 'ใช้ บริษัท and AA.PF=0' 
             'Dim strCommand As String = "SELECT AA.* FROM ( SELECT sw.WORK_ODR_DLV_DATE AS d, sw.LVL AS LVL, sw.PICK_FLG AS PF, sw.item_cd AS item_cd, sw.LINE_CD, sw.wi AS wi1, pa.wi AS wi2, pa.del_flg, CASE WHEN (sw.wi = pa.wi) AND pa.del_flg = '1' THEN '9' ELSE '0' END AS FLG, sw.qty, CAST (sw.WORK_ODR_DLV_DATE AS DATE) AS DATE FROM sup_work_plan_supply_dev sw LEFT JOIN production_actual pa ON sw.WI = pa.WI ) AA WHERE AA.FLG <> '9' AND AA. DATE BETWEEN DATEADD( DAY, 1, CAST (GETDATE() AS DATE)) AND DATEADD( DAY, 4, CAST (GETDATE() AS DATE)) AND AA.LINE_CD = '" & sel_where & "' ORDER BY AA.wi1 ASC"
             Dim str_date_now2 As String = "select GETDATE() as d "
-            'MsgBox("00001")
             Dim cmd_str2 As SqlCommand = New SqlCommand(str_date_now2, myConn)
             'MsgBox("00002")
             reader = cmd_str2.ExecuteReader()
@@ -617,6 +616,7 @@ NEXT_END_WEB_POST:
 
             Dim srt_get_day_work = "select * from EXP_WORK_DAY where work_date = '" & date_now_database & "' and enable ='1'"
             Dim cmd_work_day As SqlCommand = New SqlCommand(srt_get_day_work, myConn)
+
             'MsgBox("01")
             reader = cmd_work_day.ExecuteReader()
             Dim wd As String = "NO"

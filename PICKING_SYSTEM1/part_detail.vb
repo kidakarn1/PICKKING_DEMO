@@ -49,6 +49,7 @@ Public Class part_detail
     Dim g_update As Integer = 0 '
     Dim brak_loop As Integer = 0 '
     Public check_po_lot As String = "NODATA"
+    Public id_pick_log_supply As String = "NODATA"
     Dim j As Integer = 0
     Dim count_update_fw As Integer = 0
     Dim count_scan As Integer = 0
@@ -141,7 +142,7 @@ Public Class part_detail
             lot_no.Text = "Lot No: " + Module1.M_LOT
             show_number_supply.Text = 0
             show_number_remain.Text = 0
-            want_to_tag.Text = 0
+            want_to_tag.Text = show_qty.Text.Substring(6)
             lot_no.Hide()
             Button2.Visible = False
             Button3.Visible = False
@@ -1582,7 +1583,7 @@ loop_check_open_printer:
                 Module1.check_QTY = text_temp_del_remain
             End If
 
-            Dim qrdetailSupply As String = "SUP " & Module1.line & " " & wi_code & " " & itemStrqr & " " & Module1.check_QTY & " " & date_sup & " " & time_sup
+            Dim qrdetailSupply As String = "SUP " & Module1.line & " " & wi_code & " " & itemStrqr & " " & Module1.check_QTY & " " & Module1.user_id & " " & id_pick_log_supply & " " & date_sup & " " & time_sup
             Dim qr_detail_remain As String = "nodata"
 
             Bluetooth_Print_MB200i(stInfoSet, pin, pinlen1, part_no_detail, part_name_detail, wi_code, qty_detail, line_detail, user_detail, now_date_detail, now_time_detail, qrdetailSupply)
@@ -5370,6 +5371,11 @@ re_check:
                         If text_tmp.Text = "0" Then
                             text_tmp.Text = 0
                         End If
+
+                        If show_number_supply.Text = "0" Or show_number_supply.Text = 0 Then
+                            text_tmp.Text = 0
+                        End If
+
                         scan_qty.Text = ""
                         scan_qty.Focus()
                     ElseIf bool_check_scan = "HAVE_TAG_REMAIN" Then
@@ -6914,6 +6920,16 @@ L_END2:
             Dim command2 As SqlCommand = New SqlCommand(str_insert_log, myConn)
             reader = command2.ExecuteReader()
             reader.Close()
+            Dim get_id_log = "select * from sup_pick_log where REF_ID = '" & REMAIN_ID & "' and WI_NO = '" & F_wi & "' and USED_QTY = '" & used_qty & "'  and CREATED_DATE = '" & create_date & "' and CREATED_BY = '" & create_by & "' and UPDATED_DATE = '" & updated_date & "' and updated_by = '" & updated_by & "'"
+            Dim cmd_get As SqlCommand = New SqlCommand(get_id_log, myConn)
+            reader = cmd_get.ExecuteReader() 'ติดบรรทัดนี้'
+
+            If reader.Read Then
+                id_pick_log_supply = reader("ID").ToString()
+            Else
+                MsgBox("DATA SET FAIL INSERT_PICK_LOG")
+            End If
+            reader.Close()
         Catch ex As Exception
             MsgBox("insert_pick_log_erro" & vbNewLine & ex.Message, "FAILL")
         End Try
@@ -6924,7 +6940,7 @@ L_END2:
             Dim result As String = Api.update_data("http://192.168.161.102/exp_api3party/Api_cut_stock_web_post/get_data_service?ITEM_CD=" & F_item_cd & "&PO=" & PO & "&SEQ=" & updated_seq & " &QTY=" & used_qty)
             'MsgBox("status = " & result)
             If result <> "SUCCESS" Then
-                MsgBox("FALL UPDATE CUT_STOCK P_NICE = " & result)
+                ' MsgBox("FALL UPDATE CUT_STOCK P_NICE = " & result)
             End If
         Catch ex As Exception
             MsgBox("FAILL cut_stock_FASYSTEM" & vbNewLine & ex.Message, "FAILL")

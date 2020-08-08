@@ -13,6 +13,7 @@ Public Class setting
     Dim reader As SqlDataReader
     Public myConn = "NOO"
     Private Sub setting_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
         Dim connect_db = New connect()
         myConn = connect_db.conn()
         load_data_printer()
@@ -149,5 +150,9 @@ Public Class setting
         Catch ex As Exception
             MsgBox("ERROR Insert_History_device")
         End Try
+    End Sub
+
+    Private Sub Label1_ParentChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Label1.ParentChanged
+
     End Sub
 End Class

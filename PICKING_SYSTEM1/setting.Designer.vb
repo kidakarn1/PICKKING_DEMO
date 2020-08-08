@@ -26,6 +26,9 @@ Partial Public Class setting
         Me.Panel2 = New System.Windows.Forms.Panel
         Me.Label1 = New System.Windows.Forms.Label
         Me.Panel3 = New System.Windows.Forms.Panel
+        Me.Panel7 = New System.Windows.Forms.Panel
+        Me.Panel6 = New System.Windows.Forms.Panel
+        Me.ComboBox2 = New System.Windows.Forms.ComboBox
         Me.Label5 = New System.Windows.Forms.Label
         Me.PictureBox2 = New System.Windows.Forms.PictureBox
         Me.Label4 = New System.Windows.Forms.Label
@@ -35,9 +38,6 @@ Partial Public Class setting
         Me.PictureBox1 = New System.Windows.Forms.PictureBox
         Me.Panel5 = New System.Windows.Forms.Panel
         Me.Label3 = New System.Windows.Forms.Label
-        Me.ComboBox2 = New System.Windows.Forms.ComboBox
-        Me.Panel6 = New System.Windows.Forms.Panel
-        Me.Panel7 = New System.Windows.Forms.Panel
         Me.Panel1.SuspendLayout()
         Me.Panel3.SuspendLayout()
         Me.Panel4.SuspendLayout()
@@ -110,6 +110,28 @@ Partial Public Class setting
         Me.Panel3.Location = New System.Drawing.Point(22, 69)
         Me.Panel3.Name = "Panel3"
         Me.Panel3.Size = New System.Drawing.Size(435, 448)
+        '
+        'Panel7
+        '
+        Me.Panel7.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel7.Location = New System.Drawing.Point(218, 85)
+        Me.Panel7.Name = "Panel7"
+        Me.Panel7.Size = New System.Drawing.Size(23, 87)
+        '
+        'Panel6
+        '
+        Me.Panel6.BackColor = System.Drawing.Color.DarkSlateGray
+        Me.Panel6.Location = New System.Drawing.Point(407, 342)
+        Me.Panel6.Name = "Panel6"
+        Me.Panel6.Size = New System.Drawing.Size(32, 87)
+        '
+        'ComboBox2
+        '
+        Me.ComboBox2.Font = New System.Drawing.Font("FC Home", 28.0!, System.Drawing.FontStyle.Bold)
+        Me.ComboBox2.Location = New System.Drawing.Point(10, 99)
+        Me.ComboBox2.Name = "ComboBox2"
+        Me.ComboBox2.Size = New System.Drawing.Size(231, 48)
+        Me.ComboBox2.TabIndex = 6
         '
         'Label5
         '
@@ -186,28 +208,6 @@ Partial Public Class setting
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(132, 28)
         Me.Label3.Text = "PRINTER"
-        '
-        'ComboBox2
-        '
-        Me.ComboBox2.Font = New System.Drawing.Font("FC Home", 28.0!, System.Drawing.FontStyle.Bold)
-        Me.ComboBox2.Location = New System.Drawing.Point(10, 99)
-        Me.ComboBox2.Name = "ComboBox2"
-        Me.ComboBox2.Size = New System.Drawing.Size(231, 48)
-        Me.ComboBox2.TabIndex = 6
-        '
-        'Panel6
-        '
-        Me.Panel6.BackColor = System.Drawing.Color.DarkSlateGray
-        Me.Panel6.Location = New System.Drawing.Point(407, 342)
-        Me.Panel6.Name = "Panel6"
-        Me.Panel6.Size = New System.Drawing.Size(32, 87)
-        '
-        'Panel7
-        '
-        Me.Panel7.BackColor = System.Drawing.Color.DarkSlateGray
-        Me.Panel7.Location = New System.Drawing.Point(218, 85)
-        Me.Panel7.Name = "Panel7"
-        Me.Panel7.Size = New System.Drawing.Size(23, 87)
         '
         'setting
         '

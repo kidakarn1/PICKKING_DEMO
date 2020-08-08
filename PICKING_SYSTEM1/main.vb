@@ -480,4 +480,17 @@ Public Class main
             MsgBox("error next page setting")
         End Try
     End Sub
+
+    Private Sub PictureBox2_Click_3(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles PictureBox2.Click
+        Try
+            Timer1.Enabled = True
+            loader()
+            Application.DoEvents()
+            Dim select_pick_add As select_pick_add = New select_pick_add()
+            select_pick_add.Show()
+            Me.Hide()
+        Catch ex As Exception
+            MsgBox("error next page setting")
+        End Try
+    End Sub
 End Class

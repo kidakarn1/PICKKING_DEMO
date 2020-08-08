@@ -68,7 +68,7 @@ Module Api
             ' Open data stream:
             Using data As New StreamReader(_WebResponse.GetResponseStream())
                 re_data = data.ReadToEnd
-                MsgBox("re_data" & re_data)
+                'MsgBox("re_data" & re_data)
                 'MsgBox(data.ReadToEnd)
                 '  For Each key In data.ReadToEnd
                 're_data &= key

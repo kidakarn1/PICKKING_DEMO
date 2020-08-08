@@ -201,10 +201,10 @@ Partial Public Class main
         Me.Label8.BackColor = System.Drawing.Color.FromArgb(CType(CType(175, Byte), Integer), CType(CType(221, Byte), Integer), CType(CType(68, Byte), Integer))
         Me.Label8.Font = New System.Drawing.Font("Tahoma", 16.0!, System.Drawing.FontStyle.Bold)
         Me.Label8.ForeColor = System.Drawing.Color.FromArgb(CType(CType(3, Byte), Integer), CType(CType(9, Byte), Integer), CType(CType(28, Byte), Integer))
-        Me.Label8.Location = New System.Drawing.Point(258, 244)
+        Me.Label8.Location = New System.Drawing.Point(290, 259)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(172, 29)
-        Me.Label8.Text = "PICK PACKING"
+        Me.Label8.Size = New System.Drawing.Size(121, 29)
+        Me.Label8.Text = "PICK ADD"
         '
         'Label9
         '
@@ -290,9 +290,9 @@ Partial Public Class main
         Me.Panel1.Controls.Add(Me.TextBox1)
         Me.Panel1.Controls.Add(Me.Label2)
         Me.Panel1.Controls.Add(Me.PictureBox6)
-        Me.Panel1.Location = New System.Drawing.Point(-1, 88)
+        Me.Panel1.Location = New System.Drawing.Point(-1, 85)
         Me.Panel1.Name = "Panel1"
-        Me.Panel1.Size = New System.Drawing.Size(475, 453)
+        Me.Panel1.Size = New System.Drawing.Size(475, 456)
         '
         'PictureBox8
         '

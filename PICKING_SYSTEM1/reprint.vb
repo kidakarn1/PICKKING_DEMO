@@ -213,7 +213,7 @@ Public Class reprint
             Dim user_detail As String = Module1.user_reprint
             Dim qr_detail_reprint As String = new_qr_re_print
             Dim stInfoSet1 As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
-            MsgBox(main.number_printter_bt)
+            'MsgBox(main.number_printter_bt)
             stInfoSet1.addr = main.number_printter_bt
             Dim stInfoSet As New LibDef.BT_BLUETOOTH_TARGET()   '  Bluetooth device information
             stInfoSet.addr = main.number_printter_bt
